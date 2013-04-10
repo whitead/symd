@@ -21,9 +21,9 @@ If you choose `make all`, then all possible versions will be compiled.
 
 Example
 -------------------------
-To run the example, try the following commands after compiling:
+The harmonic oscillator example may be run with 
 
-    cd example
+    cd example_example
     ../harmonic_verlet_anderson run_params.txt
 
 TODO/Thoughts
