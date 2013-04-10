@@ -1,0 +1,12 @@
+#emacs files
+\#*\#
+*~
+
+#copmiled sources
+*.o
+*.so
+harmonic_verlet_anderson
+
+#example output
+example/positions.xyz
+example/velocities.xyz
