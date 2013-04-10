@@ -8,5 +8,5 @@
 harmonic_verlet_anderson
 
 #example output
-example/positions.xyz
-example/velocities.xyz
+*/positions.xyz
+*/velocities.xyz
