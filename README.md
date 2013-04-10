@@ -13,6 +13,7 @@ If you really want to use this code, compiling is a little different
 than normal. The thermostat, forcefield and integrator are specified
 in the `Makefile.` Thus, to compile with a Verlet Integrator, an
 Anderson thermostat, and a harmonic force field you use
+
     cd src
     make harmonic_verlet_anderson
 
@@ -21,6 +22,7 @@ If you choose `make all`, then all possible versions will be compiled.
 Example
 -------------------------
 To run the example, try the following commands after compiling:
+
     cd example
     ../harmonic_verlet_anderson run_params.txt
 

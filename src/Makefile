@@ -1,6 +1,8 @@
 CC=gcc
 CFLAGS=-g -Wall
 
+all: harmonic_verlet_anderson
+
 harmonic_verlet_anderson: *.c *.h
 	$(CC) $(CFLAGS) -c -DHARMONIC -DANDERSON -c -o util.o util.c
 	$(CC) $(CFLAGS) -c -DANDERSON -o thermostat.o anderson_thermostat.c
