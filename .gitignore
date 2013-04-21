@@ -10,3 +10,4 @@ harmonic_verlet_anderson
 #example output
 */positions.xyz
 */velocities.xyz
+*/forces.xyz
