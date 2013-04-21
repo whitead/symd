@@ -10,6 +10,7 @@ blog](http://crowsandcats.blogspot.com).
 The code has the following features:
 
 * Conserves energy
+* Arbitrary dimension number (1-5 I would recommend)
 * Verlet integrator
 * Anderson thermostat
 * LJ or Harmonic Forces
