@@ -21,16 +21,15 @@ If you choose `make all`, then all possible versions will be compiled.
 
 Example
 -------------------------
-The harmonic oscillator example may be run with 
+Examples may be run with:
 
     cd example_example
-    ../harmonic_verlet_anderson run_params.txt
+    ../name_of_executable run_params.txt
 
 TODO/Thoughts
 -------------------------
-1. Implement the Bussi-Parrinello thermostat
-2. I hate it, but I should go ahead and implement a non `n^2` force calculation
-3. Perhaps I should try implement that Hilbert curve dynamic R-Tree decomposition method for fun
-4. Try those prior belief molecular dynamics equations I wrote down on that paper I lost in my office
-5. Use actual xyz format
-6. I'm out of chunky peanut butter, I should buy more
+1. Implement Periodic boundaries
+2. Implement the Bussi-Parrinello thermostat
+3. I hate it, but I should go ahead and implement a non `n^2` force calculation at some point
+4. Perhaps I should try implement that Hilbert curve dynamic R-Tree decomposition method for fun
+5. Try those prior belief molecular dynamics equations I wrote down on that paper I lost in my office

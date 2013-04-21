@@ -31,6 +31,7 @@ int main_loop(Run_Params* params){
   double* positions = params->initial_positions;
   double* velocities = params->initial_velocities;
   double* forces = malloc(sizeof(double) * params->n_dims * params->n_particles);
+  char xyz_file_comment[100];
   double penergy = 0;
   double kenergy = 0;
   double insta_temperature;
@@ -62,8 +63,10 @@ int main_loop(Run_Params* params){
     
     
     //print
-    if(i % params->position_log_period == 0)
-      log_array(params->positions_file, positions, params->n_dims, params->n_particles, false);
+    if(i % params->position_log_period == 0) {      
+      sprintf(xyz_file_comment, "Frame: %d", i);
+	log_xyz(params->positions_file, positions, xyz_file_comment, params->n_dims, params->n_particles);
+    }
 
     if(i % params->velocity_log_period == 0)
       log_array(params->velocities_file, velocities, params->n_dims, params->n_particles, true);

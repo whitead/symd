@@ -167,6 +167,17 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
   params->force_parameters = build_harmonic(k);
   #endif
 
+  #ifdef LJ
+  double epsilon = process_double(pstrings, "lj_epsilon", &success_cur);  
+  double sigma = process_double(pstrings, "lj_sigma", &success_cur);
+  if(!success_cur) {
+    epsilon = 1;
+    sigma = 1;
+    fprintf(stderr, "Could not find LJ parameters. Assuming sigma = epsilon = 1\n");
+  }
+  params->force_parameters = build_lj(epsilon, sigma);
+  #endif
+
   
   //load starting configuration
 
@@ -326,6 +337,27 @@ double calculate_kenergy(double* velocities, double* masses, unsigned int n_dims
 
   return(kenergy);
 
+}
+
+void log_xyz(FILE* file, double* array, char* frame_string, unsigned n_dims, unsigned n_particles) {
+  
+  if(file == NULL)
+    return;
+
+  unsigned int i,j;
+
+  fprintf(file, "%d\n%s\n", n_particles, frame_string);
+
+  for(i = 0; i < n_particles; i++) {
+    fprintf(file, "Ar ");
+    for(j = 0; j < n_dims; j++) {
+      fprintf(file, "%12g ", array[i * n_dims + j]); 
+    }
+      fprintf(file, "\n");
+  }
+
+  fflush(file);
+  
 }
 
 void log_array(FILE* file, double* array, unsigned n_cols, unsigned n_rows, bool do_sum) {

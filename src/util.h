@@ -51,6 +51,11 @@ double calculate_kenergy(double* velocities, double* masses, unsigned int n_dims
 
 
 /*
+ * Write to file, which should be open, the given array in xyz format
+ */
+void log_xyz(FILE* file, double* array, char* frame_string, unsigned n_dims, unsigned n_particles);
+
+/*
  * Write to file, which should be open, the given array. If sum is true, then the cols will
  * be squared, summed, and the square root taken. For example, it will produce the speed for a 
  * velocity array.

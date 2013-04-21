@@ -12,4 +12,4 @@ masses_file masses.txt
 start_positions start_positions.xyz
 print_period 1
 positions_log_file positions.xyz
-velocity_log_file velocities.xyz
+

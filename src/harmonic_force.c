@@ -12,7 +12,7 @@ double gather_forces(void* parameters, double* positions, double* forces, double
     r = 0;
     for(j = 0; j < n_dims; j++) {
       r += positions[i * n_dims + j] * positions[i * n_dims + j];
-      forces[i * n_dims + j] =- k * positions[i * n_dims + j];
+      forces[i * n_dims + j] = -k * positions[i * n_dims + j];
     }
     penergy += r  / 2;
         

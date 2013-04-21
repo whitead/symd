@@ -7,5 +7,5 @@ constant of 2. Those parameters may be found in `run_params.txt`.
 
 Run the code using
 
-    ../name_of_executable run_params.txt
+    ../harmonic_verlet_anderson run_params.txt
 
