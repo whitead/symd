@@ -1,7 +1,8 @@
 #include "force.h"
 
+
 double gather_forces(void* parameters, double* positions, double* forces, double* masses, 
-		     unsigned int n_dims, unsigned int n_particles) {
+		     double* box_size, unsigned int n_dims, unsigned int n_particles) {
   double epsilon = ((Lj_Parameters*) parameters)->epsilon;
   double sigma = ((Lj_Parameters*) parameters)->sigma;
   unsigned int i, j, k;
@@ -21,7 +22,7 @@ double gather_forces(void* parameters, double* positions, double* forces, double
 
       //distance between particles
       for(k = 0; k < n_dims; k++) {
-	diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+	diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
 	r += diff * diff;
 	force_vector[k] = diff;
       }

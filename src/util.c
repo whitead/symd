@@ -86,6 +86,20 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
     exit(1);
   }
 
+  //Now we know dimensions, get box size
+  char box_size_string[12];
+  params->box_size = (double*) malloc(sizeof(double) * params->n_dims);
+  for(i = 0; i < params->n_dims; i++) {
+    sprintf(box_size_string, "box_%d_size", i+1);
+    temp_double = process_double(pstrings, box_size_string, &success_cur);
+    if(success_cur)
+      params->box_size[i] = temp_double;
+    else if(default_params == NULL) {
+      fprintf(stderr, "Could not read box_%d_size\n", i);
+      exit(1);
+    }
+  }
+
   temp_uint = process_uint(pstrings, "n_particles", &success_cur);
   if(success_cur)
     params->n_particles = temp_uint;
@@ -158,7 +172,7 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
   #endif
   
 
-  //System parameters
+  //FF parameters
   #ifdef HARMONIC
   double k = process_double(pstrings, "harmonic_constant", &success_cur);
   if(!success_cur) {
@@ -366,7 +380,7 @@ void log_array(FILE* file, double* array, unsigned n_cols, unsigned n_rows, bool
     return;
 
   unsigned int i,j;
-  double sum;
+  double sum = 0;
 
   for(i = 0; i < n_rows; i++) {
     if(do_sum)
@@ -436,6 +450,7 @@ void free_run_params(Run_Params* params) {
   free(params->initial_positions);
   free(params->initial_velocities);
   free(params->masses);
+  free(params->box_size);
 
   free(params);
 

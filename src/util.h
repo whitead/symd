@@ -7,6 +7,8 @@
 #include "thermostat.h"
 #include "force.h"
 
+#ifndef UTIL_H_
+#define UTIL_H_
 
 #define MD_SUCCESS 0
 
@@ -24,6 +26,7 @@ typedef struct {
   double* initial_positions;
   double* initial_velocities;
   double* masses;
+  double* box_size;
   unsigned int n_dims;
   unsigned int n_particles;
   FILE* positions_file;
@@ -82,3 +85,5 @@ char* process_string(char*** pstrings, char* key, bool* success);
 
 //free all the memory bits in the Run_Params struct
 void free_run_params(Run_Params* params);
+
+#endif

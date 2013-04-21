@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
+#include "min_image.h"
 
 #ifndef FORCE_H_
 #define FORCE_H_
@@ -18,7 +19,7 @@ typedef struct {
 #endif 
 
 double gather_forces(void* parameters, double* positions, double* forces, double* masses, 
-		     unsigned int n_dims, unsigned int n_particles);
+		     double* box_size, unsigned int n_dims, unsigned int n_particles);
 
 #ifdef HARMONIC
 void* build_harmonic(double k);

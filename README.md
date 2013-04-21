@@ -6,6 +6,18 @@ dynamics engine. I wouldn't recommend using it. I use it to test MD
 methods and sometimes post my explorations to [my
 blog](http://crowsandcats.blogspot.com).
 
+
+The code has the following features:
+
+* Conserves energy
+* Verlet integrator
+* Anderson thermostat
+* LJ or Harmonic Forces
+* Input velocites, positions (XYZ Format)
+* Output forces, temperature, energy, velocities, positions (XYZ Format)
+* Periodic boundary conditions
+
+
 Compiling
 -------------------------
 
@@ -28,8 +40,7 @@ Examples may be run with:
 
 TODO/Thoughts
 -------------------------
-1. Implement Periodic boundaries
-2. Implement the Bussi-Parrinello thermostat
-3. I hate it, but I should go ahead and implement a non `n^2` force calculation at some point
-4. Perhaps I should try implement that Hilbert curve dynamic R-Tree decomposition method for fun
-5. Try those prior belief molecular dynamics equations I wrote down on that paper I lost in my office
+1. Implement the Bussi-Parrinello thermostat
+2. I hate it, but I should go ahead and implement a non `n^2` force calculation at some point
+3. Perhaps I should try implement that Hilbert curve dynamic R-Tree decomposition method for fun
+4. Try those prior belief molecular dynamics equations I wrote down on that paper I lost in my office

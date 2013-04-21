@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 
   FILE* arguments = fopen(argv[1], "r");
   if(arguments == NULL) {
-    perror("Could not open file\n");
+    perror("Could not open file run parameter file\n");
     exit(1);
   }
 
@@ -36,7 +36,7 @@ int main_loop(Run_Params* params){
   double kenergy = 0;
   double insta_temperature;
 
-  gather_forces(params->force_parameters, positions, forces, params->masses, params->n_dims, params->n_particles);
+  gather_forces(params->force_parameters, positions, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
 
 
   printf("%12s %12s %12s %12s %12s %12s\n", "Step", "Time", "T", "PE", "KE", "E");
@@ -45,17 +45,19 @@ int main_loop(Run_Params* params){
 
     //integrate 1
 
-    integrate_1(params->time_step, positions, velocities, forces, params->masses, params->n_dims, params->n_particles);
+    integrate_1(params->time_step, positions, velocities, forces, params->masses,params->box_size,  params->n_dims, params->n_particles);
 
 
     //gather forces
-    penergy =  gather_forces(params->force_parameters, positions, forces, params->masses, params->n_dims, params->n_particles);
+    penergy =  gather_forces(params->force_parameters, positions, forces, params->masses, params->box_size,  params->n_dims, params->n_particles);
 
     //integrate 2
-    integrate_2(params->time_step, positions, velocities, forces, params->masses, params->n_dims, params->n_particles);
+    integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
 
     //thermostat
+    #ifdef THERMOSTAT
     thermostat(params->temperature, params->time_step, params->thermostat_parameters, positions, velocities, params->masses, params->n_dims, params->n_particles);
+    #endif
 
     //calculate important quantities
     kenergy = calculate_kenergy(velocities, params->masses, params->n_dims, params->n_particles);

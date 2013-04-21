@@ -6,6 +6,8 @@
 *.o
 *.so
 harmonic_verlet_anderson
+lj_verlet_anderson
+lj_verlet
 
 #example output
 */positions.xyz

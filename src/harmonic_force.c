@@ -1,7 +1,7 @@
 #include "force.h"
 
 double gather_forces(void* parameters, double* positions, double* forces, double* masses, 
-		     unsigned int n_dims, unsigned int n_particles) {
+		     double* box_size, unsigned int n_dims, unsigned int n_particles) {
   double k = ((Harmonic_Parameters*) parameters)->k;
   unsigned int i, j;
   double penergy = 0;
