@@ -41,7 +41,8 @@ Examples may be run with:
 
 TODO/Thoughts
 -------------------------
-1. Implement the Bussi-Parrinello thermostat
+1. Remove COM motion
+2. Implement the Bussi-Parrinello thermostat. The code and implementation details may be found in resamplekin.f90. The only detail to add is that the random number distributions should be discarded and  the GNU scilibrary should be used. The center-of-mass motion needs to removed as well for the whole system and its corresponding degrees of freedom removed for thermostat calculations. Also, note that some of the implemenations floating around for the Bussi thermostat draw N random numbers, where N is the number of particles. Don't do that.
 2. I hate it, but I should go ahead and implement a non `n^2` force calculation at some point
-3. Perhaps I should try implement that Hilbert curve dynamic R-Tree decomposition method for fun
-4. Try those prior belief molecular dynamics equations I wrote down on that paper I lost in my office
+
+
