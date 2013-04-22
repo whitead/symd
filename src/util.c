@@ -158,10 +158,10 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
 
   //thermostat parameters
   #ifdef ANDERSON
-  unsigned int seed = process_uint(pstrings, "anderson_seed", &success_cur);
+  unsigned int seed = process_uint(pstrings, "thermostat_seed", &success_cur);
   if(!success_cur) {
     seed = 1523;
-    fprintf(stderr, "Warning: Using default seed for anderson thermostat\n");
+    fprintf(stderr, "Warning: Using default seed for thermostat\n");
   }
   double collision_freq = process_double(pstrings, "anderson_nu", &success_cur);
   if(!success_cur) {
@@ -170,6 +170,21 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
   
   params->thermostat_parameters = build_anderson(seed, collision_freq);
   #endif
+
+  //Bussi thermostat parameters 
+  #ifdef BUSSI
+  unsigned int seed = process_uint(pstrings, "thermostat_seed", &success_cur);
+  if(!success_cur) {
+    seed = 1523;
+    fprintf(stderr, "Warning: Using default seed for thermostat\n");
+  }
+  double taut = process_double(pstrings, "bussi_taut", &success_cur);
+  if(!success_cur) {
+    taut = 0;
+  }
+  
+  params->thermostat_parameters = build_bussi(seed, taut);
+  #endif  
   
 
   //FF parameters

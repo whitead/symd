@@ -3,7 +3,7 @@ time_step 0.01
 temperature 1
 velocity_seed 456415615
 anderson_nu 100
-anderson_seed 1565
+thermostat_seed 1565
 spring_constant 2
 n_dims 3
 n_particles 100
