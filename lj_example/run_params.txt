@@ -3,6 +3,7 @@ time_step 0.01
 temperature 0.3
 velocity_seed 456415615
 anderson_nu 100
+bussi_taut 1
 thermostat_seed 1565
 n_dims 3
 box_1_size 10
