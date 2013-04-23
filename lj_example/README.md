@@ -7,5 +7,5 @@ The run parameters may be found in `run_params.txt`.
 
 Run the code using
 
-    ../lj_verlet_anderson run_params.txt
+    ../lj_vverlet_anderson run_params.txt
 

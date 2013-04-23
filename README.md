@@ -28,7 +28,7 @@ in the `Makefile.` Thus, to compile with a Verlet Integrator, an
 Anderson thermostat, and a harmonic force field you use
 
     cd src
-    make harmonic_verlet_anderson
+    make harmonic_vverlet_anderson
 
 If you choose `make all`, then all possible versions will be compiled.
 
