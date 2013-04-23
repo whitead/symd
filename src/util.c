@@ -95,8 +95,12 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
     if(success_cur)
       params->box_size[i] = temp_double;
     else if(default_params == NULL) {
+
+#ifndef NO_PBC
       fprintf(stderr, "Could not read box_%d_size\n", i);
       exit(1);
+#endif
+
     }
   }
 
@@ -361,7 +365,7 @@ double calculate_kenergy(double* velocities, double* masses, unsigned int n_dims
     for(j = 0; j < n_dims; j++) {
       etemp += velocities[i * n_dims + j] * velocities[i * n_dims + j];
     }
-    kenergy += etemp * masses[i] / 2;
+    kenergy += etemp * masses[i] / 2.;
   }
 
   return(kenergy);
@@ -381,6 +385,9 @@ void log_xyz(FILE* file, double* array, char* frame_string, unsigned n_dims, uns
     fprintf(file, "Ar ");
     for(j = 0; j < n_dims; j++) {
       fprintf(file, "%12g ", array[i * n_dims + j]); 
+    }
+    for(j = n_dims; j < 3; j++) {
+      fprintf(file, "%12g ", 0.); 
     }
       fprintf(file, "\n");
   }

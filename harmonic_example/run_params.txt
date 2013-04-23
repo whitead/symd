@@ -1,15 +1,18 @@
-steps 1000
+steps 10000
 time_step 0.01
-temperature 1
+temperature 10
 velocity_seed 456415615
-anderson_nu 100
-thermostat_seed 1565
+anderson_nu 0.1
+bussi_taut 0.1
+thermostat_seed 15643
 spring_constant 2
-n_dims 3
-n_particles 100
+n_dims 2
+box_1_size 100
+box_2_size 100
+box_3_size 100
+n_particles 250
 initial_positions initial_positions.xyz
 masses_file masses.txt
 start_positions start_positions.xyz
 print_period 1
 positions_log_file positions.xyz
-

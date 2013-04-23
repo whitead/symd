@@ -32,16 +32,17 @@ double resamplekin_sumnoises(gsl_rng* rng, unsigned int nn){
   taut:  relaxation time of the thermostat, in units of 'how often this routine is called'
 */
 
-double resamplekin(gsl_rng* rng, double kk, double sigma, int ndeg, double taut){
+double resamplekin(gsl_rng* rng, double kk, double sigma, unsigned int ndeg, double taut){
   double factor,rr;
   if(taut>0.1){
     factor=exp(-1.0/taut);
   } else{
     factor=0.0;
   }
-  rr = gsl_ran_gaussian_ziggurat(rng, 1);
+  rr = gsl_ran_gaussian_ziggurat(rng, 1.0);
+
   return kk + (1.0-factor)* (sigma*(resamplekin_sumnoises(rng, ndeg-1)+rr*rr)/ndeg-kk)
-            + 2.0*rr*sqrt(kk*sigma/ndeg*(1.0-factor)*factor);
+              + 2.0*rr*sqrt(kk*sigma/ndeg*(1.0-factor)*factor);
 }
 
 
@@ -51,7 +52,7 @@ void thermostat(double temperature, double time_step, void* thermostat_parameter
 
   unsigned int i, j, ndeg;
   double kenergy = 0;
-  double etemp, scaling_factor;
+  double etemp, scaling_factor, new_kenergy;
 
   //calculate kinetic energy
   for(i = 0; i < n_particles; i++) {
@@ -61,12 +62,19 @@ void thermostat(double temperature, double time_step, void* thermostat_parameter
     }
     kenergy += 0.5 * etemp * masses[i];
   }
-
-  ndeg = (n_particles * n_dims - n_dims);
-
+  
+  //TODO: get COM fixed
+  //  ndeg = (n_particles * n_dims - n_dims);
+  ndeg = (n_particles * n_dims);
+   
   //Equation A7 from Bussi2007
-  scaling_factor = resamplekin(params->rng, kenergy, 0.5 * temperature * ndeg, ndeg, params->taut);
-  scaling_factor = sqrt(scaling_factor);
+  new_kenergy = resamplekin(params->rng, kenergy, 0.5 * temperature * ndeg, ndeg, params->taut / time_step);
+
+  //according to gromacs implementation, it can be negative due to rounding(?)
+  if(new_kenergy < 0)
+    new_kenergy = 0;
+  
+  scaling_factor = sqrt(new_kenergy / kenergy);
 
   for(i = 0; i < n_particles; i++) {
     for(j = 0; j < n_dims; j++) {

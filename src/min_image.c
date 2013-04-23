@@ -7,9 +7,17 @@ double round(double number)
 }
 
 double min_image_dist(double dx, double img) {
+#ifdef NO_PBC
+  return dx;
+#else
   return dx - round(dx / img) *img;
+#endif
 }
 
 double wrap(double x, double img) {
+#ifdef NO_PBC
+  return x;
+#else
   return x - floor(x /  img) * img;
+#endif
 }

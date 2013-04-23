@@ -5,8 +5,8 @@
 #copmiled sources
 *.o
 *.so
-*_verlet_*
-*_verlet
+*_vverlet_*
+*_vverlet
 
 
 #example output
