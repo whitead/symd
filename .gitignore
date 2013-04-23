@@ -5,9 +5,9 @@
 #copmiled sources
 *.o
 *.so
-harmonic_verlet_anderson
-lj_verlet_anderson
-lj_verlet
+*_verlet_*
+*_verlet
+
 
 #example output
 */positions.xyz
