@@ -1,6 +1,6 @@
 steps 10000
 time_step 0.01
-temperature 0.3
+temperature 0.7
 velocity_seed 456415615
 anderson_nu 100
 bussi_taut 1

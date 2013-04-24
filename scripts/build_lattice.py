@@ -5,7 +5,7 @@ import sys, copy
 from math import *
 
 def print_usage():
-    print "Usage: build_start_config.py [dims] [box_1_size] [box_..._size] [box_dims_size] [number]"
+    print "Usage: build_lattice.py [dims] [box_1_size] [box_..._size] [box_dims_size] [number]"
 
 if(len(sys.argv) < 2):
     print_usage()
@@ -34,7 +34,10 @@ def prepend_emit(array, element):
 def enumerate_grid(fxn, dim, sizes, indices):
     if(dim > 0):
         for i in range(sizes[dim]):
-            enumerate_grid(fxn, dim - 1, sizes, prepend_emit(indices, i))
+            enumerate_grid(fxn, 
+                           dim - 1, 
+                           sizes, 
+                           prepend_emit(indices, i))
 
     else:
         for i in range(sizes[dim]):
@@ -53,4 +56,6 @@ def print_grid(indices):
         [print_point(x * increment) for x in indices]
         print ""
         
-enumerate_grid(print_grid, n_dims - 1, [int(ceil(x / increment)) for x in box_size], [])
+enumerate_grid(print_grid, n_dims - 1, 
+               [int(ceil(x / increment)) for x in box_size], 
+               [])

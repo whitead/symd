@@ -1,7 +1,7 @@
 CC=gcc
-CFLAGS=-g -Wall -O3
+CFLAGS=-g -Wall -O3 -march=native
 
-all: harmonic_vverlet_anderson lj_vverlet_anderson lj_vverlet lj_vverlet_bussi harmonic_vverlet_bussi harmonic_vverlet
+all: harmonic_vverlet_anderson lj_vverlet_anderson harmonic_vverlet lj_vverlet lj_vverlet_bussi harmonic_vverlet_bussi
 
 min_image: min_image.c min_image.h
 	$(CC) $(CFLAGS) -c -o min_image.o min_image.c
@@ -14,6 +14,10 @@ vverlet: vverlet_integrate.c integrate.h
 
 harmonic_force: harmonic_force.c force.h
 	$(CC) $(CFLAGS) -c -DHARMONIC -o harmonic_force.o harmonic_force.c
+
+lj_force: lj_force.c force.h
+	$(CC) $(CFLAGS) -c -DLJ -o lj_force.o lj_force.c
+
 
 anderson: util.c util.h anderson_thermostat.c thermostat.h 
 	$(CC) $(CFLAGS) -c -DANDERSON -o anderson_thermostat.o anderson_thermostat.c
@@ -32,11 +36,9 @@ harmonic_vverlet_anderson: *.c *.h min_image_nopbc anderson vverlet harmonic_for
 	mv harmonic_vverlet_anderson ..
 
 
-lj_vverlet_bussi: *.c *.h min_image bussi
-	$(CC) $(CFLAGS) -c -DLJ -DBUSSI -o util.o util.c
-	$(CC) $(CFLAGS) -c -o integrate.o vverlet_integrate.c
-	$(CC) $(CFLAGS) -c -DLJ -o force.o lj_force.c
-	$(CC) $(CFLAGS) -DBUSSI -o lj_vverlet_bussi min_image.o thermostat.o util.o force.o integrate.o -lgsl -lblas -lm main_loop.c
+lj_vverlet_bussi: *.c *.h min_image bussi vverlet lj_force
+	$(CC) $(CFLAGS) -c -DLJ -DBUSSI -o util_lj_bussi.o util.c
+	$(CC) $(CFLAGS) -DBUSSI -o lj_vverlet_bussi min_image.o bussi_thermostat.o util_lj_bussi.o lj_force.o vverlet_integrate.o -lgsl -lblas -lm main_loop.c
 	mv lj_vverlet_bussi ..
 
 harmonic_vverlet_bussi: *.c *.h min_image_nopbc bussi vverlet harmonic_force
@@ -45,18 +47,14 @@ harmonic_vverlet_bussi: *.c *.h min_image_nopbc bussi vverlet harmonic_force
 	mv harmonic_vverlet_bussi ..
 
 
-lj_vverlet_anderson: *.c *.h min_image anderson
-	$(CC) $(CFLAGS) -c -DLJ -DANDERSON -o util.o util.c
-	$(CC) $(CFLAGS) -c -o integrate.o vverlet_integrate.c
-	$(CC) $(CFLAGS) -c -DLJ -o force.o lj_force.c
-	$(CC) $(CFLAGS) -DANDERSON -o lj_vverlet_anderson min_image.o thermostat.o util.o force.o integrate.o -lgsl -lblas -lm main_loop.c
+lj_vverlet_anderson: *.c *.h min_image anderson lj_force vverlet
+	$(CC) $(CFLAGS) -c -DLJ -DANDERSON -o util_lj_anderson.o util.c
+	$(CC) $(CFLAGS) -DANDERSON -o lj_vverlet_anderson min_image.o anderson_thermostat.o util_lj_anderson.o lj_force.o vverlet_integrate.o -lgsl -lblas -lm main_loop.c
 	mv lj_vverlet_anderson ..
 
-lj_vverlet: *.c *.h min_image
-	$(CC) $(CFLAGS) -c -DLJ -o util.o util.c
-	$(CC) $(CFLAGS) -c -o integrate.o vverlet_integrate.c
-	$(CC) $(CFLAGS) -c -DLJ -o force.o lj_force.c
-	$(CC) $(CFLAGS) -o lj_vverlet min_image.o util.o force.o integrate.o -lgsl -lblas -lm main_loop.c
+lj_vverlet: *.c *.h min_image lj_force vverlet
+	$(CC) $(CFLAGS) -c -DLJ -o util_lj.o util.c
+	$(CC) $(CFLAGS) -o lj_vverlet min_image.o util_lj.o lj_force.o vverlet_integrate.o -lgsl -lblas -lm main_loop.c
 	mv lj_vverlet ..
 
 clean: 

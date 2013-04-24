@@ -4,7 +4,11 @@
 #define THERMOSTAT_H_
 
 
-void thermostat(double temperature, double time_step, void* thermostat_parameters, double* positions, double* velocities, double* masses, unsigned int n_dims, unsigned int n_particles);
+
+/*
+ * Returns its conserved quantity. 0 for thermostats which don't coserve anything
+ */
+double thermostat(double temperature, double time_step, void* thermostat_parameters, double* positions, double* velocities, double* masses, unsigned int n_dims, unsigned int n_particles);
 
 #ifdef ANDERSON
 #define THERMOSTAT

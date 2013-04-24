@@ -10,9 +10,11 @@ blog](http://crowsandcats.blogspot.com).
 The code has the following features:
 
 * Conserves energy
-* Arbitrary dimension number (1-5 I would recommend)
-* Verlet integrator
+* Conserves conjugate energy thing in Bussi thermostat
+* Arbitrary dimension number (1-3 I would recommend)
+* Velocity-Verlet integrator
 * Anderson thermostat
+* Bussi thermostat
 * LJ or Harmonic Forces
 * Input velocites, positions (XYZ Format)
 * Output forces, temperature, energy, velocities, positions (XYZ Format)
@@ -42,7 +44,4 @@ Examples may be run with:
 TODO/Thoughts
 -------------------------
 1. Remove COM motion
-1. Get thermostat conserved quantities to display
 2. I hate it, but I should go ahead and implement a non `n^2` force calculation at some point
-
-

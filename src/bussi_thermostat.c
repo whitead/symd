@@ -46,7 +46,7 @@ double resamplekin(gsl_rng* rng, double kk, double sigma, unsigned int ndeg, dou
 }
 
 
-void thermostat(double temperature, double time_step, void* thermostat_parameters, double* positions, double* velocities, double* masses, unsigned int n_dims, unsigned int n_particles) {
+double thermostat(double temperature, double time_step, void* thermostat_parameters, double* positions, double* velocities, double* masses, unsigned int n_dims, unsigned int n_particles) {
 
   Bussi_Params* params = (Bussi_Params*) thermostat_parameters;
 
@@ -81,6 +81,8 @@ void thermostat(double temperature, double time_step, void* thermostat_parameter
       velocities[i * n_dims + j] *= scaling_factor;
     }
   }
+
+  return new_kenergy - kenergy;
 
 }
 
