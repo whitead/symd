@@ -12,6 +12,7 @@ typedef struct {
 #endif 
 
 #ifdef LJ
+#include "nlist.h"
 typedef struct {
   double epsilon;
   double sigma;
