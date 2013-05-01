@@ -19,6 +19,8 @@ The code has the following features:
 * Input velocites, positions (XYZ Format)
 * Output forces, temperature, energy, velocities, positions (XYZ Format)
 * Periodic boundary conditions
+* g(r) script that corrects for cube-sphere intersection volume
+* script to generate initial structures
 
 
 Compiling
