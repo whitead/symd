@@ -20,7 +20,7 @@ if(len(sys.argv) < 2 + n_dims + 1):
 
 box_size = [float(sys.argv[x]) for x in range(2,2+n_dims)]
 number = int(sys.argv[2 + n_dims])
-volume = 1
+volume = 1.
 for x in box_size:
     volume = volume * x
 increment = (volume / number) ** (1. / n_dims)
