@@ -83,8 +83,8 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
   if(success_cur)
     params->com_remove_period = temp_uint;
   else if(default_params == NULL) {
-    fprintf(stderr, "Warning: assuming default com_remove_period = 25\n");
-    params->com_remove_period = 25;
+    fprintf(stderr, "Warning: assuming default com_remove_period = 1000\n");
+    params->com_remove_period = 1000;
   }
 
   temp_uint = process_uint(pstrings, "n_dims", &success_cur);

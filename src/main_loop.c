@@ -49,8 +49,7 @@ int main_loop(Run_Params* params){
 
     //remove COM if necessary
     if(i % params->com_remove_period == 0)
-      printf("Removed %g COM motion\n", remove_com(velocities, params->masses,
-						   params->n_dims, params->n_particles));
+      remove_com(velocities, params->masses, params->n_dims, params->n_particles);
 
     //gather forces
     penergy =  gather_forces(params->force_parameters, positions, forces, params->masses, params->box_size,  params->n_dims, params->n_particles);

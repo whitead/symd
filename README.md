@@ -1,9 +1,10 @@
 Simple Molecular Dynamics Engine
 =========================
 
-This code, written in `C`, provides a very simple minimal molecular
-dynamics engine. I wouldn't recommend using it. I use it to test MD
-methods and sometimes post my explorations to [my
+This code, written in `C`, is meant to be a simple, accurate, and
+easily modified (by me) MD enginer for 2D, 3D LJ fluids and 1D, 2D,
+and 3D harmonic oscillators. I use it
+to test MD methods and sometimes post my explorations to [my
 blog](http://crowsandcats.blogspot.com).
 
 
@@ -15,12 +16,14 @@ The code has the following features:
 * Velocity-Verlet integrator
 * Anderson thermostat
 * Bussi thermostat
-* LJ or Harmonic Forces
+* LJ (trunc, shifted) or Harmonic Forces
 * Input velocites, positions (XYZ Format)
-* Output forces, temperature, energy, velocities, positions (XYZ Format)
+* Output forces, temperature, energy, velocities, positions (XYZ Format) and more
 * Periodic boundary conditions
 * g(r) script that corrects for cube-sphere intersection volume
 * script to generate initial structures
+* Removes COM motion
+* Uses neighbor lists
 
 
 Compiling
@@ -45,5 +48,4 @@ Examples may be run with:
 
 TODO/Thoughts
 -------------------------
-1. Remove COM motion
-2. I hate it, but I should go ahead and implement a non `n^2` force calculation at some point
+1. Last item is to add the cell list construction 
