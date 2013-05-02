@@ -45,8 +45,12 @@ int main_loop(Run_Params* params){
   for(i = 0; i < params->steps; i++) {
 
     //integrate 1
-
     integrate_1(params->time_step, positions, velocities, forces, params->masses,params->box_size,  params->n_dims, params->n_particles);
+
+    //remove COM if necessary
+    if(i % params->com_remove_period == 0)
+      printf("Removed %g COM motion\n", remove_com(velocities, params->masses,
+						   params->n_dims, params->n_particles));
 
     //gather forces
     penergy =  gather_forces(params->force_parameters, positions, forces, params->masses, params->box_size,  params->n_dims, params->n_particles);
@@ -61,7 +65,7 @@ int main_loop(Run_Params* params){
 
     //calculate important quantities
     kenergy = calculate_kenergy(velocities, params->masses, params->n_dims, params->n_particles);
-    insta_temperature = kenergy * 2 / (params->n_particles * params->n_dims);
+    insta_temperature = kenergy * 2 / (params->n_particles * params->n_dims - params->n_dims);
     
     
     //print

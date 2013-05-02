@@ -6,7 +6,7 @@
 
 /*
  * Sampling exactly when less than 6, instead of exactly 1. TODO: Check if this
- * is necessary.
+ * is necessary. DONE, it wasn't so I removed it
  */
 double resamplekin_sumnoises(gsl_rng* rng, unsigned int nn){
 /*
@@ -63,9 +63,8 @@ double thermostat(double temperature, double time_step, void* thermostat_paramet
     kenergy += 0.5 * etemp * masses[i];
   }
   
-  //TODO: get COM fixed
-  //  ndeg = (n_particles * n_dims - n_dims);
-  ndeg = (n_particles * n_dims);
+  //Removed COM
+  ndeg = (n_particles * n_dims - n_dims);
    
   //Equation A7 from Bussi2007
   new_kenergy = resamplekin(params->rng, kenergy, 0.5 * temperature * ndeg, ndeg, params->taut / time_step);

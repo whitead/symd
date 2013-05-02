@@ -20,6 +20,7 @@
 typedef struct {
 
   unsigned int steps;
+  unsigned int com_remove_period;
   double time_step;
   double temperature;
   void* thermostat_parameters;
@@ -83,6 +84,11 @@ unsigned int process_uint(char*** pstrings, char* key, bool* success);
 double process_double(char*** pstrings, char* key, bool* success);
 
 char* process_string(char*** pstrings, char* key, bool* success);
+
+/* Remove center of mass translational motion. Returns the magnitude of the COM
+ *
+ */
+double remove_com(double* velocities, double* masses, unsigned int n_dims, unsigned int n_particles);
 
 //free all the memory bits in the Run_Params struct
 void free_run_params(Run_Params* params);

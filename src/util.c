@@ -78,6 +78,15 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
     exit(1);
   }
 
+  
+  temp_uint = process_uint(pstrings, "com_remove_period", &success_cur);
+  if(success_cur)
+    params->com_remove_period = temp_uint;
+  else if(default_params == NULL) {
+    fprintf(stderr, "Warning: assuming default com_remove_period = 500\n");
+    params->com_remove_period = 25;
+  }
+
   temp_uint = process_uint(pstrings, "n_dims", &success_cur);
   if(success_cur)
     params->n_dims = temp_uint;
@@ -479,6 +488,40 @@ double* load_matrix(char* filename, unsigned int nrow, unsigned int ncol, unsign
 
 }
 
+
+double remove_com(double* velocities, double* masses, unsigned int n_dims, unsigned int n_particles) {
+
+  unsigned int i, k;
+  double com[n_dims];
+  double mass_sum = 0;
+  double com_mag = 0;
+  
+  //zero 
+  for(i = 0 ; i < n_dims; i++)
+    com[i] = 0;
+  //calculate COM in 2 parts, sum ( mass) and sum(momentum)
+  for(i = 0; i < n_particles; i++) {
+    mass_sum += masses[i];
+    for(k = 0; k < n_dims; k++) {
+      com[i] += velocities[i * n_dims + k] / masses[i];
+    }
+  }
+
+  //turn into COM
+  for(i = 0; i < n_dims; i++) {
+    com[i] /= mass_sum;
+    com_mag += com[i] * com[i];
+  }
+
+  //remove COM motion
+  for(i = 0; i < n_particles; i++) {
+    for(k = 0; k < n_dims; k++) {
+      velocities[i * n_dims + k] -= com[i];
+    }
+  }
+  
+  return sqrt(com_mag);
+}
 
 void free_run_params(Run_Params* params) {
 
