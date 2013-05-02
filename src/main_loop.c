@@ -48,7 +48,6 @@ int main_loop(Run_Params* params){
 
     integrate_1(params->time_step, positions, velocities, forces, params->masses,params->box_size,  params->n_dims, params->n_particles);
 
-
     //gather forces
     penergy =  gather_forces(params->force_parameters, positions, forces, params->masses, params->box_size,  params->n_dims, params->n_particles);
 

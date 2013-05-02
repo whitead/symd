@@ -10,7 +10,7 @@ double min_image_dist(double dx, double img) {
 #ifdef NO_PBC
   return dx;
 #else
-  return dx - round(dx / img) *img;
+  return dx - round(dx / img) * img;
 #endif
 }
 

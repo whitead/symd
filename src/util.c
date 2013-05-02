@@ -159,6 +159,21 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
     exit(1);
   }
 
+  //Neighbor list parameters
+#ifndef HARMONIC
+  double rcut = process_double(pstrings, "rcut", &success_cur);
+  if(!success_cur) {
+    fprintf(stderr, "Error: Must list rcut (cut-off)\n");
+    exit(1);
+  }
+  double skin = process_double(pstrings, "skin", &success_cur);
+  if(!success_cur) {
+    skin = 1.2 * rcut;
+    fprintf(stderr, "Warning: Assuming skin %g\n", skin);
+  }
+  Nlist_Parameters* nlist = build_nlist_params(params->n_dims, params->n_particles, skin, rcut);
+#endif //HARMONIC
+
 
   //thermostat parameters
   #ifdef ANDERSON
@@ -208,7 +223,7 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
     sigma = 1;
     fprintf(stderr, "Could not find LJ parameters. Assuming sigma = epsilon = 1\n");
   }
-  params->force_parameters = build_lj(epsilon, sigma);
+  params->force_parameters = build_lj(epsilon, sigma, nlist);
   #endif
 
   

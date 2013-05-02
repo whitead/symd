@@ -14,11 +14,15 @@ typedef struct {
 #ifdef LJ
 #include "nlist.h"
 typedef struct {
-  double epsilon;
-  double sigma;
+  const double epsilon;
+  const double sigma;
+  Nlist_Parameters* nlist;
 } Lj_Parameters;
 #endif 
 
+/*
+ * Calculates forces and rebuilds neighbor list
+ */
 double gather_forces(void* parameters, double* positions, double* forces, double* masses, 
 		     double* box_size, unsigned int n_dims, unsigned int n_particles);
 
@@ -27,7 +31,7 @@ void* build_harmonic(double k);
 #endif
 
 #ifdef LJ
-void* build_lj(double epsilon, double sigma);
+void* build_lj(const double epsilon, const double sigma, Nlist_Parameters* nlist);
 #endif 
 
 #endif

@@ -3,7 +3,7 @@
 
 
 /*
- * The first integration should update positions and velocities with last time step's forces
+ * The first integration should update positions and velocities with last time step's forces.
  */
 void integrate_1(double time_step, double* positions, double* velocities,
 		 double* forces, double* masses, double* box_size, unsigned int n_dims, 
