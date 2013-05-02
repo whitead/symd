@@ -64,7 +64,7 @@ void update_nlist(double* positions,
 
 
 /*
- * Naive build without using cells
+ * Build list using cells
  */
 void build_list(double* positions, double* box_size, unsigned int n_dims, unsigned int n_particles, Nlist_Parameters* nlist) {
 
@@ -78,23 +78,110 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
   } 
 
   //rebuild the list
-  unsigned int i, j, k;
+  unsigned int i, k, dcell_number;
+  int j;
+  unsigned int cell_number[n_dims];
+  int dx, dy, dz, net_dcell;
+  unsigned int ncell, cell_number_total;
   double dist, dx;
 
+  ncell_number = 14;
+  int[][] neighbors[ncell_number][n_dims];
+
+  if(n_dims == 3) {
+    neighbors[0] = {0, -1, 0};
+    neighbors[1] = {1, -1, 0};
+    neighbors[2] = {1, 0, 0};
+    neighbors[3] = {1, 1, 0};
+    neighbors[4] = {-1, -1, -1};
+    neighbors[5] = {-1, 0, -1};
+    neighbors[6] = {-1, 1, -1};
+    neighbors[7] = {0, -1, -1};
+    neighbors[8] = {0, 0, -1};
+    neighbors[9] = {0, 1, -1};
+    neighbors[10] = {1, -1, -1};
+    neighbors[11] = {1, 0, -1};
+    neighbors[12] = {1, 1, -1};
+    neighbors[13] = {0, 0, 0};
+  } else if(n_dims == 2) {
+    neighbors[0] = {0, -1};
+    neighbors[1] = {1, -1};
+    neighbors[2] = {1, 0};
+    neighbors[3] = {1, 1};
+    neighbors[4] = {0, 0};
+    ncell_number = 5;
+  } else if(n_dims == 1) {
+    neighbors[0] = {0};
+    neighbors[0] = {1};
+    ncell_number = 2;
+  }
+
+  int icell[3];
+
+
+  //build cell list
+  cell_number_total = 1;
+  double width = sqrt(nlist->skin_rcut);
+  for(i = 0; i < n_dims; i++) {
+    cell_number[i] = (box_size[i] + width - 1) / width; // ceiling quotient
+    cell_number_total *= cell_number[i];
+  }
+  
+  int head[cell_number_total];
+  int cell_list[n_particles];
+  
+  for(i = 0; i < cell_number_total; i++)
+    head[i] = -1;
+
+
+  //fills the list in reverse order. I didn't invent this algorithm. The person who did is a genius.
   for(i = 0; i < n_particles; i++) {
-    nlist->nlist_count[i] = 0;
-    for(j = i + 1; j < n_particles; j++) {
-      dist = 0;
-      for(k = 0; k < n_dims; k++) {
-	dx = positions[i * n_dims + k] - positions[j * n_dims + k];
-	dx = min_image_dist(dx, box_size[k]);
-	dist += dx * dx;
+    for(k = 0; k < n_dims; k++) {
+      icell = int((positions[i * n_dims + k] + box_size[k] / 2) / box_size[k] * cell_number[k]) + icell * cell_number[k];
+    }
+    cell_list[i] = head[icell];
+    head[icell] = i;      
+  }
+
+
+  for(i = 0; i < n_particles; i++) {
+    //loop over neighbor cells, with no double counting
+    icell = 0;
+    //find index of particle using polynomial indexing 
+    for(k = 0; k < n_dims; k++)
+      icell = int((positions[i * n_dims + k] + box_size[k] / 2) / box_size[k] * cell_number[k]) + icell * cell_number[k];    
+    //loop over neighbor cells
+    for(ncell = 0; ncell < ncell_number; ncell++) {      
+      net_dcell = 0;
+      //convert neighbor in x,y,z notation to polynomial index
+      for(k = 0; k < n_dims; k++)
+	net_dcell += neighbors[ncell][k] + net_dcell * cell_number[k];
+
+      //get head of list
+      j = head[icell + net_dcell];
+      nlist->nlist_count[i] = 0;
+
+      //-1 marks end of cell list
+      while(j != -1) {
+
+	if(j == i)
+	  continue;
+
+	dist = 0;
+	for(k = 0; k < n_dims; k++) {
+	  dx = positions[i * n_dims + k] - positions[j * n_dims + k];
+	  dx = min_image_dist(dx, box_size[k]);
+	  dist += dx * dx;
+	}
+	if(dist < nlist->skin_rcut) {
+	  insert_grow(total_n, j, &(nlist->nlist), &(nlist->nlist_length));
+	  total_n += 1;
+	  nlist->nlist_count[i] += 1;
+	}
+
+	//get next cell member
+	j = cell_list[j];
       }
-      if(dist < nlist->skin_rcut) {
-	insert_grow(total_n, j, &(nlist->nlist), &(nlist->nlist_length));
-	total_n += 1;
-	nlist->nlist_count[i] += 1;
-      }	
     }
   }
 
