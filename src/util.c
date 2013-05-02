@@ -83,7 +83,7 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
   if(success_cur)
     params->com_remove_period = temp_uint;
   else if(default_params == NULL) {
-    fprintf(stderr, "Warning: assuming default com_remove_period = 500\n");
+    fprintf(stderr, "Warning: assuming default com_remove_period = 25\n");
     params->com_remove_period = 25;
   }
 
@@ -503,7 +503,7 @@ double remove_com(double* velocities, double* masses, unsigned int n_dims, unsig
   for(i = 0; i < n_particles; i++) {
     mass_sum += masses[i];
     for(k = 0; k < n_dims; k++) {
-      com[i] += velocities[i * n_dims + k] / masses[i];
+      com[k] += velocities[i * n_dims + k] / masses[i];
     }
   }
 
@@ -516,7 +516,7 @@ double remove_com(double* velocities, double* masses, unsigned int n_dims, unsig
   //remove COM motion
   for(i = 0; i < n_particles; i++) {
     for(k = 0; k < n_dims; k++) {
-      velocities[i * n_dims + k] -= com[i];
+      velocities[i * n_dims + k] -= com[k];
     }
   }
   
