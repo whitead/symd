@@ -45,10 +45,11 @@ Examples may be run with:
     cd example_example
     ../name_of_executable run_params.txt
 
-TODO/Thoughts
+TODO/Thoughts/Notes
 -------------------------
 1. Make a few plots showing conservation, linear scaling
 2. Write down g(r) cube-sphere intersection information
 3. Test 1D lj and 4D lj
 4. Write about branching feature
 5. Get checkensemble to work
+6. The cells (used in LJ) do not support open boxes. Not sure whether or not I should implement that. 
