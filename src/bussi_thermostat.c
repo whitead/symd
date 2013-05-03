@@ -99,3 +99,12 @@ void* build_bussi(unsigned int seed, double taut) {
   return((void*) params);
 
 }
+
+
+void free_thermostat(void* thermostat_parameters) {
+ 
+  Bussi_Params* params = (Bussi_Params*) thermostat_parameters;
+  gsl_rng_free(params->rng);
+  free(params);
+ 
+}

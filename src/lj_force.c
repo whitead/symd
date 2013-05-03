@@ -1,6 +1,7 @@
 #include "force.h"
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
 
 inline double lj(double r,  double epsilon, double sigma) {
   return 4 * epsilon * (6 * pow(sigma / r, 7) - 12 * pow(sigma / r, 13));  
@@ -53,6 +54,11 @@ double gather_forces(void* parameters, double* positions, double* forces, double
       r = sqrt(r);
       //LJ force and potential
       force = lj_trunc_shift(r, epsilon, sigma, rcut, lj_shift);
+
+#ifdef DEBUG
+      printf("F(%g) = %g\n", r, force);
+#endif //DEBUG
+
       for(k = 0; k < n_dims; k++)  {
 	forces[i * n_dims + k] += force / r * force_vector[k];
 	forces[j * n_dims + k] -= force / r * force_vector[k];
@@ -71,4 +77,13 @@ void* build_lj(double epsilon, double sigma, Nlist_Parameters* nlist) {
   memcpy(parameters, &init, sizeof(init));
   parameters->nlist = nlist;
   return (parameters);
+}
+
+void free_forces(void* parameters) {
+
+  Lj_Parameters* lj_parameters = (Lj_Parameters*) parameters;
+  Nlist_Parameters* nlist = ((Lj_Parameters*) lj_parameters)->nlist;
+  free_nlist(nlist);
+  free(lj_parameters);
+
 }

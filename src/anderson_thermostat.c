@@ -33,3 +33,10 @@ void* build_anderson(unsigned int seed, double collision_freq) {
   return((void*) params);
 
 }
+
+void free_thermostat(void* thermostat_parameters) {
+ 
+  Anderson_Params* params = (Anderson_Params*) thermostat_parameters;
+  free(params);
+ 
+}

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -Wall -O3 -march=native
+CFLAGS=-g -Wall
 
 all: harmonic_vverlet_anderson lj_vverlet_anderson harmonic_vverlet lj_vverlet lj_vverlet_bussi harmonic_vverlet_bussi
 

@@ -6,7 +6,7 @@ anderson_nu 0.1
 bussi_taut 0.1
 thermostat_seed 15643
 spring_constant 2
-n_dims 2
+n_dims 1
 box_1_size 100
 box_2_size 100
 box_3_size 100

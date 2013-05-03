@@ -10,7 +10,7 @@ double* generate_velocities(double temperature, unsigned int seed, double* masse
   double* velocities = (double*) malloc(sizeof(double) * n_dims * n_particles);
 
   unsigned int i, j;
-  const gsl_rng * rng;
+  gsl_rng * rng;
 
   gsl_rng_env_setup();
   rng = gsl_rng_alloc (gsl_rng_default);
@@ -25,6 +25,8 @@ double* generate_velocities(double temperature, unsigned int seed, double* masse
   double ke = calculate_kenergy(velocities, masses, n_dims, n_particles);
 
   printf("Generated velocity distribution with %g temperature\n", ke * 2 / (n_dims * n_particles));
+
+  gsl_rng_free(rng);
 
   return(velocities);
 
@@ -177,10 +179,10 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
   }
   double skin = process_double(pstrings, "skin", &success_cur);
   if(!success_cur) {
-    skin = 1.2 * rcut;
+    skin = 0.2 * rcut;
     fprintf(stderr, "Warning: Assuming skin %g\n", skin);
   }
-  Nlist_Parameters* nlist = build_nlist_params(params->n_dims, params->n_particles, skin, rcut);
+  Nlist_Parameters* nlist = build_nlist_params(params->n_dims, params->n_particles, params->box_size, skin, rcut);
 #endif //HARMONIC
 
 
@@ -525,8 +527,13 @@ double remove_com(double* velocities, double* masses, unsigned int n_dims, unsig
 
 void free_run_params(Run_Params* params) {
 
-  free(params->thermostat_parameters);
-  free(params->force_parameters);
+#ifdef THERMOSTAT
+  free_thermostat(params->thermostat_parameters);
+#endif
+  
+  free_forces(params->force_parameters);
+
+
   free(params->initial_positions);
   free(params->initial_velocities);
   free(params->masses);
