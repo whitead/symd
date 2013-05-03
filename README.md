@@ -2,7 +2,7 @@ Simple Molecular Dynamics Engine
 =========================
 
 This code, written in `C`, is meant to be a simple, accurate, and
-easily modified (by me) MD enginer for 2D, 3D LJ fluids and 1D, 2D,
+easily modified (by me) MD engine for 2D, 3D LJ fluids and 1D, 2D,
 and 3D harmonic oscillators. I use it to test MD methods and sometimes
 post my explorations to [my
 blog](http://crowsandcats.blogspot.com). The goal is to keep the code
