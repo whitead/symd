@@ -23,7 +23,7 @@ The code has the following features:
 * Periodic boundary conditions (or not)
 * g(r) script that corrects for cube-sphere intersection volume
 * script to generate initial structures
-* Removes COM motion
+* Removes center-of-mass translational motion
 
 
 Compiling
@@ -54,3 +54,4 @@ TODO/Thoughts/Notes
 5. Get checkensemble to work
 6. The cells (used in LJ) do not support open boxes. Not sure whether or not I should implement that. 
 7. The g(r) script only supports 3D. I should rewrite it to support 2D and maybe 1D. 3D cube-sphere intersection sounds like I would die.
+8. If I want to really pursue open boundaries (which I really don't), then I need to remove center-of-mass angular momentum and center-of-mass translation
