@@ -12,13 +12,13 @@ base around 1500 lines at all times.
 The code has the following features:
 
 * Conserves energy
-* O(N) with cell/verlet lists
-* Arbitrary dimension number (1-3 I would recommend)
+* Linear scaling wrt atom number with cell/verlet lists
+* Arbitrary dimension number (implementing cell/verlet lists in arbitrary dimensions was fun)
 * Velocity-Verlet integrator
 * Anderson thermostat
 * Bussi thermostat (conserves conjugate energy)
-* LJ (trunc, shifted) or Harmonic Forces
-* Input velocites, positions (XYZ Format)
+* Lennary-Jones (truncated & shifted) or Harmonic Forces
+* Input velocities, positions (XYZ Format)
 * Output forces, temperature, energy, velocities, positions (XYZ Format), etc.
 * Periodic boundary conditions (or not)
 * g(r) script that corrects for cube-sphere intersection volume
@@ -53,3 +53,4 @@ TODO/Thoughts/Notes
 4. Write about branching feature
 5. Get checkensemble to work
 6. The cells (used in LJ) do not support open boxes. Not sure whether or not I should implement that. 
+7. The g(r) script only supports 3D. I should rewrite it to support 2D and maybe 1D. 3D cube-sphere intersection sounds like I would die.
