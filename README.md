@@ -17,7 +17,7 @@ The code has the following features:
 * Velocity-Verlet integrator
 * Anderson thermostat
 * Bussi thermostat (conserves conjugate energy)
-* Lennary-Jones (truncated & shifted) or Harmonic Forces
+* Lennard-Jones (truncated & shifted) or Harmonic Forces
 * Input velocities, positions (XYZ Format)
 * Output forces, temperature, energy, velocities, positions (XYZ Format), etc.
 * Periodic boundary conditions (or not)

@@ -1,7 +1,6 @@
 #include "util.h"
 #include "min_image.h"
 
-
 /*
  * The first integration should update positions and velocities with last time step's forces.
  */
