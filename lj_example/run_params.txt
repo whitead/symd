@@ -6,10 +6,10 @@ anderson_nu 100
 bussi_taut 1
 thermostat_seed 1565
 rcut 3
-n_dims 3
-box_1_size 20
-box_2_size 20
-box_3_size 20
+n_dims 2
+box_1_size 25
+box_2_size 25
+box_3_size 25
 n_particles 100
 initial_positions initial_positions.xyz
 masses_file masses.txt

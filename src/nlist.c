@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define DEBUG
+
 
 /*
  * Grow and insert a value as needed
@@ -186,6 +186,9 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
 #endif //DEBUG
 
   for(i = 0; i < n_particles; i++) {
+    //reset count
+    nlist->nlist_count[i] = 0;
+
     //loop over neighbor cells, with no double counting
     icell = 0;
     //find index of particle using polynomial indexing 
@@ -196,10 +199,8 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
 
 
       net_dcell = icell + neighbors[ncell];
-
       //get head of list, using mapping
       j = head[mapping[net_dcell + map_offset]];
-      nlist->nlist_count[i] = 0;
 
       //-1 marks end of cell list
       while(j != -1) {
@@ -220,7 +221,6 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
 	  nlist->nlist_length = insert_grow(total_n, j, &(nlist->nlist), nlist->nlist_length);
 	  total_n += 1;
 	  nlist->nlist_count[i] += 1;
-	  printf("nlist_count[%d]:%d\n", i, nlist->nlist_count[i]);
 	}
 
 	//get next cell member
