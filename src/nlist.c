@@ -1,12 +1,14 @@
 #include "nlist.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
+#define DEBUG
 
 /*
  * Grow and insert a value as needed
  */
-void insert_grow(unsigned int index, unsigned int value, unsigned int** array, unsigned int* length);
+unsigned int insert_grow(unsigned int index, unsigned int value, unsigned int** array, unsigned int length);
 
 
 /*
@@ -63,8 +65,23 @@ void update_nlist(double* positions,
 }
 
 
+unsigned int gen_index_r(int* array, int* dims, unsigned int index, unsigned int cur_dim, unsigned int n_dims, int value, unsigned int output_length) {
+  int diff[3] = {0, -1, 1};
+  unsigned int i;  
+  for(i = 0; index < output_length && i < 3; i++){
+    if(cur_dim < n_dims - 1)
+      index = gen_index_r(array, dims, index, cur_dim + 1, n_dims, value * dims[cur_dim] + diff[i], output_length);
+    else  {
+      array[index] = value * dims[cur_dim] + diff[i];
+      index++;
+    }
+  }
+
+  return index;
+}
+
 /*
- * Build list using cells
+ * Build neighbor list using cells in N-dimensions
  */
 void build_list(double* positions, double* box_size, unsigned int n_dims, unsigned int n_particles, Nlist_Parameters* nlist) {
 
@@ -80,53 +97,66 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
   //rebuild the list
   unsigned int i, k;
   int j;
-  unsigned int cell_number[n_dims];
+  int cell_number[n_dims];
   unsigned int ncell, cell_number_total, ncell_number;
   double dist, dx;
   int net_dcell;
-
-  ncell_number = 14;
-  int neighbors[ncell_number];
-
-  if(n_dims == 3) {
-    neighbors[0] = 0 + -1 * cell_number[0] + cell_number[0] * cell_number[1] * 0;
-    neighbors[1] = 1 + -1 * cell_number[0] + cell_number[0] * cell_number[1] * 0;
-    neighbors[2] = 1 + 0 * cell_number[0] + cell_number[0] * cell_number[1] * 0;
-    neighbors[3] = 1 + 1 * cell_number[0] + cell_number[0] * cell_number[1] * 0;
-    neighbors[4] = -1 + -1 * cell_number[0] + cell_number[0] * cell_number[1] * -1;
-    neighbors[5] = -1 + 0 * cell_number[0] + cell_number[0] * cell_number[1] * -1;
-    neighbors[6] = -1 + 1 * cell_number[0] + cell_number[0] * cell_number[1] * -1;
-    neighbors[7] = 0 + -1 * cell_number[0] + cell_number[0] * cell_number[1] * -1;
-    neighbors[8] = 0 + 0 * cell_number[0] + cell_number[0] * cell_number[1] * -1;
-    neighbors[9] = 0 + 1 * cell_number[0] + cell_number[0] * cell_number[1] * -1;
-    neighbors[10] = 1 + -1 * cell_number[0] + cell_number[0] * cell_number[1] * -1;
-    neighbors[11] = 1 + 0 * cell_number[0] + cell_number[0] * cell_number[1] * -1;
-    neighbors[12] = 1 + 1 * cell_number[0] + cell_number[0] * cell_number[1] * -1;
-    neighbors[13] = 0 + 0 * cell_number[0] + cell_number[0] * cell_number[1] * 0;
-  } else if(n_dims == 2) {
-    neighbors[0] = 0 + -1 * cell_number[0];
-    neighbors[1] = 1 + -1 * cell_number[0];
-    neighbors[2] = 1 + 0 * cell_number[0];
-    neighbors[3] = 1 + 1 * cell_number[0];
-    neighbors[4] = 0 + 0 * cell_number[0];
-    ncell_number = 5;
-  } else if(n_dims == 1) {
-    neighbors[0] = 0;
-    neighbors[0] = 1;
-    ncell_number = 2;
-  }
-
-  int icell;
-
 
   //build cell list
   cell_number_total = 1;
   double width = sqrt(nlist->skin_rcut);
   for(i = 0; i < n_dims; i++) {
-    cell_number[i] = (box_size[i] + width - 1) / width; // ceiling quotient
-    cell_number_total *= cell_number[i];
+    cell_number[i] = (int) (box_size[i] + width - 1) / width; // ceiling quotient
+    cell_number[i] += 2; //for ghost cells
+    cell_number_total *= cell_number[i] - 2; //don't include ghost cells in calculation
   }
+
+#ifdef DEBUG
+  printf("cell number: %d\n", cell_number_total);
+#endif //DEBUG
+
+  ncell_number = (pow(3, n_dims) - 1) / 2 + 1;//number of neighboring cells
+  if(ncell_number > cell_number_total)//for small systems
+    ncell_number = cell_number_total;
+  int neighbors[ncell_number];
+
+
+  //create offset matrix
+  gen_index_r(neighbors, cell_number, 0, 0, n_dims, 0, ncell_number);
+
+#ifdef DEBUG
+  printf("offset:\n");
+  for(i = 0; i < ncell_number; i++)
+    printf("%d\n", neighbors[i]);
+#endif //DEBUG
+
+
+  //create mapping for PBCs
+  //find how far the cells may extend past real cells with the offset matrix
+  unsigned int map_offset = 0;
+  for(i = 0; i < n_dims; i++)
+    map_offset = map_offset * cell_number[i] + 1;
   
+  unsigned int mapping[map_offset * 2 + cell_number_total];
+  for(i = 0; i < map_offset; i++) {
+    mapping[i] = cell_number_total - i % cell_number_total - 1;
+    mapping[i + map_offset + cell_number_total] = i % cell_number_total;
+  }
+  for(i = 0; i < cell_number_total; i++)
+    mapping[i + map_offset] = i;
+
+#ifdef DEBUG
+  printf("mapping:\n");
+  for(i = 0; i < map_offset * 2 + cell_number_total; i++)
+    printf("%d ", mapping[i]);
+  printf("\n");
+#endif //DEBUG
+
+  //remove ghost cells from cell count
+  for(i = 0; i < n_dims; i++)
+    cell_number[i] -= 2;
+
+  int icell;  
   int head[cell_number_total];
   int cell_list[n_particles];
   
@@ -136,34 +166,48 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
 
   //fills the list in reverse order. I didn't invent this algorithm. The person who did is a genius.
   for(i = 0; i < n_particles; i++) {
+    icell = 0;
     for(k = 0; k < n_dims; k++) {
-      icell = (int) ((positions[i * n_dims + k] + box_size[k] / 2) / box_size[k] * cell_number[k]) + icell * cell_number[k];
+      icell = (int) (wrap(positions[i * n_dims + k],box_size[k]) / box_size[k]) * cell_number[k] + icell * cell_number[k];
     }
     cell_list[i] = head[icell];
     head[icell] = i;      
   }
 
+#ifdef DEBUG
+  printf("cell_list:\n");
+  for(i = 0; i < n_particles; i++)
+    printf("%d ", cell_list[i]);
+  
+  printf("\nhead:\n");
+  for(i = 0; i < cell_number_total; i++)
+    printf("%d ", head[i]);
+  printf("\n");
+#endif //DEBUG
 
   for(i = 0; i < n_particles; i++) {
     //loop over neighbor cells, with no double counting
     icell = 0;
     //find index of particle using polynomial indexing 
     for(k = 0; k < n_dims; k++)
-      icell = (int) ((positions[i * n_dims + k] + box_size[k] / 2) / box_size[k] * cell_number[k]) + icell * cell_number[k];    
+      icell = (int) (wrap(positions[i * n_dims + k], box_size[k]) / box_size[k]) * cell_number[k] + icell * cell_number[k];    
     //loop over neighbor cells
     for(ncell = 0; ncell < ncell_number; ncell++) {      
 
-      //get head of list
+
       net_dcell = icell + neighbors[ncell];
-      
-      j = head[icell + neighbors[ncell]];
+
+      //get head of list, using mapping
+      j = head[mapping[net_dcell + map_offset]];
       nlist->nlist_count[i] = 0;
 
       //-1 marks end of cell list
       while(j != -1) {
 
-	if(j == i)
-	  continue;
+	if(i >= j){
+	  //don't double count pairs
+	  break;
+	}
 
 	dist = 0;
 	for(k = 0; k < n_dims; k++) {
@@ -171,10 +215,12 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
 	  dx = min_image_dist(dx, box_size[k]);
 	  dist += dx * dx;
 	}
+
 	if(dist < nlist->skin_rcut) {
-	  insert_grow(total_n, j, &(nlist->nlist), &(nlist->nlist_length));
+	  nlist->nlist_length = insert_grow(total_n, j, &(nlist->nlist), nlist->nlist_length);
 	  total_n += 1;
 	  nlist->nlist_count[i] += 1;
+	  printf("nlist_count[%d]:%d\n", i, nlist->nlist_count[i]);
 	}
 
 	//get next cell member
@@ -182,6 +228,19 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
       }
     }
   }
+
+#ifdef DEBUG
+  printf("nlist: \n");
+  unsigned int count = 0;
+  for(i = 0; i < n_particles; i++) {
+    printf("nlist_count[%d]:%d\n", i, nlist->nlist_count[i]);
+    for(j = 0; j < nlist->nlist_count[i]; j++)  {
+      printf("%d ", nlist->nlist[count]);
+      count++;
+    }
+    printf("\n");
+  }
+#endif //DEBUG
 
   //Cache old positions
   for(i = 0; i < n_particles; i++)
@@ -192,15 +251,17 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
 /* An insert that grows the array if necessary
  *
  */
-void insert_grow(unsigned int index, unsigned int value, unsigned int** array, unsigned int* length) {
+unsigned int insert_grow(unsigned int index, unsigned int value, unsigned int** array, unsigned int length) {
 
-  if(index >= *length) {
-    unsigned int new_length = (unsigned int) index * 1.5;
+  if(index >= length) {
+    unsigned int new_length = (unsigned int) (index * 1.5);
     unsigned int* new_array = (unsigned int*) realloc(*array, sizeof(unsigned int) * new_length);
-    array = &new_array;
-    length = &new_length;
+    *array = new_array;
+    (*array)[index] = value;
+    return new_length;
   }
 
   (*array)[index] = value;
 
+  return length;
 }

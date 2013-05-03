@@ -16,8 +16,6 @@ typedef struct {
   unsigned int* nlist;
   unsigned int* nlist_count;
   unsigned int nlist_length;
-  unsigned int* cells;
-  unsigned int* cell_i;
   const double skin;
   const double rcut;
   const double skin_rcut;
