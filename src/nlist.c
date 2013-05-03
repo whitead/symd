@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
+#define COUNT_NLIST
 
 /*
  * Grow and insert a value as needed
@@ -78,6 +78,9 @@ void update_nlist(double* positions,
     }
   }
   if(max1 + max2 > nlist->skin)  {
+#ifdef COUNT_LIST
+    printf("updating nlist due to %g + %g > %g\n", max1, ,max2, nlist->skin);
+#endif
     build_list(positions, box_size, n_dims, n_particles, nlist);
   }
 

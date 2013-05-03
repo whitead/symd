@@ -38,6 +38,11 @@ Anderson thermostat, and a harmonic force field you use
 
 If you choose `make all`, then all possible versions will be compiled.
 
+Profile/Optimizing
+-------------------------
+The makefile includes the ability to profile and then optimize the code.
+This may be completed by running `make all-profile` followed by `make all-optimize`.
+
 Example
 -------------------------
 Examples may be run with:

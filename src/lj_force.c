@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 
+
 inline double lj(double r,  double epsilon, double sigma) {
   return 4 * epsilon * (6 * pow(sigma / r, 7) - 12 * pow(sigma / r, 13));  
 }

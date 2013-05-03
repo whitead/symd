@@ -8,6 +8,8 @@
 *_vverlet_*
 *_vverlet
 
+#profiles
+*.gcda
 
 #example output
 */positions.xyz

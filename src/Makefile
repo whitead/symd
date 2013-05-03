@@ -1,63 +1,120 @@
 CC=gcc
 CFLAGS=-g -Wall
+SUB_CFLAGS= $(CFLAGS) -o $@_$(SUFFIX).o -c
+FINISH=mv $@ ..
+MAKE_EXE=$(CC) $(CFLAGS) -o $@ $(UTIL_O) $(addsuffix _$(SUFFIX).o, $^) -lgsl -lblas -lm main_loop.c
 
-all: harmonic_vverlet_anderson lj_vverlet_anderson harmonic_vverlet lj_vverlet lj_vverlet_bussi harmonic_vverlet_bussi
+
+.PHONY: clean all all-profile all-optimize
+
+all:
+	make harmonic_vverlet
+	make lj_vverlet
+	make harmonic_vverlet_anderson
+	make lj_vverlet_bussi
+	make lj_vverlet_anderson
+	make harmonic_vverlet_bussi
+
+all-profile:
+	make profile harmonic_vverlet
+	make profile lj_vverlet
+	make profile harmonic_vverlet_anderson
+	make profile lj_vverlet_bussi
+	make profile lj_vverlet_anderson
+	make profile harmonic_vverlet_bussi
+
+all-optimize:
+	make optimize harmonic_vverlet
+	make optimize lj_vverlet
+	make optimize harmonic_vverlet_anderson
+	make optimize lj_vverlet_bussi
+	make optimize lj_vverlet_anderson
+	make optimize harmonic_vverlet_bussi
+
+
 
 nlist: nlist.c nlist.h
-	$(CC) $(CFLAGS) -c -o nlist.o nlist.c
+	$(CC) $(SUB_CFLAGS) nlist.c
 
 min_image: min_image.c min_image.h
-	$(CC) $(CFLAGS) -c -o min_image.o min_image.c
+	$(CC) $(SUB_CFLAGS) min_image.c
 
 min_image_nopbc: min_image.c min_image.h
-	$(CC) $(CFLAGS) -DNO_PBC -c -o min_image_nopbc.o min_image.c
+	$(CC) $(SUB_CFLAGS) -DNO_PBC min_image.c
 
 vverlet: vverlet_integrate.c integrate.h
-	$(CC) $(CFLAGS) -c -o vverlet_integrate.o vverlet_integrate.c
+	$(CC) $(SUB_CFLAGS) vverlet_integrate.c
 
 harmonic_force: harmonic_force.c force.h
-	$(CC) $(CFLAGS) -c -DHARMONIC -o harmonic_force.o harmonic_force.c
+	$(CC) $(SUB_CFLAGS) -DHARMONIC harmonic_force.c
+
 
 lj_force: lj_force.c force.h
-	$(CC) $(CFLAGS) -c -DLJ -o lj_force.o lj_force.c
+	$(CC) $(SUB_CFLAGS) -DLJ lj_force.c
 
-anderson: util.c util.h anderson_thermostat.c thermostat.h 
-	$(CC) $(CFLAGS) -c -DANDERSON -o anderson_thermostat.o anderson_thermostat.c
+anderson_thermostat: util.c util.h anderson_thermostat.c thermostat.h 
+	$(CC) $(SUB_CFLAGS) -DANDERSON anderson_thermostat.c
 
-bussi: util.c util.h bussi_thermostat.c thermostat.h 
-	$(CC) $(CFLAGS) -c -DBUSSI -o bussi_thermostat.o bussi_thermostat.c
+bussi_thermostat: util.c util.h bussi_thermostat.c thermostat.h 
+	$(CC) $(SUB_CFLAGS) -DBUSSI bussi_thermostat.c
 
-harmonic_vverlet: *.c *.h min_image_nopbc vverlet harmonic_force nlist
-	$(CC) $(CFLAGS) -c -DHARMONIC -DNO_PBC -o util_harmonic_nopbc.o util.c
-	$(CC) $(CFLAGS) -o harmonic_vverlet nlist.o min_image_nopbc.o util_harmonic_nopbc.o harmonic_force.o vverlet_integrate.o -lgsl -lblas -lm main_loop.c
-	mv harmonic_vverlet ..
-
-harmonic_vverlet_anderson: *.c *.h min_image_nopbc anderson vverlet harmonic_force nlist
-	$(CC) $(CFLAGS) -c -DHARMONIC -DNO_PBC -DANDERSON -o util_harmonic_nopbc_anderson.o util.c
-	$(CC) $(CFLAGS) -DANDERSON -o harmonic_vverlet_anderson min_image_nopbc.o nlist.o anderson_thermostat.o util_harmonic_nopbc_anderson.o harmonic_force.o vverlet_integrate.o -lgsl -lblas -lm main_loop.c
-	mv harmonic_vverlet_anderson ..
+util: util.c util.h *.h
+	$(CC) $(SUB_CFLAGS) util.c
 
 
-lj_vverlet_bussi: *.c *.h min_image bussi vverlet lj_force nlist
-	$(CC) $(CFLAGS) -c -DLJ -DBUSSI -o util_lj_bussi.o util.c
-	$(CC) $(CFLAGS) -DBUSSI -o lj_vverlet_bussi min_image.o nlist.o bussi_thermostat.o util_lj_bussi.o lj_force.o vverlet_integrate.o -lgsl -lblas -lm main_loop.c
-	mv lj_vverlet_bussi ..
+profile: CFLAGS += -fprofile-generate -march=native -Ofast
+profile: FINISH = cd profile && ../$@ run_params_$(PARAMS).txt
+profile: $(filter-out profile, $(MAKECMDGOALS))
 
-harmonic_vverlet_bussi: *.c *.h min_image_nopbc bussi vverlet harmonic_force nlist
-	$(CC) $(CFLAGS) -c -DHARMONIC -DNO_PBC -DBUSSI -o util_harmonic_nopbc_bussi.o util.c
-	$(CC) $(CFLAGS) -DBUSSI -o harmonic_vverlet_bussi min_image_nopbc.o nlist.o bussi_thermostat.o util_harmonic_nopbc_bussi.o harmonic_force.o vverlet_integrate.o -lgsl -lblas -lm main_loop.c
-	mv harmonic_vverlet_bussi ..
+optimize: CFLAGS += -fprofile-use -march=native -Ofast
+optimize: $(filter-out optimize, $(MAKECMDGOALS))
+
+harmonic_vverlet: SUB_CFLAGS += -DHARMONIC -DNO_PBC
+harmonic_vverlet: SUFFIX = hv
+harmonic_vverlet: PARAMS=harmonic
+harmonic_vverlet: min_image_nopbc vverlet harmonic_force nlist util
+	$(MAKE_EXE)
+	$(FINISH)
 
 
-lj_vverlet_anderson: *.c *.h min_image anderson lj_force vverlet nlist
-	$(CC) $(CFLAGS) -c -DLJ -DANDERSON -o util_lj_anderson.o util.c
-	$(CC) $(CFLAGS) -DANDERSON -o lj_vverlet_anderson min_image.o nlist.o anderson_thermostat.o util_lj_anderson.o lj_force.o vverlet_integrate.o -lgsl -lblas -lm main_loop.c
-	mv lj_vverlet_anderson ..
+lj_vverlet: SUB_CFLAGS += -DLJ
+lj_vverlet: SUFFIX = ljv
+lj_vverlet: PARAMS=lj
+lj_vverlet: min_image lj_force vverlet nlist util
+	$(MAKE_EXE)
+	$(FINISH)
 
-lj_vverlet: *.c *.h min_image lj_force vverlet nlist
-	$(CC) $(CFLAGS) -c -DLJ -o util_lj.o util.c
-	$(CC) $(CFLAGS) -o lj_vverlet min_image.o nlist.o util_lj.o lj_force.o vverlet_integrate.o -lgsl -lblas -lm main_loop.c
-	mv lj_vverlet ..
+harmonic_vverlet_anderson: SUB_CFLAGS += -DHARMONIC -DNO_PBC -DANDERSON
+harmonic_vverlet_anderson: SUFFIX = hva
+harmonic_vverlet_anderson: PARAMS=harmonic
+harmonic_vverlet_anderson: min_image_nopbc anderson_thermostat vverlet harmonic_force nlist util
+	$(MAKE_EXE)
+	$(FINISH)
+
+lj_vverlet_bussi: SUB_CFLAGS += -DLJ -DBUSSI
+lj_vverlet_bussi: SUFFIX = ljvb
+lj_vverlet_bussi: PARAMS=lj
+lj_vverlet_bussi: min_image bussi_thermostat lj_force vverlet nlist util
+	$(MAKE_EXE)
+	$(FINISH)
+
+
+lj_vverlet_anderson: SUB_CFLAGS += -DLJ -DANDERSON
+lj_vverlet_anderson: SUFFIX = ljvb
+lj_vverlet_anderson: PARAMS=lj
+lj_vverlet_anderson: min_image anderson_thermostat lj_force vverlet nlist util
+	$(MAKE_EXE)
+	$(FINISH)
+
+
+harmonic_vverlet_bussi: SUB_CFLAGS += -DHARMONIC -DBUSSI -DNO_PBC
+harmonic_vverlet_bussi: SUFFIX = hvb
+harmonic_vverlet_bussi: PARAMS=harmonic
+harmonic_vverlet_bussi: min_image_nopbc bussi_thermostat harmonic_force vverlet util nlist
+	$(MAKE_EXE)
+	$(FINISH)
+
 
 clean: 
-	rm -rf *o
+	rm -f *.o
+	rm -f *.gcda
