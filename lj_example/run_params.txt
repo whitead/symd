@@ -14,7 +14,7 @@ n_particles 100
 initial_positions initial_positions.xyz
 masses_file masses.txt
 start_positions start_positions.xyz
-print_period 100
+print_period 10
 positions_log_file positions.xyz
 position_log_period 10
 
