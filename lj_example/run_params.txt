@@ -5,11 +5,11 @@ velocity_seed 456415615
 anderson_nu 100
 bussi_taut 1
 thermostat_seed 1565
-rcut 5
-n_dims 3
-box_1_size 10
-box_2_size 10
-box_3_size 10
+rcut 2
+n_dims 2
+box_1_size 25
+box_2_size 25
+box_3_size 25
 n_particles 100
 initial_positions initial_positions.xyz
 masses_file masses.txt
