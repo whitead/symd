@@ -246,8 +246,8 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
       //-1 marks end of cell list
       while(j != -1) {
 
-	if(i >= j){
-	  //don't double count pairs
+	if(net_dcell == 0 && i >= j){
+	  //don't double count pairs in self-box
 	  break;
 	}
 
