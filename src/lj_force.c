@@ -78,3 +78,12 @@ void* build_lj(double epsilon, double sigma, Nlist_Parameters* nlist) {
   parameters->nlist = nlist;
   return (parameters);
 }
+
+void free_forces(void* parameters) {
+
+  Lj_Parameters* lj_parameters = (Lj_Parameters*) parameters;
+  Nlist_Parameters* nlist = ((Lj_Parameters*) lj_parameters)->nlist;
+  free_nlist(nlist);
+  free(lj_parameters);
+
+}

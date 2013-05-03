@@ -27,3 +27,9 @@ void* build_harmonic(double k) {
   parameters->k = k;
   return (parameters);
 }
+
+void free_forces(void* parameters) {
+  Harmonic_Parameters* h_parameters = (Harmonic_Parameters*) parameters;
+  free(h_parameters);
+
+}

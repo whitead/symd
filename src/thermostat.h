@@ -10,6 +10,8 @@
  */
 double thermostat(double temperature, double time_step, void* thermostat_parameters, double* positions, double* velocities, double* masses, unsigned int n_dims, unsigned int n_particles);
 
+void free_thermostat(void* thermostat_parameters);
+
 #ifdef ANDERSON
 #define THERMOSTAT
 
