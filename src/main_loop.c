@@ -1,18 +1,14 @@
 #include "main_loop.h"
+#include <stdio.h>
 
 int main(int argc, char* argv[]) {
 
+  FILE* arguments;
   //process arguemnts to get parameters
-  if(argc != 2) {
-    printf("Usage: [run file]\n");
-    exit(1);
-  }
-
-  FILE* arguments = fopen(argv[1], "r");
-  if(arguments == NULL) {
-    perror("Could not open file run parameter file\n");
-    exit(1);
-  }
+  if(argc == 0)
+    arguments = NULL;
+  else
+    arguments = fopen(argv[1], "r");
 
   Run_Params* p = read_parameters(arguments, NULL);
 

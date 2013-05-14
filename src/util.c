@@ -24,7 +24,9 @@ double* generate_velocities(double temperature, unsigned int seed, double* masse
 
   double ke = calculate_kenergy(velocities, masses, n_dims, n_particles);
 
+#ifdef DEBUG
   printf("Generated velocity distribution with %g temperature\n", ke * 2 / (n_dims * n_particles));
+#endif
 
   gsl_rng_free(rng);
 
@@ -51,8 +53,13 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
   unsigned int n = 2;
 
   for(i = 0; n == 2 && i < ARG_BUFFER; i++) {
-    n = fscanf(params_file,"%s %s\n", pstrings[i][KEY], pstrings[i][VALUE]);
+    if(params_file == NULL)
+      n = fscanf(stdin,"%s %s\n", pstrings[i][KEY], pstrings[i][VALUE]);
+    else
+      n = fscanf(params_file,"%s %s\n", pstrings[i][KEY], pstrings[i][VALUE]);
+#ifdef DEBUG
     printf("Read [%s] and [%s]\n", pstrings[i][KEY], pstrings[i][VALUE]);
+#endif
   }
 
   Run_Params* params = (Run_Params*) malloc(sizeof(Run_Params));
@@ -332,7 +339,9 @@ char* process_string(char*** pstrings, char* key, bool* success) {
     if(strcmp(pstrings[i][KEY], key) == 0) {
       char*  result = pstrings[i][VALUE];
       *success = true;
+#ifdef DEBUG
       printf("Read in [%s] for [%s]\n", result, key);
+#endif
       return result;
     }
   }
@@ -351,7 +360,9 @@ unsigned int process_uint(char*** pstrings, char* key, bool* success) {
       unsigned int result;
       sscanf(pstrings[i][VALUE], "%ud", &result);
       *success = true;
+#ifdef DEBUG
       printf("Read in [%d] for [%s]\n", result, key);
+#endif
       return result;
     }
   }
@@ -370,7 +381,9 @@ double process_double(char*** pstrings, char* key, bool* success) {
       double result;
       sscanf(pstrings[i][VALUE], "%lf", &result);
       *success = true;
+#ifdef DEBUG
       printf("Read in [%6f] for [%s]\n", result, key);
+#endif
       return result;
     }
   }
