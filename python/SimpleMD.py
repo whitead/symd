@@ -222,9 +222,3 @@ class SimpleMD:
         
 
 
-md = SimpleMD(100, 3, exeDir="test")
-md.setup_positions(0.7)
-md.setup_masses(1)
-md.log_positions()
-md.log_output()
-md.execute()
