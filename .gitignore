@@ -15,3 +15,6 @@
 */positions.xyz
 */velocities.xyz
 */forces.xyz
+
+#python files
+*.pyc
