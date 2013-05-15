@@ -13,6 +13,7 @@ typedef struct {
 
 #ifdef LJ
 #include "nlist.h"
+
 typedef struct {
   const double epsilon;
   const double sigma;

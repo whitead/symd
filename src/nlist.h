@@ -1,5 +1,7 @@
 #include "min_image.h"
 
+#define NLIST
+
 #ifndef NLIST_H_
 #define NLIST_H_
 

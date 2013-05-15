@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdio.h>
 
-
 inline double lj(double r,  double epsilon, double sigma) {
   return 4 * epsilon * (6 * pow(sigma / r, 7) - 12 * pow(sigma / r, 13));  
 }
@@ -57,7 +56,7 @@ double gather_forces(void* parameters, double* positions, double* forces, double
       force = lj_trunc_shift(r, epsilon, sigma, rcut, lj_shift);
 
 #ifdef DEBUG
-      printf("F(%g) = %g\n", r, force);
+      printf("F(%d - %d, %g) = %g\n", i, j, r, force);
 #endif //DEBUG
 
       for(k = 0; k < n_dims; k++)  {

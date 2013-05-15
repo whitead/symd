@@ -18,13 +18,16 @@ double* generate_velocities(double temperature, unsigned int seed, double* masse
   
   for(i = 0; i < n_particles; i++) {
     for(j = 0; j < n_dims; j++) {
-      velocities[i * n_dims + j] = gsl_ran_gaussian_ziggurat(rng, sqrt(temperature / masses[i]));
+      if(temperature != 0)
+	velocities[i * n_dims + j] = gsl_ran_gaussian_ziggurat(rng, sqrt(temperature / masses[i]));
+      else
+	velocities[i * n_dims + j] = 0;
     }
   }
 
-  double ke = calculate_kenergy(velocities, masses, n_dims, n_particles);
 
 #ifdef DEBUG
+  double ke = calculate_kenergy(velocities, masses, n_dims, n_particles);
   printf("Generated velocity distribution with %g temperature\n", ke * 2 / (n_dims * n_particles));
 #endif
 
@@ -178,7 +181,7 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
   }
 
   //Neighbor list parameters
-#ifndef HARMONIC
+#ifdef NLIST
   double rcut = process_double(pstrings, "rcut", &success_cur);
   if(!success_cur) {
     fprintf(stderr, "Error: Must list rcut (cut-off)\n");
@@ -190,7 +193,7 @@ Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params)
     fprintf(stderr, "Warning: Assuming skin %g\n", skin);
   }
   Nlist_Parameters* nlist = build_nlist_params(params->n_dims, params->n_particles, params->box_size, skin, rcut);
-#endif //HARMONIC
+#endif //NLIST
 
 
   //thermostat parameters

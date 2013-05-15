@@ -117,6 +117,9 @@ void build_cells(double* box_size, unsigned int n_dims, unsigned int n_particles
   for(i = 0; i < n_dims; i++) {
     nlist->cell_number[i] = 
       (int) (box_size[i] + width - 1) / width; // ceiling quotient
+    //minimum
+    if(nlist->cell_number[i] == 0)
+      nlist->cell_number[i] = 1;
     nlist->cell_number[i] += 2; //for ghost cells
     nlist->cell_number_total *= 
       nlist->cell_number[i] - 2; //don't include ghost cells in calculation
@@ -249,7 +252,7 @@ void build_list(double* positions, double* box_size, unsigned int n_dims, unsign
       //-1 marks end of cell list
       while(j != -1) {
 
-	if(net_dcell == 0 && i >= j){
+	if(nlist->mapping[net_dcell + nlist->map_offset] == 0 && i >= j){
 	  //don't double count pairs in self-box
 	  break;
 	}

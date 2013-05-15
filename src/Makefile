@@ -14,6 +14,7 @@ all:
 	make lj_vverlet_bussi
 	make lj_vverlet_anderson
 	make harmonic_vverlet_bussi
+	make soft_vverlet
 
 all-profile:
 	make profile harmonic_vverlet
@@ -22,6 +23,7 @@ all-profile:
 	make profile lj_vverlet_bussi
 	make profile lj_vverlet_anderson
 	make profile harmonic_vverlet_bussi
+	make profile soft_vverlet
 
 all-optimize:
 	make optimize harmonic_vverlet
@@ -30,6 +32,7 @@ all-optimize:
 	make optimize lj_vverlet_bussi
 	make optimize lj_vverlet_anderson
 	make optimize harmonic_vverlet_bussi
+	make optimize soft_vverlet
 
 
 
@@ -47,6 +50,9 @@ vverlet: vverlet_integrate.c integrate.h
 
 harmonic_force: harmonic_force.c force.h
 	$(CC) $(SUB_CFLAGS) -DHARMONIC harmonic_force.c
+
+soft_force: soft_force.c force.h
+	$(CC) $(SUB_CFLAGS) soft_force.c
 
 
 lj_force: lj_force.c force.h
@@ -68,6 +74,12 @@ profile: $(filter-out profile, $(MAKECMDGOALS))
 
 optimize: CFLAGS += -fprofile-use -march=native -Ofast
 optimize: $(filter-out optimize, $(MAKECMDGOALS))
+
+soft_vverlet: SUFFIX = s
+soft_vverlet: PARAMS = soft
+soft_vverlet: min_image soft_force vverlet util
+	$(MAKE_EXE)
+	$(FINISH)	  
 
 harmonic_vverlet: SUB_CFLAGS += -DHARMONIC -DNO_PBC
 harmonic_vverlet: SUFFIX = hv

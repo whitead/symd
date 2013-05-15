@@ -6,7 +6,6 @@
 #include <string.h>
 #include "thermostat.h"
 #include "force.h"
-#include "nlist.h"
 
 #ifndef UTIL_H_
 #define UTIL_H_

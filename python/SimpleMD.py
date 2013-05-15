@@ -28,6 +28,7 @@ class SimpleMD:
             self.createdDir = False
 
         self.executed = False
+        self.do_log_output = False
 
         self.runParams = { 'steps':100,
                            'n_dims': self.ndims,
@@ -41,10 +42,11 @@ class SimpleMD:
                            'skin':3 * 0.2,
                            'com_remove_period':1000,
                            #this is the initial velocity temperature if NVE is chosen
-                           'temperature':1, 
+                           'temperature':0, 
                            'print_period':1,
                            'masses_file':self.prefix + os.sep + 'masses.txt' }
-        
+
+        self.exePrefix = exePrefix
         if(temperature != None):
             self.runParams['temperature'] = temperature
             self.exe = '%s%s%s_%s_%s' % (exePrefix, os.sep, force, integrator, thermostat)
@@ -54,6 +56,21 @@ class SimpleMD:
         if(force == 'lj'):
             self.runParams['lj_epsilon'] = 1
             self.runParams['lj_sigma'] = 1
+
+    def log_positions(self, filename='positions.xyz', period=0):
+        """enable logging of the xyz positions of the simulation. Default is to output 100 frames"""
+        if(period == 0):
+            period = ceil(self.runParams['steps'] / 100.)
+
+        self.runParams['position_log_period'] = int(period)
+        self.runParams['positions_log_file'] = self.prefix + os.sep + filename
+
+
+    def log_output(self, filename='md.log', period=0):
+        if(period != 0):
+            self.runParams['print_period'] = period
+        self.log_file = self.prefix + os.sep + filename 
+        self.do_log_output =True
 
     def setup_masses(self, masses = 1, masses_file = None):        
         """Creates a masses file. The masses variable is expanded to be the 
@@ -76,14 +93,20 @@ class SimpleMD:
         with open(self.runParams['masses_file'], 'w') as f:
             for m in masses:
                 f.write("%d\n" % m)
+
+        self.mass_ready = True
             
-    def setup_positions(self, box_size, start_positions=None, overwrite=True):
+    def setup_positions(self, density=None, box_size=None, start_positions=None, overwrite=True, removeOverlap=True):
         """build a uniform lattice of particles given the box size or density"""
 
         if(start_positions == None):
             start_positions = self.prefix + os.sep + 'start_positions.xyz'
             
-
+        if(density != None):
+            volume = self.nparticles / density
+            edge_size = volume ** (1. / self.ndims)
+            box_size = [edge_size for x in range(self.ndims)]
+        
         if(len(box_size) != self.ndims):
             raise Exception('Incorrect number of box dimensions. Must be %d' % self.ndims)
 
@@ -108,6 +131,37 @@ class SimpleMD:
 
             sys.stdout = temp
 
+        if(removeOverlap):
+            #we create another MD engine to run with a soft potential and take the results
+
+            overlapMD = SimpleMD(self.nparticles, self.ndims, temperature=None, 
+                                 exeDir=self.prefix + os.sep + "overlap",
+                                 force='soft',
+                                 exePrefix=self.exePrefix)
+            overlapMD.setup_positions(box_size=box_size, start_positions=start_positions, overwrite=False, removeOverlap=False)
+            overlapMD.runParams['steps'] = 1000
+            overlapMD.runParams['time_step'] = 0.001
+            overlapMD.runParams['positions_log_file'] = overlapMD.prefix + os.sep + 'positions.xyz'
+            overlapMD.runParams['position_log_period'] = overlapMD.runParams['steps']
+            overlapMD.setup_masses(1)
+            overlapMD.execute()
+
+            #get the output. Skip first 2 lines and atomic symbol
+            with open(overlapMD.runParams['positions_log_file'], 'r') as infile:
+                with open(start_positions, 'w') as outfile:
+                    lines = infile.readlines()
+                    for line in lines[2:]:
+                        outfile.write("".join([x + " " for x in line.split()[1:]]))
+                        outfile.write("\n")
+
+            #prevent overlap from cleaning out position file
+            overlapMD.runParams['start_positions'] = ''
+            overlapMD.clean_files()
+
+        self.position_ready = True
+                    
+            
+
     def clean_files(self):
         files = ['masses_file', 'start_positions', 'positions_log_file',
                  'velocities_log_file', 'forces_log_file']
@@ -120,6 +174,14 @@ class SimpleMD:
             os.rmdir(self.prefix)
             
     def execute(self):
+
+        if(not self.mass_ready):
+            raise Exception("Must call setup_masses() before executing")
+
+        if(not self.position_ready):
+            raise Exception("Must call setup_positions() before executing")
+
+
         output_lines = self.runParams['steps']
 
         self.temperature = np.empty(output_lines)
@@ -136,9 +198,16 @@ class SimpleMD:
             input_string.append('%s %s\n' % (k, self.runParams[k]))
 
         proc = subprocess.Popen(self.exe, stdin=subprocess.PIPE,
-                           stdout=subprocess.PIPE)
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        print ''.join(input_string)
         
         output = proc.communicate(''.join(input_string))[0]
+
+        if(self.do_log_output):
+            with open(self.log_file, 'w') as f:
+                f.write(output)
+
 
         for line in output.split('\n'):
             try:
@@ -153,3 +222,9 @@ class SimpleMD:
         
 
 
+md = SimpleMD(100, 3, exeDir="test")
+md.setup_positions(0.7)
+md.setup_masses(1)
+md.log_positions()
+md.log_output()
+md.execute()

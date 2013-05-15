@@ -37,8 +37,8 @@ int main_loop(Run_Params* params){
 
 
   printf("%12s %12s %12s %12s %12s %12s %12s\n", "Step", "Time", "T", "PE", "KE", "E", "Htherm");
-  
-  for(i = 0; i < params->steps; i++) {
+  //start at 0, so that we don't log on the first loop
+  for(i = 1; i <= params->steps; i++) {
 
     //integrate 1
     integrate_1(params->time_step, positions, velocities, forces, params->masses,params->box_size,  params->n_dims, params->n_particles);
@@ -54,9 +54,9 @@ int main_loop(Run_Params* params){
     integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
 
     //thermostat
-    #ifdef THERMOSTAT
+#ifdef THERMOSTAT
     therm_conserved += thermostat(params->temperature, params->time_step, params->thermostat_parameters, positions, velocities, params->masses, params->n_dims, params->n_particles);
-    #endif
+#endif
 
     //calculate important quantities
     kenergy = calculate_kenergy(velocities, params->masses, params->n_dims, params->n_particles);
