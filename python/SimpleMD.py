@@ -2,6 +2,7 @@ import os, sys, subprocess
 from math import *
 import numpy as np
 import build_lattice
+import gofr
 
 SimpleMDLocation = ".."
 
@@ -9,7 +10,7 @@ SimpleMDLocation = ".."
 class SimpleMD:
     """SimpleMD Engine set-up and output parser"""    
 
-    def __init__(self, nparticles, ndims, temperature=None,
+    def __init__(self, nparticles, ndims, steps=100, temperature=None,
                  exeDir='',
                  exePrefix=SimpleMDLocation,
                  integrator='vverlet', 
@@ -30,7 +31,7 @@ class SimpleMD:
         self.executed = False
         self.do_log_output = False
 
-        self.runParams = { 'steps':100,
+        self.runParams = { 'steps':steps,
                            'n_dims': self.ndims,
                            'n_particles':nparticles,
                            'time_step':0.005,
@@ -43,7 +44,7 @@ class SimpleMD:
                            'com_remove_period':1000,
                            #this is the initial velocity temperature if NVE is chosen
                            'temperature':0, 
-                           'print_period':1,
+                           'print_period':10,
                            'masses_file':self.prefix + os.sep + 'masses.txt' }
 
         self.exePrefix = exePrefix
@@ -114,6 +115,8 @@ class SimpleMD:
 
         for i in range(self.ndims):
             self.runParams['box_%d_size' % (i + 1)] = box_size[i]
+
+        self.box_size = box_size
 
         if(overwrite):
             increment = build_lattice.increment_size(self.ndims, box_size, self.nparticles)
@@ -200,8 +203,6 @@ class SimpleMD:
         proc = subprocess.Popen(self.exe, stdin=subprocess.PIPE,
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-        print ''.join(input_string)
-        
         output = proc.communicate(''.join(input_string))[0]
 
         if(self.do_log_output):
@@ -219,12 +220,16 @@ class SimpleMD:
                 pass
 
         self.executed = True
+
+    def calc_gofr(self, bin_width=0.1):
+        """Calculates g(r)""" 
+        #check that we have structures and a cube
+        if(not self.executed):
+            raise Exception("Must execute SimpleMD before calculating statistics")
+        if(not self.runParams.has_key('positions_log_file')):
+            raise Exception("Must call log_positions with SimpleMD to calculate gofr")
+        return gofr.calc_gofr(self.runParams['positions_log_file'], self.box_size, 
+                         bin_width=bin_width, ndims=self.ndims)
         
 
 
-md = SimpleMD(100, 3, exeDir="test")
-md.setup_positions(0.7)
-md.setup_masses(1)
-md.log_positions()
-md.log_output()
-md.execute()
