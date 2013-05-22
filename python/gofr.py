@@ -1,15 +1,8 @@
 #!/usr/bin/python
-
 import numpy as np
-import sys
+
 from scipy.integrate import quad
 from math import pi
-
-print "Note: This program assumes your box is a cube. It does not check"
-
-if(len(sys.argv) != 5):
-    print "usage: [gofr.py] [input xyz file] [output file] [run_params_file] [bin_width]"
-    exit()
 
 def read_run_params(fname):
     params = {}
@@ -20,18 +13,19 @@ def read_run_params(fname):
                 params[sline[0]] = sline[1]
     return params
 
-def pair_distance(x, y, img):
+def pair_distance(x, y, ndims, img, PBC):
     dsum = 0
     dist = 0
     for j in range(ndims):
         dist = (x[j] - y[j])
-        dist = dist - round(dist / img) * img
+        if(PBC):
+            dist = dist - round(dist / img[j]) * img[j]
         dsum += dist ** 2
     return np.sqrt(dsum)
 
-def bin_atom(i, distances, positions, bin_edges, img):
+def bin_atom(i, distances, positions, bin_edges, ndims, img, PBC):
     for j in range(i+1, len(positions)):
-        distances[j] = pair_distance(positions[i], positions[j], img)
+        distances[j] = pair_distance(positions[i], positions[j], ndims, img, PBC)
     return np.histogram(distances[i+1:], bin_edges)
 
 #square regions
@@ -75,50 +69,90 @@ def calc_volume(rho, d):
 
 
 
-bin_width = float(sys.argv[4])
-params = read_run_params(sys.argv[3])
-natoms = int(params['n_particles'])
-ndims = int(params['n_dims'])
-box_size = [int(params['box_%d_size' % x]) for x in range(1,ndims+1)]
-bin_edges = np.arange(0, np.sqrt(3) * box_size[0] / 2, bin_width)
-header = 2
-(hist, bin_edges) = np.histogram([-1], bin_edges)
 
-with open(sys.argv[1], 'r') as f:
+def calc_gofr(xyz_file, box_size, bin_width=0.1, ndims=3, PBC=True): 
 
-    lines_read = 2
-    frames_read = 0
-    positions = [0 for x in range(natoms)]
-    distances = [0 for x in range(natoms)]
+    if(ndims != 3):
+        raise Exception("Have not implemented n-dimensional g(r)")
+    #if we don't have a cube, I don't yet have the g(r) cube-sphere intersection implemented
+    if(not(box_size[0] == box_size[1] and box_size[1] == box_size[2])):
+        bin_edges = np.arange(0, min(box_size) / 2, bin_width)
+    else:
+        bin_edges = np.arange(0, np.sqrt(3) * box_size[0] / 2, bin_width)
+    (hist, bin_edges) = np.histogram([-1], bin_edges)    
 
-    print "Processing frame...0"
-    while(1):
+    with open(xyz_file, 'r') as f:
+
+        lines_read = 2
+        frames_read = 0
+        natoms = 0
         try:
-            for i in range(header):
-                f.readline()
-            for i in range(natoms):
-                tokens = f.readline().split()
-                if(len(tokens) != ndims + 1):
-                    raise EOFError()
-                positions[i] = [float(x) for x in tokens[1:]]
-            for i in range(natoms):
-                (newhist, bin_edges) = bin_atom(i,distances, positions, bin_edges, box_size[0])
-                hist = np.add(hist, newhist)
-            frames_read += 1
-            print "\rProcessing frame...%d" % frames_read,
-        except EOFError:
-            break
+            natoms = int(f.readline())
+        except ValueError:
+            raise Exception("Doesn't look like %s in an xyz file" % xyz_file)
 
-print "\nCalculating g(r)..."
-volume = 1.
-for x in box_size:
-    volume = volume * x
-bulk_density = sum(hist) / volume 
+        if(natoms == 0):
+            return None
 
+        positions = [0 for x in range(natoms)]
+        distances = [0 for x in range(natoms)]
+        
+        print "Processing frame...0",
+        while(1):
+            try:
+                #skip over frames and number of atoms
+                line = f.readline() 
+                while(line != "" and line.split(":")[0] != "Frame"):
+                    line = f.readline() 
+                for i in range(natoms):
+                    tokens = f.readline().split()
+                    if(len(tokens) != ndims + 1):
+                        raise EOFError()
+                    positions[i] = [float(x) for x in tokens[1:]]
+                for i in range(natoms):
+                    (newhist, bin_edges) = bin_atom(i,distances, positions, bin_edges, ndims, box_size, PBC)
+                    hist = np.add(hist, newhist)
+                frames_read += 1
+                print "\rProcessing frame...%d" % frames_read,
+            except EOFError:
+                break
 
-with open(sys.argv[2], 'w') as f:
-    for i in range(0, len(bin_edges) - 1) :
+        print "\nCalculating g(r)..."
+        volume = 1.
+        for x in box_size:
+            volume = volume * x
+        bulk_density = sum(hist) / volume 
+
+    r = np.empty(len(bin_edges) - 1)
+    n = np.empty(len(bin_edges) - 1)
+    gofr = np.empty(len(bin_edges) - 1)
+    
+    for i in range(len(bin_edges) - 1) :
         v = calc_volume(bin_edges[i+1], box_size[0] / 2.) - calc_volume(bin_edges[i], box_size[0] / 2.)
         ideal = v * bulk_density
         actual = hist[i]
-        f.write("%g %g %g\n" % ((bin_edges[i + 1] + bin_edges[i]) / 2., v, (actual / ideal)))
+        r[i] = (bin_edges[i + 1]  + bin_edges[i]) / 2.
+        n[i] = actual
+        gofr[i] = actual / ideal
+    return (r,n,gofr)
+
+if __name__ == "__main__":
+    import sys
+    print "Note: This program assumes your box is a cube. It does not check"
+
+    if(len(sys.argv) != 5):
+        print "usage: [gofr.py] [input xyz file] [output file] [run_params_file] [bin_width]"
+        exit()
+    
+    bin_width = float(sys.argv[4])
+    params = read_run_params(sys.argv[3])
+    ndims = int(params['n_dims'])
+    (r, n, gofr) = calc_gofr(sys.argv[1],
+                   box_size=[int(params['box_%d_size' % x]) for x in range(1,ndims+1)], 
+                   bin_width=bin_width,
+                   ndims=ndims)
+    
+    with open(sys.argv[2], 'w') as f:
+        for (ri, ni, gofri) in zip(r,n,gofr):
+            f.write("%g %g %g\n" % (ri, ni, gofri))
+
