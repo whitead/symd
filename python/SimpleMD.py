@@ -200,8 +200,6 @@ class SimpleMD:
         proc = subprocess.Popen(self.exe, stdin=subprocess.PIPE,
                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-        print ''.join(input_string)
-        
         output = proc.communicate(''.join(input_string))[0]
 
         if(self.do_log_output):
