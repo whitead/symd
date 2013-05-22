@@ -44,7 +44,7 @@ class SimpleMD:
                            'com_remove_period':1000,
                            #this is the initial velocity temperature if NVE is chosen
                            'temperature':0, 
-                           'print_period':10,
+                           'print_period':max(1, (steps / 100)),
                            'masses_file':self.prefix + os.sep + 'masses.txt' }
 
         self.exePrefix = exePrefix
@@ -70,7 +70,7 @@ class SimpleMD:
     def log_output(self, filename='md.log', period=0):
         if(period != 0):
             self.runParams['print_period'] = period
-        self.log_file = self.prefix + os.sep + filename 
+        self.runParams['log_file'] = self.prefix + os.sep + filename 
         self.do_log_output =True
 
     def setup_masses(self, masses = 1, masses_file = None):        
@@ -143,6 +143,7 @@ class SimpleMD:
                                  exePrefix=self.exePrefix)
             overlapMD.setup_positions(box_size=box_size, start_positions=start_positions, overwrite=False, removeOverlap=False)
             overlapMD.runParams['steps'] = 1000
+            overlapMD.runParams['print_period'] = 1000
             overlapMD.runParams['time_step'] = 0.001
             overlapMD.runParams['positions_log_file'] = overlapMD.prefix + os.sep + 'positions.xyz'
             overlapMD.runParams['position_log_period'] = overlapMD.runParams['steps']
@@ -167,7 +168,7 @@ class SimpleMD:
 
     def clean_files(self):
         files = ['masses_file', 'start_positions', 'positions_log_file',
-                 'velocities_log_file', 'forces_log_file']
+                 'velocities_log_file', 'forces_log_file', 'log_file']
         for k in files:
             if(self.runParams.has_key(k)):
                 if(os.path.exists(self.runParams[k])):
@@ -185,8 +186,9 @@ class SimpleMD:
             raise Exception("Must call setup_positions() before executing")
 
 
-        output_lines = self.runParams['steps']
+        output_lines = ceil(self.runParams['steps'] / self.runParams['print_period'])
 
+        self.out_times = np.empty(output_lines)
         self.temperature = np.empty(output_lines)
         self.ke = np.empty_like(self.temperature)
         self.pe = np.empty_like(self.temperature)
@@ -206,17 +208,23 @@ class SimpleMD:
         output = proc.communicate(''.join(input_string))[0]
 
         if(self.do_log_output):
-            with open(self.log_file, 'w') as f:
+            with open(self.runParams['log_file'], 'w') as f:
                 f.write(output)
 
+        index = 0
 
         for line in output.split('\n'):
             try:
                 sline = line.split()
+                if(len(sline) < 2):
+                    continue
                 step = int(sline[0])
+                self.out_times[index] = float(sline[1])
                 for i, oa in zip(range(len(out_arrays)), out_arrays):
-                    oa[step] = float(sline[i + 2])
-            except:
+                    # +1 for step and +1 for time
+                    oa[index] = float(sline[i + 2]) 
+                index += 1
+            except ValueError:
                 pass
 
         self.executed = True
