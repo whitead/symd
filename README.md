@@ -13,17 +13,16 @@ The code has the following features:
 
 * Conserves energy
 * Linear scaling wrt atom number with cell/verlet lists
-* Arbitrary dimension number (implementing cell/verlet lists in arbitrary dimensions was fun)
+* Arbitrary dimension number
 * Velocity-Verlet integrator
 * Anderson thermostat
-* Bussi thermostat (conserves conjugate energy)
-* Lennard-Jones (truncated & shifted) or Harmonic Forces
+* Bussi thermostat
+* Lennard-Jones (truncated & shifted), Harmonic Forces, and a cosine soft potential for removing overlap
 * Input velocities, positions (XYZ Format)
 * Output forces, temperature, energy, velocities, positions (XYZ Format), etc.
-* Periodic boundary conditions (or not)
-* g(r) script that corrects for cube-sphere intersection volume
+* Periodic boundary conditions (or not for harmonic oscillator)
+* g(r) script that corrects for [cube-sphere intersection volume](http://crowsandcats.blogspot.com/2013/05/extending-radial-distributions.html)
 * script to generate initial structures
-* Removes center-of-mass translational motion
 
 
 Compiling
@@ -52,11 +51,9 @@ Examples may be run with:
 
 TODO/Thoughts/Notes
 -------------------------
-1. Make a few plots showing conservation, linear scaling
-2. Write down g(r) cube-sphere intersection information
 3. Test 1D lj and 4D lj
 4. Write about branching feature
-5. Get checkensemble to work
+5. checkensemble
 6. The cells (used in LJ) do not support open boxes. Not sure whether or not I should implement that. 
-7. The g(r) script only supports 3D. I should rewrite it to support 2D and maybe 1D. 3D cube-sphere intersection sounds like I would die.
+7. The g(r) script only supports 3D. I should rewrite it to support 2D and maybe 1D. 
 8. If I want to really pursue open boundaries (which I really don't), then I need to remove center-of-mass angular momentum and center-of-mass translation
