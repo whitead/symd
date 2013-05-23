@@ -155,12 +155,12 @@ class SimpleMD:
                 with open(start_positions, 'w') as outfile:
                     lines = infile.readlines()
                     for line in lines[2:]:
-                        outfile.write("".join([x + " " for x in line.split()[1:]]))
+                        outfile.write("".join([x + " " for x in line.split()[1:(self.ndims + 1)]]))
                         outfile.write("\n")
 
             #prevent overlap from cleaning out position file
             overlapMD.runParams['start_positions'] = ''
-            overlapMD.clean_files()
+            #overlapMD.clean_files()
 
         self.position_ready = True
                     
@@ -202,14 +202,16 @@ class SimpleMD:
         for k in self.runParams.iterkeys():
             input_string.append('%s %s\n' % (k, self.runParams[k]))
 
-        proc = subprocess.Popen(self.exe, stdin=subprocess.PIPE,
-                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(self.exe, stdin=subprocess.PIPE, bufsize=4096,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        output = proc.communicate(''.join(input_string))[0]
+        output,outerr = proc.communicate(''.join(input_string))
 
         if(self.do_log_output):
             with open(self.runParams['log_file'], 'w') as f:
                 f.write(output)
+
+        self.outerr = outerr
 
         index = 0
 
