@@ -11,7 +11,6 @@ box_1_size 55
 box_2_size 55
 box_3_size 55
 n_particles 250
-initial_positions initial_positions.xyz
 masses_file masses.txt
 start_positions start_positions.xyz
 print_period 1
