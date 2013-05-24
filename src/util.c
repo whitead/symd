@@ -407,7 +407,7 @@ double calculate_kenergy(double* velocities, double* masses, unsigned int n_dims
     for(j = 0; j < n_dims; j++) {
       etemp += velocities[i * n_dims + j] * velocities[i * n_dims + j];
     }
-    kenergy += etemp * masses[i] / 2.;
+    kenergy += 0.5 * etemp * masses[i];
   }
 
   return(kenergy);

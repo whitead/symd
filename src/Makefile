@@ -1,8 +1,9 @@
 CC=gcc
 CFLAGS=-g -Wall
-SUB_CFLAGS= $(CFLAGS) -o $@_$(SUFFIX).o -c
+PPFLAGS= 
+SUB_CFLAGS= $(CFLAGS) $(PPFLAGS) -o $@_$(SUFFIX).o -c
 FINISH=mv $@ ..
-MAKE_EXE=$(CC) $(CFLAGS) -o $@ $(UTIL_O) $(addsuffix _$(SUFFIX).o, $^) -lgsl -lblas -lm main_loop.c
+MAKE_EXE=$(CC) $(CFLAGS) $(PPFLAGS) -o $@ $(UTIL_O) $(addsuffix _$(SUFFIX).o, $^) -lgsl -lblas -lm main_loop.c
 
 
 .PHONY: clean all all-profile all-optimize
@@ -81,7 +82,7 @@ soft_vverlet: min_image soft_force vverlet util
 	$(MAKE_EXE)
 	$(FINISH)	  
 
-harmonic_vverlet: SUB_CFLAGS += -DHARMONIC -DNO_PBC
+harmonic_vverlet: PPFLAGS += -DHARMONIC -DNO_PBC
 harmonic_vverlet: SUFFIX = hv
 harmonic_vverlet: PARAMS=harmonic
 harmonic_vverlet: min_image_nopbc vverlet harmonic_force nlist util
@@ -89,21 +90,21 @@ harmonic_vverlet: min_image_nopbc vverlet harmonic_force nlist util
 	$(FINISH)
 
 
-lj_vverlet: SUB_CFLAGS += -DLJ
+lj_vverlet: PPFLAGS += -DLJ
 lj_vverlet: SUFFIX = ljv
 lj_vverlet: PARAMS=lj
 lj_vverlet: min_image lj_force vverlet nlist util
 	$(MAKE_EXE)
 	$(FINISH)
 
-harmonic_vverlet_anderson: SUB_CFLAGS += -DHARMONIC -DNO_PBC -DANDERSON
+harmonic_vverlet_anderson: PPFLAGS += -DHARMONIC -DNO_PBC -DANDERSON
 harmonic_vverlet_anderson: SUFFIX = hva
 harmonic_vverlet_anderson: PARAMS=harmonic
 harmonic_vverlet_anderson: min_image_nopbc anderson_thermostat vverlet harmonic_force nlist util
 	$(MAKE_EXE)
 	$(FINISH)
 
-lj_vverlet_bussi: SUB_CFLAGS += -DLJ -DBUSSI
+lj_vverlet_bussi: PPFLAGS += -DLJ -DBUSSI
 lj_vverlet_bussi: SUFFIX = ljvb
 lj_vverlet_bussi: PARAMS=lj
 lj_vverlet_bussi: min_image bussi_thermostat lj_force vverlet nlist util
@@ -111,7 +112,7 @@ lj_vverlet_bussi: min_image bussi_thermostat lj_force vverlet nlist util
 	$(FINISH)
 
 
-lj_vverlet_anderson: SUB_CFLAGS += -DLJ -DANDERSON
+lj_vverlet_anderson: PPFLAGS += -DLJ -DANDERSON
 lj_vverlet_anderson: SUFFIX = ljvb
 lj_vverlet_anderson: PARAMS=lj
 lj_vverlet_anderson: min_image anderson_thermostat lj_force vverlet nlist util
@@ -119,7 +120,7 @@ lj_vverlet_anderson: min_image anderson_thermostat lj_force vverlet nlist util
 	$(FINISH)
 
 
-harmonic_vverlet_bussi: SUB_CFLAGS += -DHARMONIC -DBUSSI -DNO_PBC
+harmonic_vverlet_bussi: PPFLAGS += -DHARMONIC -DBUSSI -DNO_PBC
 harmonic_vverlet_bussi: SUFFIX = hvb
 harmonic_vverlet_bussi: PARAMS=harmonic
 harmonic_vverlet_bussi: min_image_nopbc bussi_thermostat harmonic_force vverlet util nlist

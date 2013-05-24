@@ -50,8 +50,7 @@ class Tester:
             success = t.run()
             print "*",
             t.print_summary()
-            if(not success):
-                return
+
 
 class EnergyConservationTest(Test):
 

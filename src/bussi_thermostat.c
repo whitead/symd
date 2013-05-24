@@ -2,8 +2,6 @@
 #include <gsl/gsl_randist.h>
 #include <math.h>
 
-
-
 /*
  * Sampling exactly when less than 6, instead of exactly 1. TODO: Check if this
  * is necessary. DONE, it wasn't so I removed it
@@ -72,6 +70,10 @@ double thermostat(double temperature, double time_step, void* thermostat_paramet
   //according to gromacs implementation, it can be negative due to rounding(?)
   if(new_kenergy < 0)
     new_kenergy = 0;
+
+#ifdef DEBUG
+  printf("Bussi kenergy = %f, desired = %f, sampled = %f (scaling factor = %f)\n", kenergy, 0.5 * temperature * ndeg, new_kenergy, sqrt(new_kenergy / kenergy));
+#endif
   
   scaling_factor = sqrt(new_kenergy / kenergy);
 

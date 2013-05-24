@@ -160,7 +160,7 @@ class SimpleMD:
 
             #prevent overlap from cleaning out position file
             overlapMD.runParams['start_positions'] = ''
-            #overlapMD.clean_files()
+            overlapMD.clean_files()
 
         self.position_ready = True
                     
