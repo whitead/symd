@@ -23,7 +23,8 @@ double gather_forces(void* parameters, double* positions, double* forces, double
   //update neighbor list
   update_nlist(positions, box_size, n_dims, n_particles, nlist);
 
-  unsigned int i, j, k, n, offset;
+  unsigned int i, j, k, n;
+  int offset;
   double penergy = 0;
   double r, force, diff;
   double force_vector[n_dims];
@@ -32,42 +33,78 @@ double gather_forces(void* parameters, double* positions, double* forces, double
   
 
   //zero forces
+  #pragma omp parallel for
   for(i = 0; i < n_particles; i++)
     for(k = 0; k < n_dims; k++)
       forces[i * n_dims + k] = 0;
 
   //iterate through all particles
-  offset = 0;
-  for(i = 0; i < n_particles; i++) {
-    //iterate through neighbor list
-    for(n = offset; n - offset < nlist->nlist_count[i]; n++) {
-      j = nlist->nlist[n];
-      r = 0;
 
-      //distance between particles
-      for(k = 0; k < n_dims; k++) {
-	diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-	r += diff * diff;
-	force_vector[k] = diff;
+  //This seems strange at first,
+  //but it really just distributes
+  //the work across the threads
+  //The only trick is that the neighborlists
+  //are not easy to spread out across the workers,
+  //hence the conditionals.
+
+#pragma omp parallel default(shared) \
+  private(offset, n, i, j, k, r, force, force_vector, diff)\
+  reduction(+:penergy)
+  {
+
+#ifdef _OPENMP
+    offset = -1; //indicator
+#else
+    offset = 0; //zeroed
+#endif   
+
+#pragma omp for
+    for(i = 0; i < n_particles; i++) {
+
+#ifdef _OPENMP
+      //accumulate the offset now that we know i
+      if(offset == -1) {
+	offset = 0;
+	for(j = 0; j < i; j++) {
+	  offset += nlist->nlist_count[j];
+	}
       }
+#endif
 
-      r = sqrt(r);
-      //LJ force and potential
-      force = lj_trunc_shift(r, epsilon, sigma, rcut, lj_shift);
-
+      //iterate through neighbor list
+      for(n = offset; n - offset < nlist->nlist_count[i]; n++) {
+	j = nlist->nlist[n];
+	r = 0;
+	
+	//distance between particles
+	for(k = 0; k < n_dims; k++) {
+	  diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+	  r += diff * diff;
+	  force_vector[k] = diff;
+	}
+	
+	r = sqrt(r);
+	//LJ force and potential
+	force = lj_trunc_shift(r, epsilon, sigma, rcut, lj_shift);
+	
 #ifdef DEBUG
-      printf("F(%d - %d, %g) = %g\n", i, j, r, force);
+	printf("F(%d - %d, %g) = %g\n", i, j, r, force);
 #endif //DEBUG
-
-      for(k = 0; k < n_dims; k++)  {
-	forces[i * n_dims + k] += force / r * force_vector[k];
-	forces[j * n_dims + k] -= force / r * force_vector[k];
+	
+#pragma omp critical (update_forces)
+	for(k = 0; k < n_dims; k++)  {
+	  forces[i * n_dims + k] += force / r * force_vector[k];
+	  forces[j * n_dims + k] -= force / r * force_vector[k];
+	}
+	
+	penergy += 4 * epsilon * (pow(sigma / r, 12) - pow(sigma / r, 6)) - 4 * epsilon * (pow(sigma / rcut, 12) - pow(sigma / rcut, 6));
       }
 
-      penergy += 4 * epsilon * (pow(sigma / r, 12) - pow(sigma / r, 6)) - 4 * epsilon * (pow(sigma / rcut, 12) - pow(sigma / rcut, 6));
-    }
-    offset += nlist->nlist_count[i];
-  }  
+      offset += nlist->nlist_count[i];
+    }  
+
+  }
+
   return(penergy);  
 }
 

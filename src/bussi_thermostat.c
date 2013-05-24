@@ -53,14 +53,15 @@ double thermostat(double temperature, double time_step, void* thermostat_paramet
   double etemp, scaling_factor, new_kenergy;
 
   //calculate kinetic energy
+#pragma omp parallel for default(shared) \
+  private(etemp) reduction(+:kenergy)
   for(i = 0; i < n_particles; i++) {
     etemp = 0;
     for(j = 0; j < n_dims; j++) {
       etemp += velocities[i * n_dims + j] * velocities[i * n_dims + j];
     }
     kenergy += 0.5 * etemp * masses[i];
-  }
-  
+  }  
   //Removed COM
   ndeg = (n_particles * n_dims - n_dims);
    
@@ -77,6 +78,8 @@ double thermostat(double temperature, double time_step, void* thermostat_paramet
   
   scaling_factor = sqrt(new_kenergy / kenergy);
 
+  //update velocities
+#pragma omp parallel for
   for(i = 0; i < n_particles; i++) {
     for(j = 0; j < n_dims; j++) {
       velocities[i * n_dims + j] *= scaling_factor;

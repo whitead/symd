@@ -18,10 +18,14 @@ double gather_forces(void* parameters, double* positions, double* forces, double
   double force_vector[n_dims];
 
   //zero forces
+#pragma omp parallel for
   for(i = 0; i < n_particles; i++)
     for(k = 0; k < n_dims; k++)
       forces[i * n_dims + k] = 0;
 
+#pragma parallel for default(shared) \
+  private(i, j, r, k, force_vector) \
+  reduction(+:penergy)
   for(i = 0; i < n_particles; i++) {
     for(j = i+1; j < n_particles; j++ ){
 	r = 0;
@@ -35,10 +39,13 @@ double gather_forces(void* parameters, double* positions, double* forces, double
 	  r = 0.01;
 	}
 	if(r < 1) {
+
+	  #pragma omp critical
 	  for(k = 0; k < n_dims; k++) {
 	    forces[i * n_dims + k] += -sin(PI *  r) * PI * force_vector[k] / r;
 	    forces[j * n_dims + k] +=  sin(PI *  r) * PI * force_vector[k] / r;
 	  }
+
 	  penergy += cos(PI * r);
 	} else
 	  penergy += 0;

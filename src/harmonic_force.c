@@ -7,17 +7,17 @@ double gather_forces(void* parameters, double* positions, double* forces, double
   double penergy = 0;
   double r;
 
+#pragma omp parallel for default(shared) \
+  private(r) reduction(+:penergy)
   for(i = 0; i < n_particles; i++) {
-
     r = 0;
     for(j = 0; j < n_dims; j++) {
       r += positions[i * n_dims + j] * positions[i * n_dims + j];
       forces[i * n_dims + j] = -k * positions[i * n_dims + j];
     }
-    penergy += r  / 2;
-        
+    penergy += r  / 2;        
   }
-
+  
   return(penergy);
 
 }

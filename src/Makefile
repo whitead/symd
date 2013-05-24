@@ -1,14 +1,14 @@
 CC=gcc
-CFLAGS=-g -Wall
+CFLAGS=-g -Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter
 PPFLAGS= 
 SUB_CFLAGS= $(CFLAGS) $(PPFLAGS) -o $@_$(SUFFIX).o -c
 FINISH=mv $@ ..
 MAKE_EXE=$(CC) $(CFLAGS) $(PPFLAGS) -o $@ $(UTIL_O) $(addsuffix _$(SUFFIX).o, $^) -lgsl -lblas -lm main_loop.c
 
 
-.PHONY: clean all all-profile all-optimize
+.PHONY: clean all all-single all
 
-all:
+all-single:
 	make harmonic_vverlet
 	make lj_vverlet
 	make harmonic_vverlet_anderson
@@ -17,16 +17,7 @@ all:
 	make harmonic_vverlet_bussi
 	make soft_vverlet
 
-all-profile:
-	make profile harmonic_vverlet
-	make profile lj_vverlet
-	make profile harmonic_vverlet_anderson
-	make profile lj_vverlet_bussi
-	make profile lj_vverlet_anderson
-	make profile harmonic_vverlet_bussi
-	make profile soft_vverlet
-
-all-optimize:
+all:
 	make optimize harmonic_vverlet
 	make optimize lj_vverlet
 	make optimize harmonic_vverlet_anderson
@@ -69,11 +60,7 @@ util: util.c util.h *.h
 	$(CC) $(SUB_CFLAGS) util.c
 
 
-profile: CFLAGS += -fprofile-generate -march=native -Ofast
-profile: FINISH = cd profile && ../$@ run_params_$(PARAMS).txt
-profile: $(filter-out profile, $(MAKECMDGOALS))
-
-optimize: CFLAGS += -fprofile-use -march=native -Ofast
+optimize: CFLAGS += -fopenmp -march=native -Ofast
 optimize: $(filter-out optimize, $(MAKECMDGOALS))
 
 soft_vverlet: SUFFIX = s
