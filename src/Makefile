@@ -3,21 +3,13 @@ CFLAGS=-g -Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter
 PPFLAGS= 
 SUB_CFLAGS= $(CFLAGS) $(PPFLAGS) -o $@_$(SUFFIX).o -c
 FINISH=mv $@ ..
-MAKE_EXE=$(CC) $(CFLAGS) $(PPFLAGS) -o $@ $(UTIL_O) $(addsuffix _$(SUFFIX).o, $^) -lgsl -lblas -lm main_loop.c
+MAKE_EXE_FLAGS=
+MAKE_EXE=$(CC) $(CFLAGS) $(PPFLAGS) $(MAKE_EXE_FLAGS) -o $@ $(UTIL_O) $(addsuffix _$(SUFFIX).o, $^) -lgsl -lblas -lm main_loop.c
 
 
-.PHONY: clean all all-single all
+.PHONY: clean all all-single all all-debug
 
 all-single:
-	make harmonic_vverlet
-	make lj_vverlet
-	make harmonic_vverlet_anderson
-	make lj_vverlet_bussi
-	make lj_vverlet_anderson
-	make harmonic_vverlet_bussi
-	make soft_vverlet
-
-all:
 	make optimize harmonic_vverlet
 	make optimize lj_vverlet
 	make optimize harmonic_vverlet_anderson
@@ -25,6 +17,24 @@ all:
 	make optimize lj_vverlet_anderson
 	make optimize harmonic_vverlet_bussi
 	make optimize soft_vverlet
+
+all:
+	make openmp optimize harmonic_vverlet
+	make openmp optimize lj_vverlet
+	make openmp optimize harmonic_vverlet_anderson
+	make openmp optimize lj_vverlet_bussi
+	make openmp optimize lj_vverlet_anderson
+	make openmp optimize harmonic_vverlet_bussi
+	make openmp optimize soft_vverlet
+
+all-debug:
+	make harmonic_vverlet
+	make lj_vverlet
+	make harmonic_vverlet_anderson
+	make lj_vverlet_bussi
+	make lj_vverlet_anderson
+	make harmonic_vverlet_bussi
+	make soft_vverlet
 
 
 
@@ -59,8 +69,11 @@ bussi_thermostat: util.c util.h bussi_thermostat.c thermostat.h
 util: util.c util.h *.h
 	$(CC) $(SUB_CFLAGS) util.c
 
+openmp: CFLAGS += -fopenmp
+openmp: $(filter-out openmp, $(MAKECMDGOALS))
 
-optimize: CFLAGS += -fopenmp -march=native -Ofast
+optimize: CFLAGS += -march=native -Ofast -fmodulo-sched-allow-regmoves
+optimize: MAKE_EXE_FLAGS += -fwhole-program
 optimize: $(filter-out optimize, $(MAKECMDGOALS))
 
 soft_vverlet: SUFFIX = s
