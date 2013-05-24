@@ -2,17 +2,18 @@ Simple Molecular Dynamics Engine
 =========================
 
 This code, written in `C`, is meant to be a simple, accurate, and
-easily modified (by me) MD engine for 2D, 3D LJ fluids and 1D, 2D,
-and 3D harmonic oscillators. I use it to test MD methods and sometimes
+easily modified (by me) MD engine for 2D, 3D LJ fluids and 1D, 2D, and
+3D harmonic oscillators. I use it to test MD methods and sometimes
 post my explorations to [my
 blog](http://crowsandcats.blogspot.com). The goal is to keep the code
-base around 1500 lines at all times.
+base around 1000 lines at all times. 500 lines are for I/O.
 
 
 The code has the following features:
 
 * Conserves energy
 * Linear scaling wrt atom number with cell/verlet lists
+* Multithreading with a few well-placed omp pragmas
 * Arbitrary dimension number
 * Velocity-Verlet integrator
 * Anderson thermostat
@@ -36,11 +37,13 @@ Anderson thermostat, and a harmonic force field you use
     make harmonic_vverlet_anderson
 
 If you choose `make all`, then all possible versions will be compiled.
+Type `make all-single` to use the single threaded versions.
 
-Profile/Optimizing
--------------------------
-The makefile includes the ability to profile and then optimize the code.
-This may be completed by running `make all-profile` followed by `make all-optimize`.
+Python Interface
+-----------------
+TODO: write this section
+
+Try running `python Tester.py` in the python directory
 
 Example
 -------------------------
@@ -48,6 +51,7 @@ Examples may be run with:
 
     cd example_example
     ../name_of_executable run_params.txt
+
 
 TODO/Thoughts/Notes
 -------------------------
