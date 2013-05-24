@@ -160,7 +160,7 @@ class ThermostatTest(Test):
         self.name = "Thermostat test `%s`" % name
         self.md = md
         self.passed = False
-        self.equil_frac = 0.05
+        self.equil_frac = 0.30
 
         self.mtol = 1e-10
         self.ptol = 0.05
@@ -212,16 +212,19 @@ class ThermostatTest(Test):
         temperature_smooth = np.convolve(weights / weights.sum(), md.temperature[max(start_index - window + 1, 0):], mode='valid')
 
         ax.plot(md.out_times[(len(md.out_times) - len(temperature_smooth)):], temperature_smooth, linewidth=2, color="r")
-        ax.set_title('Time vs $\Delta T$')
+
+        ax.axhline(set_temperature, color="green", linewidth=2)
+
+        ax.set_title('Time vs Temperature')
         ax.set_xlabel('time')
-        ax.set_ylabel('$\Delta T$')
+        ax.set_ylabel('$T$')
         ax.grid(True)
 
         ax = plt.subplot2grid((2,2), (1,0))
         
         ax.hist(temperature - set_temperature, 50, normed=1, facecolor="blue", alpha=0.75)
         
-        ax.axvline(0)
+        ax.axvline(0, color="green", linewidth=2)
         
         ax.set_xlabel("$\Delta$Temperature")
         ax.set_ylabel("Density")
@@ -280,8 +283,8 @@ if __name__ == "__main__":
     runner = Tester(md, "LJ_4_NVE")
     runner.run()
 
-    md = SimpleMD(100, 3, steps=50000, temperature=0.7, exeDir="test")
-    md.log_output(period=10)
+    md = SimpleMD(100, 3, steps=500000, temperature=0.7, exeDir="test")
+    md.log_output(period=100)
     md.setup_positions(0.7)
     md.setup_masses(1)
 
