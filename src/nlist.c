@@ -69,6 +69,7 @@ void update_nlist(double* positions,
     dist = 0;
     for(k = 0; k < n_dims; k++) {
       temp = (positions[i * n_dims + k] - nlist->last_positions[i * n_dims + k]);
+      temp = min_image_dist(temp, box_size[k]);
       dist += temp * temp;
     }
     if(dist > max1) {
@@ -78,8 +79,8 @@ void update_nlist(double* positions,
     }
   }
   if(max1 + max2 > nlist->skin)  {
-#ifdef COUNT_LIST
-    printf("updating nlist due to %g + %g > %g\n", max1, ,max2, nlist->skin);
+#ifdef COUNT_NLIST
+    printf("updating nlist due to %f + %f > %f\n", max1, max2, nlist->skin);
 #endif
     build_list(positions, box_size, n_dims, n_particles, nlist);
   }
