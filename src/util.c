@@ -1,9 +1,14 @@
 #include "util.h"
 
+
 #define ARG_BUFFER 150
 #define STRING_BUFFER 50
 #define KEY 0
 #define VALUE 1
+
+static const char*  
+default_json       = " { \"com_remove_period\" : 1000, \"skin\" : 0, \"thermostat_seed\" : 1523, \"anderson_nu\" : 10.0, \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0,  \"velocity_seed\" : 543214, \"position_log_period\" : 0, \"velocity_log_period\" : 0, \"force_log_period\" : 0} ";
+
 
 double* generate_velocities(double temperature, unsigned int seed, double* masses, unsigned int n_dims, unsigned int n_particles) {
 
@@ -38,7 +43,203 @@ double* generate_velocities(double temperature, unsigned int seed, double* masse
 }
 
 
-Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params) {
+void load_json(char* filename, char** data) {
+
+  FILE* f;
+
+  if(!filename) { //stdin    
+    f = stdin;    
+  } else {//file
+    //get file length
+    f = fopen(filename,"rb");
+  }
+
+  fseek(f,0,SEEK_END);
+  long len = ftell(f);
+  //reset file
+  fseek(f,0,SEEK_SET);
+  //load data
+  *data = (char*) malloc(len+1);
+  fread(*data,1,len,f);
+
+  if(filename)
+    fclose(f);
+
+}
+
+cJSON* retrieve_item(cJSON* root, cJSON* default_root, const char* item_name) {
+  cJSON* item = cJSON_GetObjectItem(root, item_name);
+  if(!item) { //check if it's in the default parameter list
+    item = cJSON_GetObjectItem(default_root, item_name);
+    if(item) {
+      fprintf(stderr, "Warning: assuming default value for %s = ", item_name);
+      switch(item->type) {
+      case cJSON_False:
+	fprintf(stderr, "false\n");
+	break;
+      case cJSON_True:
+	fprintf(stderr, "true\n");
+	break;
+      case cJSON_Number:
+	fprintf(stderr, "%g\n", item->valuedouble);
+	break;
+      case cJSON_String:
+	fprintf(stderr, "%s\n", item->valuestring);
+	break;
+      }
+	
+    }
+    else {
+      fprintf(stderr, "Error: could not read %s and no default value\n", item_name);
+      exit(1);
+    }
+  }
+
+  return item;
+}
+
+Run_Params* read_parameters(char* file_name) {
+
+  char* data;
+  load_json(file_name, &data);
+  cJSON* root = cJSON_Parse(data);
+  cJSON* default_root = cJSON_Parse(default_json);
+  cJSON* item;
+  
+  if (!root) {
+    printf("Error before: [%s]\n",cJSON_GetErrorPtr());
+    return NULL;
+  }
+
+  Run_Params* params = (Run_Params*) malloc(sizeof(Run_Params));
+
+
+  //get single value parameters
+  params->steps = (unsigned int) retrieve_item(root, default_root, "steps")->valueint;
+  params->com_remove_period = (unsigned int) retrieve_item(root, default_root, "com_remove_period")->valueint;
+  params->time_step =  retrieve_item(root, default_root, "time_step")->valuedouble;
+
+  params->temperature = retrieve_item(root, default_root, "temperature")->valuedouble;
+
+  params->n_dims = (unsigned int) retrieve_item(root, default_root, "n_dims")->valueint;
+  params->n_particles = (unsigned int) retrieve_item(root, default_root, "n_particles")->valueint;
+
+  params->print_period =  (unsigned int) retrieve_item(root, default_root, "print_period")->valueint;
+
+  params->position_log_period =  (unsigned int) retrieve_item(root, default_root, "position_log_period")->valueint;
+  params->position_log_period = (params->position_log_period == 0 ? params->print_period : params->position_log_period);
+
+  params->velocity_log_period =  (unsigned int) retrieve_item(root, default_root, "velocity_log_period")->valueint;
+  params->velocity_log_period = (params->velocity_log_period == 0 ? params->print_period : params->velocity_log_period);
+
+  params->force_log_period =  (unsigned int) retrieve_item(root, default_root, "force_log_period")->valueint;
+  params->force_log_period = (params->force_log_period == 0 ? params->print_period : params->force_log_period);
+
+  
+  //box size
+#ifndef NO_PBC
+
+  unsigned int i;
+  params->box_size = (double*) malloc(sizeof(double) * params->n_dims);
+  
+  item = retrieve_item(root, default_root, "box_size");
+  i = 0;
+  for(item = item->child; item != NULL; item = item->next) {
+    params->box_size[i] = item->valuedouble;
+    i++;
+  }
+  if(i != params->n_dims) {
+    fprintf(stderr, "Error: Number of box dimensions not equal to simulation dimension\n");
+    exit(1);
+  }
+  
+#endif
+
+  //neighbor list parameters
+#ifdef NLIST
+  
+  double rcut = retrieve_item(root, default_root, "rcut")->valuedouble;
+  double skin = retrieve_item(root, default_root, "skin")->valuedouble;
+  if(skin == 0) {
+    skin = 0.2 * rcut;
+    fprintf(stderr, "Warning: Assuming skin = %g\n", skin);
+  }
+
+  Nlist_Parameters* nlist = build_nlist_params(params->n_dims, params->n_particles,
+					       params->box_size, skin, rcut);
+#endif//NLIST
+
+  //thermostats
+#ifdef ANDERSON
+
+  unsigned int seed = (unsigned int) retrieve_item(root, default_root, "thermostat_seed")->valueint;
+  double collision_freq = retrieve_item(root, default_root, "anderson_nu")->valuedouble;
+  params->thermostat_parameters = build_anderson(seed, collision_freq);
+
+#endif//ANDERSON
+
+#ifdef BUSSI
+
+  unsigned int seed = (unsigned int) retrieve_item(root, default_root, "thermostat_seed")->valueint;
+  double taut = retrieve_item(root, default_root, "bussi_taut")->valuedouble;
+  params->thermostat_parameters = build_bussi(seed, taut);
+
+#endif//BUSSI
+  
+#ifdef HARMONIC
+  double k = retrieve_item(root, default_root, "harmonic_constant")->valuedouble;
+  params->force_parameters = build_harmonic(k);
+#endif//HARMONIC
+
+#ifdef LJ
+  double epsilon = retrieve_item(root, default_root, "lj_epsilon")->valuedouble;
+  double sigma = retrieve_item(root, default_root, "lj_sigma")->valuedouble;
+  params->force_parameters = build_lj(epsilon, sigma, nlist);
+#endif//LJ
+
+  //load input files
+  char* positions_file = retrieve_item(root, default_root, "start_positions")->valuestring; 
+  params->initial_positions = load_matrix(positions_file, params->n_particles, params->n_dims, 0);
+  
+  char* masses_file = retrieve_item(root, default_root, "masses_file")->valuestring;
+  params->masses = load_matrix(masses_file, params->n_particles, 1, 0);
+
+  item = cJSON_GetObjectItem(root, "start_velocities");
+  if(!item) {
+    unsigned int velocity_seed = (unsigned int) retrieve_item(root, default_root, "velocity_seed")->valueint;
+    params->initial_velocities = 
+      generate_velocities(params->temperature, velocity_seed, 
+			  params->masses, params->n_dims,
+			  params->n_particles);
+  } else {
+        params->initial_velocities = 
+	  load_matrix(item->valuestring, params->n_particles, params->n_dims, 0);
+  }
+
+  //prepare output files
+  item = cJSON_GetObjectItem(root, "positions_log_file");
+  if(item)
+    params->positions_file = fopen(item->valuestring, "w");
+
+
+  item = cJSON_GetObjectItem(root, "velocities_log_file");
+  if(item)
+    params->positions_file = fopen(item->valuestring, "w");
+
+  item = cJSON_GetObjectItem(root, "forces_log_file");
+  if(item)
+    params->positions_file = fopen(item->valuestring, "w");
+    
+
+  free(data);
+  cJSON_Delete(root);
+  cJSON_Delete(default_root);
+
+  return params;
+  
+}
+
+Run_Params* read_parameters_old(FILE* params_file, const Run_Params* default_params) {
 
 
   //set up a buffer for all the arguments. The first dimension is file row, the second

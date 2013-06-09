@@ -6,6 +6,7 @@
 #include <string.h>
 #include "thermostat.h"
 #include "force.h"
+#include "cJSON.h"
 
 #ifndef UTIL_H_
 #define UTIL_H_
@@ -73,9 +74,9 @@ void log_array(FILE* file, double* array, unsigned n_cols, unsigned n_rows, bool
 double* load_matrix(char* filename, unsigned int nrow, unsigned int ncol, unsigned int skip);
 
 /*
- * Read in the given parameters. Pass NULL for default_params if not known.
+ * Read in the given parameters.
  */
-Run_Params* read_parameters(FILE* params_file, const Run_Params* default_params);
+Run_Params* read_parameters(char* params_file);
 
 
 unsigned int process_uint(char*** pstrings, char* key, bool* success);
