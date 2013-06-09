@@ -3,14 +3,14 @@
 
 int main(int argc, char* argv[]) {
 
-  FILE* arguments;
+  char* pfile;
   //process arguemnts to get parameters
   if(argc == 0)
-    arguments = NULL;
+    pfile = NULL;
   else
-    arguments = fopen(argv[1], "r");
+    pfile = argv[1];
 
-  Run_Params* p = read_parameters(arguments, NULL);
+  Run_Params* p = read_parameters(pfile);
 
   //start main loop
   main_loop(p);
