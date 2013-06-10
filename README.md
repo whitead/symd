@@ -6,7 +6,7 @@ easily modified (by me) MD engine for 2D, 3D LJ fluids and 1D, 2D, and
 3D harmonic oscillators. I use it to test MD methods and sometimes
 post my explorations to [my
 blog](http://crowsandcats.blogspot.com). The goal is to keep the code
-base around 1000 lines at all times. 500 lines are for I/O.
+base around 1000 lines at all times. 300 lines are for I/O.
 
 
 The code has the following features:
@@ -20,6 +20,7 @@ The code has the following features:
 * Bussi thermostat
 * Lennard-Jones (truncated & shifted), Harmonic Forces, and a cosine soft potential for removing overlap
 * Input velocities, positions (XYZ Format)
+* Input file format is JSON
 * Output forces, temperature, energy, velocities, positions (XYZ Format), etc.
 * Periodic boundary conditions (or not for harmonic oscillator)
 * g(r) script that corrects for [cube-sphere intersection volume](http://crowsandcats.blogspot.com/2013/05/extending-radial-distributions.html)
