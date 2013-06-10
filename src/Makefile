@@ -26,6 +26,7 @@ all:
 	make openmp optimize lj_vverlet_anderson
 	make openmp optimize harmonic_vverlet_bussi
 	make openmp optimize soft_vverlet
+	clean
 
 all-debug:
 	make harmonic_vverlet
@@ -133,4 +134,4 @@ harmonic_vverlet_bussi: min_image_nopbc bussi_thermostat harmonic_force vverlet 
 
 clean: 
 	rm -f *.o
-	rm -f *.gcda
+
