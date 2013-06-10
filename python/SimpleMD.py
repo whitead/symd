@@ -156,7 +156,7 @@ class SimpleMD:
 
             #prevent overlap from cleaning out position file
             overlapMD.runParams['start_positions'] = ''
-            #overlapMD.clean_files()
+            overlapMD.clean_files()
 
         self.position_ready = True
                     
@@ -198,9 +198,6 @@ class SimpleMD:
 
         output,outerr = proc.communicate(json.dumps(self.runParams))
         
-        print outerr
-        
-
         if(self.do_log_output):
             with open(self.runParams['log_file'], 'w') as f:
                 f.write(output)
