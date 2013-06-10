@@ -1,5 +1,7 @@
 #include "util.h"
 
+#define PARAM_FILE_BUFFER 1024
+
 static const char*  
 default_json       = " { \"com_remove_period\" : 1000, \"skin\" : 0, \"thermostat_seed\" : 1523, \"anderson_nu\" : 10.0, \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0,  \"velocity_seed\" : 543214, \"position_log_period\" : 0, \"velocity_log_period\" : 0, \"force_log_period\" : 0} ";
 
@@ -43,21 +45,39 @@ void load_json(char* filename, char** data) {
 
   if(!filename) { //stdin    
     f = stdin;    
+    //create buffer
+    int buffer_size = PARAM_FILE_BUFFER;
+    char* buffer = (char*) malloc(buffer_size);
+    //read in up to buffer size
+    int len = fread(buffer,  sizeof(char),  PARAM_FILE_BUFFER, f);
+    //while we fill the buffer, keep reading
+    while(len % buffer_size == 0) {
+      buffer_size += PARAM_FILE_BUFFER;
+      buffer = (char*) realloc(buffer, buffer_size);
+      len += fread((void*) (buffer + len), sizeof(char), PARAM_FILE_BUFFER, f);
+    }
+
+    if(ferror(f)) {
+      perror("Error reading input stream");
+    }
+    
+    //trim to size
+    buffer = (char*) realloc(buffer, len);
+    *data = buffer;
+    
   } else {//file
     //get file length
     f = fopen(filename,"rb");
+    fseek(f,0,SEEK_END);
+    long len = ftell(f);
+    //reset file
+    fseek(f,0,SEEK_SET);
+    //load data
+    *data = (char*) malloc(len+1);
+    fread(*data,1,len,f);
+    fclose(f);
   }
 
-  fseek(f,0,SEEK_END);
-  long len = ftell(f);
-  //reset file
-  fseek(f,0,SEEK_SET);
-  //load data
-  *data = (char*) malloc(len+1);
-  fread(*data,1,len,f);
-
-  if(filename)
-    fclose(f);
 
 }
 
@@ -101,8 +121,8 @@ Run_Params* read_parameters(char* file_name) {
   cJSON* item;
   
   if (!root) {
-    printf("Error before: [%s]\n",cJSON_GetErrorPtr());
-    return NULL;
+    fprintf(stderr, "Error before: [%s]\n",cJSON_GetErrorPtr());
+    exit(1);
   }
 
   Run_Params* params = (Run_Params*) malloc(sizeof(Run_Params));
@@ -214,15 +234,21 @@ Run_Params* read_parameters(char* file_name) {
   item = cJSON_GetObjectItem(root, "positions_log_file");
   if(item)
     params->positions_file = fopen(item->valuestring, "w");
+  else
+    params->positions_file = NULL;
 
 
   item = cJSON_GetObjectItem(root, "velocities_log_file");
   if(item)
-    params->positions_file = fopen(item->valuestring, "w");
+    params->velocities_file = fopen(item->valuestring, "w");
+  else
+    params->velocities_file = NULL;
 
   item = cJSON_GetObjectItem(root, "forces_log_file");
   if(item)
-    params->positions_file = fopen(item->valuestring, "w");
+    params->forces_file = fopen(item->valuestring, "w");
+  else
+    params->forces_file = NULL;
     
 
   free(data);

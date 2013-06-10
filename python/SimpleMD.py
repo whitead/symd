@@ -1,4 +1,4 @@
-import os, sys, subprocess
+import os, sys, subprocess, json
 from math import *
 import numpy as np
 import build_lattice
@@ -112,16 +112,12 @@ class SimpleMD:
             raise Exception('Incorrect number of box dimensions. Must be %d' % self.ndims)
 
         self.runParams['start_positions'] = start_positions
-
-        for i in range(self.ndims):
-            self.runParams['box_%d_size' % (i + 1)] = box_size[i]
-
-        self.box_size = box_size
+        self.runParams['box_size'] = box_size
 
         if(overwrite):
             increment = build_lattice.increment_size(self.ndims, box_size, self.nparticles)
 
-            temp = sys.stdout            
+            temp = sys.stdout    
 
             with open(start_positions, 'w') as f:
                 sys.stdout = f
@@ -160,7 +156,7 @@ class SimpleMD:
 
             #prevent overlap from cleaning out position file
             overlapMD.runParams['start_positions'] = ''
-            overlapMD.clean_files()
+            #overlapMD.clean_files()
 
         self.position_ready = True
                     
@@ -197,21 +193,20 @@ class SimpleMD:
 
         out_arrays = (self.temperature, self.pe, self.ke, self.te, self.htherm)
 
-        input_string = []
-        
-        for k in self.runParams.iterkeys():
-            input_string.append('%s %s\n' % (k, self.runParams[k]))
-
         proc = subprocess.Popen(self.exe, stdin=subprocess.PIPE, bufsize=4096,
                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        output,outerr = proc.communicate(''.join(input_string))
+        output,outerr = proc.communicate(json.dumps(self.runParams))
+        
+        print outerr
+        
 
         if(self.do_log_output):
             with open(self.runParams['log_file'], 'w') as f:
                 f.write(output)
 
         self.outerr = outerr
+
 
         index = 0
 
@@ -238,7 +233,7 @@ class SimpleMD:
             raise Exception("Must execute SimpleMD before calculating statistics")
         if(not self.runParams.has_key('positions_log_file')):
             raise Exception("Must call log_positions with SimpleMD to calculate gofr")
-        return gofr.calc_gofr(self.runParams['positions_log_file'], self.box_size, 
+        return gofr.calc_gofr(self.runParams['positions_log_file'], self.runParams['box_size'], 
                          bin_width=bin_width, ndims=self.ndims)
         
 
