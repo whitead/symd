@@ -4,7 +4,7 @@ PPFLAGS=
 SUB_CFLAGS= $(CFLAGS) $(PPFLAGS) -o $@_$(SUFFIX).o -c
 FINISH=mv $@ ..
 MAKE_EXE_FLAGS=
-MAKE_EXE=$(CC) $(CFLAGS) $(PPFLAGS) $(MAKE_EXE_FLAGS) -o $@ $(UTIL_O) $(addsuffix _$(SUFFIX).o, $^) -lgsl -lblas -lm cJSON.c main_loop.c
+MAKE_EXE=$(CC) $(CFLAGS) $(PPFLAGS) $(MAKE_EXE_FLAGS) -o $@ $(UTIL_O) $(addsuffix _$(SUFFIX).o, $^) -lgsl -lblas -lm main_loop.c
 
 
 .PHONY: clean all all-single all all-debug
@@ -37,6 +37,8 @@ all-debug:
 	make soft_vverlet
 
 
+cJSON: cJSON.c cJSON.h
+	$(CC) $(SUB_CFLAGS) cJSON.c
 
 nlist: nlist.c nlist.h
 	$(CC) $(SUB_CFLAGS) nlist.c
@@ -74,18 +76,19 @@ openmp: $(filter-out openmp, $(MAKECMDGOALS))
 
 
 optimize: CFLAGS += -march=native -Ofast -fmodulo-sched-allow-regmoves
+optimize: MAKE_EXE_FLAGS += -fwhole-program
 optimize: $(filter-out optimize, $(MAKECMDGOALS))
 
 soft_vverlet: SUFFIX = s
 soft_vverlet: PARAMS = soft
-soft_vverlet: min_image soft_force vverlet util
+soft_vverlet: min_image soft_force vverlet util cJSON
 	$(MAKE_EXE)
 	$(FINISH)	  
 
 harmonic_vverlet: PPFLAGS += -DHARMONIC -DNO_PBC
 harmonic_vverlet: SUFFIX = hv
 harmonic_vverlet: PARAMS=harmonic
-harmonic_vverlet: min_image_nopbc vverlet harmonic_force nlist util
+harmonic_vverlet: min_image_nopbc vverlet harmonic_force nlist util cJSON
 	$(MAKE_EXE)
 	$(FINISH)
 
@@ -93,21 +96,21 @@ harmonic_vverlet: min_image_nopbc vverlet harmonic_force nlist util
 lj_vverlet: PPFLAGS += -DLJ
 lj_vverlet: SUFFIX = ljv
 lj_vverlet: PARAMS=lj
-lj_vverlet: min_image lj_force vverlet nlist util
+lj_vverlet: min_image lj_force vverlet nlist util cJSON
 	$(MAKE_EXE)
 	$(FINISH)
 
 harmonic_vverlet_anderson: PPFLAGS += -DHARMONIC -DNO_PBC -DANDERSON
 harmonic_vverlet_anderson: SUFFIX = hva
 harmonic_vverlet_anderson: PARAMS=harmonic
-harmonic_vverlet_anderson: min_image_nopbc anderson_thermostat vverlet harmonic_force nlist util
+harmonic_vverlet_anderson: min_image_nopbc anderson_thermostat vverlet harmonic_force nlist util cJSON
 	$(MAKE_EXE)
 	$(FINISH)
 
 lj_vverlet_bussi: PPFLAGS += -DLJ -DBUSSI
 lj_vverlet_bussi: SUFFIX = ljvb
 lj_vverlet_bussi: PARAMS=lj
-lj_vverlet_bussi: min_image bussi_thermostat lj_force vverlet nlist util
+lj_vverlet_bussi: min_image bussi_thermostat lj_force vverlet nlist util cJSON
 	$(MAKE_EXE)
 	$(FINISH)
 
@@ -115,7 +118,7 @@ lj_vverlet_bussi: min_image bussi_thermostat lj_force vverlet nlist util
 lj_vverlet_anderson: PPFLAGS += -DLJ -DANDERSON
 lj_vverlet_anderson: SUFFIX = ljvb
 lj_vverlet_anderson: PARAMS=lj
-lj_vverlet_anderson: min_image anderson_thermostat lj_force vverlet nlist util
+lj_vverlet_anderson: min_image anderson_thermostat lj_force vverlet nlist util cJSON
 	$(MAKE_EXE)
 	$(FINISH)
 
@@ -123,7 +126,7 @@ lj_vverlet_anderson: min_image anderson_thermostat lj_force vverlet nlist util
 harmonic_vverlet_bussi: PPFLAGS += -DHARMONIC -DBUSSI -DNO_PBC
 harmonic_vverlet_bussi: SUFFIX = hvb
 harmonic_vverlet_bussi: PARAMS=harmonic
-harmonic_vverlet_bussi: min_image_nopbc bussi_thermostat harmonic_force vverlet util nlist
+harmonic_vverlet_bussi: min_image_nopbc bussi_thermostat harmonic_force vverlet util cJSON nlist
 	$(MAKE_EXE)
 	$(FINISH)
 
