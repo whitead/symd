@@ -4,7 +4,7 @@ PPFLAGS=
 SUB_CFLAGS= $(CFLAGS) $(PPFLAGS) -o $@_$(SUFFIX).o -c
 FINISH=mv $@ ..
 MAKE_EXE_FLAGS=
-MAKE_EXE=$(CC) $(CFLAGS) $(PPFLAGS) $(MAKE_EXE_FLAGS) -o $@ $(UTIL_O) $(addsuffix _$(SUFFIX).o, $^) -lgsl -lblas -lm main_loop.c
+MAKE_EXE=$(CC) $(CFLAGS) $(PPFLAGS) $(MAKE_EXE_FLAGS) -o $@ $(UTIL_O) $(addsuffix _$(SUFFIX).o, $^) -lgsl -lblas -lm cJSON.c main_loop.c
 
 
 .PHONY: clean all all-single all all-debug
@@ -72,8 +72,8 @@ util: util.c util.h *.h
 openmp: CFLAGS += -fopenmp
 openmp: $(filter-out openmp, $(MAKECMDGOALS))
 
+
 optimize: CFLAGS += -march=native -Ofast -fmodulo-sched-allow-regmoves
-optimize: MAKE_EXE_FLAGS += -fwhole-program
 optimize: $(filter-out optimize, $(MAKECMDGOALS))
 
 soft_vverlet: SUFFIX = s
