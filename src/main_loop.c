@@ -5,9 +5,9 @@ int main(int argc, char* argv[]) {
 
   char* pfile;
   //process arguemnts to get parameters
-  if(argc == 0)
-    pfile = NULL;
-  else
+  pfile = NULL;
+
+  if(argc == 1)
     pfile = argv[1];
 
   Run_Params* p = read_parameters(pfile);
