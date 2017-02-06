@@ -43,7 +43,8 @@ void load_json(char* filename, char** data) {
 
   FILE* f;
 
-  if(!filename) { //stdin    
+  if(!filename) { //stdin
+    fprintf(stdout, "Assuming you'll pass parameters via stdin. Waiting...\n");
     f = stdin;    
     //create buffer
     int buffer_size = PARAM_FILE_BUFFER;
@@ -149,12 +150,12 @@ Run_Params* read_parameters(char* file_name) {
   params->force_log_period =  (unsigned int) retrieve_item(root, default_root, "force_log_period")->valueint;
   params->force_log_period = (params->force_log_period == 0 ? params->print_period : params->force_log_period);
 
-  
+
+  params->box_size = (double*) calloc(params->n_dims,sizeof(double));  
   //box size
 #ifndef NO_PBC
 
   unsigned int i;
-  params->box_size = (double*) malloc(sizeof(double) * params->n_dims);
   
   item = retrieve_item(root, default_root, "box_size");
   i = 0;

@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
   //process arguemnts to get parameters
   pfile = NULL;
 
-  if(argc == 1)
+  if(argc == 2)
     pfile = argv[1];
 
   Run_Params* p = read_parameters(pfile);

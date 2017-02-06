@@ -1,18 +1,20 @@
-steps 100000
-time_step 0.005
-temperature 0.7
-velocity_seed 456415615
-anderson_nu 100
-bussi_taut 1
-thermostat_seed 1565
-rcut 3
-n_dims 3
-box_1_size 5.2
-box_2_size 5.2
-box_3_size 5.2
-n_particles 100
-masses_file masses.txt
-start_positions start_positions.xyz
-print_period 100
-positions_log_file positions.xyz
-position_log_period 1
+{
+    "steps": 100000,
+    "time_step": 0.005,
+    "temperature": 0.7,
+    "velocity_seed": 456415615,
+    "anderson_nu": 100,
+    "bussi_taut": 1,
+    "thermostat_seed": 1565,
+    "rcut": 3,
+    "n_dims": 3,
+    "box_1_size": 5.2,
+    "box_2_size": 5.2,
+    "box_3_size": 5.2,
+    "n_particles": 100,
+    "masses_file": "masses.txt",
+    "start_positions": "start_positions.xyz",
+    "print_period": 100,
+    "positions_log_file": "positions.xyz",
+    "position_log_period": 1
+}

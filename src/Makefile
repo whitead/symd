@@ -26,7 +26,7 @@ all:
 	make openmp optimize lj_vverlet_anderson
 	make openmp optimize harmonic_vverlet_bussi
 	make openmp optimize soft_vverlet
-	clean
+	make clean
 
 all-debug:
 	make harmonic_vverlet
