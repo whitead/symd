@@ -29,6 +29,11 @@ The code has the following features:
 
 Compiling
 -------------------------
+
+### Dependencies
+
+ * libgsl-dev (GNU Scientific Library headers)
+
 Compiling is a little different
 than normal. The thermostat, forcefield and integrator are specified
 in the `Makefile.` Thus, to compile with a Verlet Integrator, an
