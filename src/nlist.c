@@ -11,16 +11,18 @@ unsigned int insert_grow(unsigned int index, unsigned int value, unsigned int **
 /*
  * build the neighbor list
  */
-void build_list(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, nlist_parameters_t *nlist);
+void build_list(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, nlist_parameters_t *nlist);
 
 /*
  * Precompute cells used for constructing neighbor lists.
  * Note: this is not ready to be called multiple times. If there
  * ever is barostatting, this needs work.
  */
-void build_cells(double *box_size, unsigned int n_dims, unsigned int n_particles, nlist_parameters_t *nlist);
+void build_cells(double *box_size, unsigned int n_dims,
+                 unsigned int n_particles, unsigned int n_ghost_particles,
+                 nlist_parameters_t *nlist);
 
-nlist_parameters_t *build_nlist_params(unsigned int n_dims, unsigned int n_particles, double *box_size, double skin, double rcut)
+nlist_parameters_t *build_nlist_params(unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, double *box_size, double skin, double rcut)
 {
 
   nlist_parameters_t init = {.rcut = rcut * rcut, .skin = skin * skin, .skin_rcut = (rcut + skin) * (rcut + skin)};
@@ -28,7 +30,7 @@ nlist_parameters_t *build_nlist_params(unsigned int n_dims, unsigned int n_parti
   memcpy(nlist, &init, sizeof(nlist_parameters_t));
   nlist->nlist = NULL;
   nlist->last_positions = (double *)malloc(sizeof(double) * n_particles * n_dims);
-  build_cells(box_size, n_dims, n_particles, nlist);
+  build_cells(box_size, n_dims, n_particles, n_ghost_particles, nlist);
   return nlist;
 }
 
@@ -51,12 +53,13 @@ void update_nlist(double *positions,
                   double *box_size,
                   unsigned int n_dims,
                   unsigned int n_particles,
+                  unsigned int n_ghost_particles,
                   nlist_parameters_t *nlist)
 {
 
   if (nlist->nlist == NULL)
   {
-    build_list(positions, box_size, n_dims, n_particles, nlist);
+    build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
   }
 
   double dist, temp;
@@ -87,7 +90,7 @@ void update_nlist(double *positions,
 #ifdef DEBUG
     printf("updating nlist due to %f + %f > %f\n", max1, max2, nlist->skin);
 #endif
-    build_list(positions, box_size, n_dims, n_particles, nlist);
+    build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
   }
 
   return;
@@ -111,7 +114,11 @@ unsigned int gen_index_r(int *array, int *dims, unsigned int index, unsigned int
   return index;
 }
 
-void build_cells(double *box_size, unsigned int n_dims, unsigned int n_particles, nlist_parameters_t *nlist)
+void build_cells(double *box_size,
+                 unsigned int n_dims,
+                 unsigned int n_particles,
+                 unsigned int n_ghost_particles,
+                 nlist_parameters_t *nlist)
 {
 
   //rebuild the list
@@ -159,7 +166,8 @@ void build_cells(double *box_size, unsigned int n_dims, unsigned int n_particles
     nlist->map_offset = nlist->map_offset * nlist->cell_number[i] + 1;
 
   nlist->mapping =
-      (unsigned int *)malloc(sizeof(unsigned int) * (nlist->map_offset * 2 + nlist->cell_number_total));
+      (unsigned int *)malloc(sizeof(unsigned int) *
+                             (nlist->map_offset * 2 + nlist->cell_number_total));
 
   //wrapped mapping
   for (i = 0; i < nlist->map_offset; i++)
@@ -187,13 +195,13 @@ void build_cells(double *box_size, unsigned int n_dims, unsigned int n_particles
 
   //prepare cell list and head
   nlist->head = (int *)malloc(sizeof(int) * nlist->cell_number_total);
-  nlist->cell_list = (int *)malloc(sizeof(int) * n_particles);
+  nlist->cell_list = (int *)malloc(sizeof(int) * (n_particles + n_ghost_particles));
 }
 
 /*
  * Build neighbor list using cells in N-dimensions
  */
-void build_list(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, nlist_parameters_t *nlist)
+void build_list(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, nlist_parameters_t *nlist)
 {
 
   unsigned int total_n = 0;
@@ -219,7 +227,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
     nlist->head[i] = -1;
 
   //fills the list in reverse order. I didn't invent this algorithm. The person who did is a genius.
-  for (i = 0; i < n_particles; i++)
+  for (i = 0; i < n_particles + n_ghost_particles; i++)
   {
     icell = 0;
     for (k = 0; k < n_dims; k++)

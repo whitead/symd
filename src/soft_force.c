@@ -8,10 +8,10 @@
  *
  */
 
-double soft_gather_forces(force_t *parameters, double *positions, double *forces, double *masses,
-						  double *box_size, unsigned int n_dims, unsigned int n_particles)
+double soft_gather_forces(run_params_t *params, double *positions, double *forces)
 {
 
+	unsigned int n_dims = params->n_dims;
 	unsigned int i, j, k;
 	double penergy = 0;
 	double r;

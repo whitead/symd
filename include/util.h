@@ -34,6 +34,7 @@ typedef struct
   double *box_size;
   unsigned int n_dims;
   unsigned int n_particles;
+  unsigned int n_ghost_particles;
   FILE *positions_file;
   FILE *velocities_file;
   FILE *forces_file;

@@ -17,9 +17,11 @@ static inline double lj_trunc_shift(double r, double epsilon, double sigma, doub
   return lj(r, epsilon, sigma) - shift;
 }
 
-double lj_gather_forces(force_t *force_struct, double *positions, double *forces, double *masses,
-                        double *box_size, unsigned int n_dims, unsigned int n_particles)
+double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 {
+  unsigned n_dims = params->n_dims;
+  unsigned n_particles = params->n_particles;
+  double *box_size = params->box_size;
   lj_parameters_t *parameters = (lj_parameters_t *)force_struct->parameters;
   const double epsilon = parameters->epsilon;
   const double sigma = parameters->sigma;

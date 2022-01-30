@@ -6,6 +6,8 @@
 #ifndef FORCE_H_
 #define FORCE_H_
 
+typedef struct run_params_t run_params_t;
+
 typedef struct force_t force_t;
 
 typedef struct
@@ -23,13 +25,9 @@ typedef struct
 /*
  * Calculates forces and rebuilds neighbor list
  */
-typedef double (*gather_forces_t)(force_t *parameters,
+typedef double (*gather_forces_t)(run_params_t *parameters,
                                   double *positions,
-                                  double *forces,
-                                  double *masses,
-                                  double *box_size,
-                                  unsigned int n_dims,
-                                  unsigned int n_particles);
+                                  double *forces);
 //                      double *box_size, unsigned int n_dims, unsigned int n_particles)
 // double gather_forces(void *parameters, double *positions, double *forces, double *masses,
 //                      double *box_size, unsigned int n_dims, unsigned int n_particles);

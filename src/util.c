@@ -260,17 +260,6 @@ run_params_t *read_parameters(char *file_name)
     exit(1);
   }
 
-  // group
-  item = cJSON_GetObjectItem(root, "group");
-  if (item)
-  {
-    params->group = load_group(item->valuestring, params->n_dims);
-  }
-  else
-  {
-    params->group = NULL;
-  }
-
   //load input files
   char *positions_file = retrieve_item(root, default_root, "start_positions")->valuestring;
   params->initial_positions = load_matrix(positions_file, params->n_particles, params->n_dims, 0);
@@ -302,6 +291,24 @@ run_params_t *read_parameters(char *file_name)
   {
     params->initial_velocities =
         load_matrix(item->valuestring, params->n_particles, params->n_dims, 0);
+  }
+
+  // group - partition to ghost too
+  item = cJSON_GetObjectItem(root, "group");
+  if (item)
+  {
+    params->group = load_group(item->valuestring, params->n_dims);
+    params->n_particles = params->n_particles / params->group->size;
+    params->n_ghost_particles = params->n_particles * (params->group->size - 1);
+    // remove velocties on ghost particles
+    for (unsigned int i = params->n_particles; i < params->n_particles + params->n_ghost_particles; i++)
+      for (unsigned int j = 0 j < params->n_dims; j++)
+        params->initial_velocities[i * params->n_dims + j] = 0;
+  }
+  else
+  {
+    params->group = NULL;
+    params->n_ghost_particles = 0;
   }
 
   //prepare output files
