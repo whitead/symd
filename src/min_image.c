@@ -6,18 +6,16 @@ double round(double number)
   return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
 }
 
-double min_image_dist(double dx, double img) {
-#ifdef NO_PBC
+double min_image_dist(double dx, double img)
+{
+  if (img)
+    return dx - round(dx / img) * img;
   return dx;
-#else
-  return dx - round(dx / img) * img;
-#endif
 }
 
-double wrap(double x, double img) {
-#ifdef NO_PBC
+double wrap(double x, double img)
+{
+  if (img)
+    return x - floor(x / img) * img;
   return x;
-#else
-  return x - floor(x /  img) * img;
-#endif
 }

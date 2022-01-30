@@ -19,3 +19,5 @@
 #python files
 *.pyc
 
+build/*
+.vscode/*
