@@ -6,45 +6,12 @@
 #include <string.h>
 #include "thermostat.h"
 #include "cJSON.h"
-#include "group.h"
+#include "params.h"
 
 #ifndef UTIL_H_
 #define UTIL_H_
 
 #define MD_SUCCESS 0
-
-typedef struct force_t force_t;
-
-/*
-* Parameters needed to begin an MD run
-*
-*/
-typedef struct
-{
-
-  unsigned int steps;
-  unsigned int com_remove_period;
-  double time_step;
-  double temperature;
-  thermostat_t *thermostat_parameters;
-  force_t *force_parameters;
-  group_t *group;
-  double *initial_positions;
-  double *initial_velocities;
-  double *masses;
-  double *box_size;
-  unsigned int n_dims;
-  unsigned int n_particles;
-  unsigned int n_ghost_particles;
-  FILE *positions_file;
-  FILE *velocities_file;
-  FILE *forces_file;
-  unsigned int position_log_period;
-  unsigned int velocity_log_period;
-  unsigned int force_log_period;
-  unsigned int print_period;
-
-} run_params_t;
 
 /*
  * Generate a set of initial velocities from the appropiate chi-n distribution

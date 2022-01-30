@@ -209,10 +209,12 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
 
   if (nlist->nlist == NULL)
   {
+    //TODO: Maybe only need n_particles?
+    unsigned int ps = n_particles + n_ghost_particles;
     //first call, need to set-up some things
-    nlist->nlist_count = (unsigned int *)malloc(sizeof(unsigned int) * n_particles);
-    nlist->nlist = (unsigned int *)malloc(sizeof(unsigned int) * n_particles * (n_particles / 2));
-    nlist->nlist_length = n_particles * (n_particles / 2);
+    nlist->nlist_count = (unsigned int *)malloc(sizeof(unsigned int) * ps);
+    nlist->nlist = (unsigned int *)malloc(sizeof(unsigned int) * ps * (ps / 2));
+    nlist->nlist_length = ps * (ps / 2);
   }
 
   //rebuild the list
@@ -255,7 +257,8 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   printf("\n");
 #endif //DEBUG
 
-  for (i = 0; i < n_particles; i++)
+  // TODO: maybe only need n_particles???
+  for (i = 0; i < n_particles + n_ghost_particles; i++)
   {
     //reset count
     nlist->nlist_count[i] = 0;
@@ -321,6 +324,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
 #endif //DEBUG
 
   //Cache old positions
+  //TODO: Maybe only need n_particles?
   for (i = 0; i < n_particles; i++)
     for (k = 0; k < n_dims; k++)
       nlist->last_positions[i * n_dims + k] = positions[i * n_dims + k];

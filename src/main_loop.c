@@ -1,5 +1,10 @@
 #include "main_loop.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include "force.h"
+#include "integrate.h"
+#include "thermostat.h"
+#include "group.h"
 
 int main(int argc, char *argv[])
 {
@@ -34,7 +39,11 @@ int main_loop(run_params_t *params)
   double insta_temperature;
   double therm_conserved = 0;
 
-  params->force_parameters->gather(params, positions, forces);
+  // apply group if necessary
+  if (params->group)
+  {
+    fold_particles(params, positions, true);
+  }
 
   printf("%12s %12s %12s %12s %12s %12s %12s\n", "Step", "Time", "T", "PE", "KE", "E", "Htherm");
   //start at 0, so that we don't log on the first loop
@@ -47,13 +56,11 @@ int main_loop(run_params_t *params)
     // apply group if necessary
     if (params->group)
     {
-      fold_particles(params->group, positions, params->n_dims, params->n_particles + params->n_ghost_particles);
-      fold_particles(params->group, velocities, params->n_dims, params->n_particles + params->n_ghost_particles);
+      fold_particles(params, positions, false);
+      //fold_particles(params, velocities, false);
     }
-
-    //remove COM if necessary
     if (i % params->com_remove_period == 0)
-      remove_com(velocities, params->masses, params->n_dims, params->n_particles + params->n_ghost_particles);
+      remove_com(velocities, params->masses, params->n_dims, params->n_particles);
 
     //gather forces
     penergy = params->force_parameters->gather(params, positions, forces);

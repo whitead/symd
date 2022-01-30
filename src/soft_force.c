@@ -12,6 +12,7 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 {
 
 	unsigned int n_dims = params->n_dims, n_particles = params->n_particles;
+	unsigned int n_ghost_particles = params->n_ghost_particles;
 	double *box_size = params->box_size;
 	unsigned int i, j, k;
 	double penergy = 0;
@@ -29,7 +30,7 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 			  : penergy)
 	for (i = 0; i < n_particles; i++)
 	{
-		for (j = i + 1; j < n_particles; j++)
+		for (j = i + 1; j < n_particles + n_ghost_particles; j++)
 		{
 			r = 0;
 			for (k = 0; k < n_dims; k++)
@@ -50,7 +51,8 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 				for (k = 0; k < n_dims; k++)
 				{
 					forces[i * n_dims + k] += -sin(PI * r) * PI * force_vector[k] / r;
-					forces[j * n_dims + k] += sin(PI * r) * PI * force_vector[k] / r;
+					if (j < params->n_particles)
+						forces[j * n_dims + k] += sin(PI * r) * PI * force_vector[k] / r;
 				}
 
 				penergy += cos(PI * r);

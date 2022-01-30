@@ -1,5 +1,5 @@
 #include "group.h"
-#include "util.h"
+#include "min_image.h"
 
 static inline double *action(double *g, double *output, double *data, unsigned int n_dims)
 {
@@ -10,16 +10,30 @@ static inline double *action(double *g, double *output, double *data, unsigned i
     return output;
 }
 
-void *fold_particles(group_t *group, double *particles, unsigned int n_dims, unsigned int n_particles)
+void *fold_particles(run_params_t *params, double *particles, bool reduce)
 {
+    group_t *group = params->group;
+    unsigned int n_dims = params->n_dims, n_particles = params->n_particles + params->n_ghost_particles;
     const unsigned int p = n_particles / group->size;
-    unsigned int i, j;
+    unsigned int i, j, k;
     for (i = 0; i < p; i++)
     {
-        for (j = 1; j < group->size; j++)
-            action(group->members[j].i, &particles[i * n_dims], &particles[j * p * n_dims + i * n_dims], n_dims);
-        for (j = 0; j < n_dims; j++)
-            particles[i * n_dims + j] /= group->size;
+        // fold to common partition
+        if (reduce)
+        {
+            for (j = 0; j < group->size; j++)
+            {
+                // need to be wrapped
+                // non-ghost should be wrapped in integrate
+                for (k = 0; k < n_dims; k++)
+                    particles[j * p * n_dims + i * n_dims + k] = wrap(particles[j * p * n_dims + i * n_dims + k], params->box_size[k]);
+                action(group->members[j].i, &particles[i * n_dims], &particles[j * p * n_dims + i * n_dims], n_dims);
+            }
+            // average
+            for (k = 0; k < n_dims; k++)
+                particles[i * n_dims + k] /= group->size;
+        }
+        // unfold
         for (j = 1; j < group->size; j++)
         {
             memset(&particles[j * p * n_dims + i * n_dims], 0, sizeof(double) * n_dims);

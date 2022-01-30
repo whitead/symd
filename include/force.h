@@ -2,12 +2,10 @@
 #include <math.h>
 #include "min_image.h"
 #include "nlist.h"
-#include "util.h"
+#include "params.h"
 
 #ifndef FORCE_H_
 #define FORCE_H_
-
-typedef struct force_t force_t;
 
 /*
  * Calculates forces and rebuilds neighbor list

@@ -1,5 +1,6 @@
 #include "util.h"
 #include "force.h"
+#include "group.h"
 
 #define PARAM_FILE_BUFFER 1024
 
@@ -185,7 +186,7 @@ run_params_t *read_parameters(char *file_name)
   }
   //thermostats
   params->thermostat_parameters = NULL;
-  if (!params->temperature)
+  if (params->temperature)
   {
     item = cJSON_GetObjectItem(root, "thermostat");
     if (item)
