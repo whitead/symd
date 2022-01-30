@@ -140,13 +140,14 @@ void build_cells(double *box_size,
         nlist->cell_number[i] - 2; //don't include ghost cells in calculation
   }
 
-#ifdef DEBUG
-  printf("cell number: %d\n", nlist->cell_number_total);
-#endif //DEBUG
-
   nlist->ncell_number = (pow(3, n_dims) - 1) / 2 + 1; //number of neighboring cells
   if (nlist->ncell_number > nlist->cell_number_total) //for small systems
     nlist->ncell_number = nlist->cell_number_total;
+
+#ifdef DEBUG
+  printf("cell number total: %d\n", nlist->cell_number_total);
+  printf("cell number: %d\n", nlist->ncell_number);
+#endif //DEBUG
 
   nlist->adjacent_cells = (int *)malloc(sizeof(int) * nlist->ncell_number);
 
@@ -229,21 +230,26 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   //fills the list in reverse order. I didn't invent this algorithm. The person who did is a genius.
   for (i = 0; i < n_particles + n_ghost_particles; i++)
   {
+    // the cell for particle i
     icell = 0;
     for (k = 0; k < n_dims; k++)
     {
+      // get 1D index of cell
       icell = (int)(wrap(positions[i * n_dims + k], box_size[k]) / box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
     }
+    //have cell_list point to cell for particle i
     nlist->cell_list[i] = nlist->head[icell];
+    // point this cell at particle i
+    // so we can loop via this
     nlist->head[icell] = i;
   }
 
 #ifdef DEBUG
-  printf("cell_list:\n");
-  for (i = 0; i < n_particles; i++)
+  printf("cell_list per particle:\n");
+  for (i = 0; i < n_particles + n_ghost_particles; i++)
     printf("%d ", nlist->cell_list[i]);
 
-  printf("\nhead:\n");
+  printf("\nhead for each cell:\n");
   for (i = 0; i < nlist->cell_number_total; i++)
     printf("%d ", nlist->head[i]);
   printf("\n");
@@ -306,11 +312,12 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
     printf("nlist_count[%d]:%d\n", i, nlist->nlist_count[i]);
     for (j = 0; j < nlist->nlist_count[i]; j++)
     {
-      printf("%d ", nlist->nlist[count]);
+      printf("\t%d ", nlist->nlist[count]);
       count++;
     }
     printf("\n");
   }
+  printf("Total particles: %d\n", count);
 #endif //DEBUG
 
   //Cache old positions

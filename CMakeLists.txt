@@ -4,7 +4,9 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(CMAKE_C_FLAGS_RELEASE "-Ofast -march=native -fmodulo-sched-allow-regmoves")
+string(APPEND CMAKE_C_FLAGS_DEBUG " -DDEBUG")
+
+set(CMAKE_C_FLAGS_RELEASE "-Ofast -fno-tree-pta -g -march=native -fmodulo-sched-allow-regmoves")
 
 # set the project name
 project(simple-md)
@@ -31,5 +33,5 @@ add_executable(simple-md ${SOURCE_FILES})
 find_package(GSL REQUIRED)    # See below (2)
 target_link_libraries(simple-md GSL::gsl GSL::gslcblas)
 target_link_libraries(simple-md m)
-find_package(OpenMP REQUIRED)
-target_link_libraries(simple-md OpenMP::OpenMP_CXX)
+#find_package(OpenMP REQUIRED)
+#target_link_libraries(simple-md OpenMP::OpenMP_CXX)

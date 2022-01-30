@@ -44,13 +44,16 @@ int main_loop(run_params_t *params)
     //integrate 1
     integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
 
+    // apply group if necessary
+    if (params->group)
+    {
+      fold_particles(params->group, positions, params->n_dims, params->n_particles + params->n_ghost_particles);
+      fold_particles(params->group, velocities, params->n_dims, params->n_particles + params->n_ghost_particles);
+    }
+
     //remove COM if necessary
     if (i % params->com_remove_period == 0)
       remove_com(velocities, params->masses, params->n_dims, params->n_particles + params->n_ghost_particles);
-
-    // apply group if necessary
-    if (params->group)
-      fold_particles(params->group, positions, params->n_dims, params->n_particles + params->n_ghost_particles);
 
     //gather forces
     penergy = params->force_parameters->gather(params, positions, forces);

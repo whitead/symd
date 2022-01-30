@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "thermostat.h"
-#include "force.h"
 #include "cJSON.h"
 #include "group.h"
 
@@ -13,6 +12,8 @@
 #define UTIL_H_
 
 #define MD_SUCCESS 0
+
+typedef struct force_t force_t;
 
 /*
 * Parameters needed to begin an MD run

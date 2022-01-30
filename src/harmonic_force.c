@@ -1,5 +1,10 @@
 #include "force.h"
 
+typedef struct
+{
+  double k;
+} harmonic_parameters_t;
+
 double h_gather_forces(run_params_t *params, double *positions, double *forces)
 {
 

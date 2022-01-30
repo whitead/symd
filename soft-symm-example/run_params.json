@@ -1,5 +1,5 @@
 {
-    "steps": 10000,
+    "steps": 20000,
     "time_step": 0.005,
     "temperature": 0.0,
     "velocity_seed": 456415615,
@@ -7,16 +7,17 @@
     "bussi_taut": 1,
     "thermostat_seed": 1565,
     "rcut": 3,
+    "lj_sigma": 0.01,
     "n_dims": 2,
     "box_size": [
-        5.2,
-        5.2
+        100,
+        100
     ],
-    "n_particles": 25,
+    "n_particles": 2500,
     "start_positions": "start_positions.xyz",
     "print_period": 100,
     "positions_log_file": "positions.xyz",
-    "position_log_period": 10,
+    "position_log_period": 30,
     "force_type": "soft",
     "thermostat": "bussi",
     "group": "group.json"

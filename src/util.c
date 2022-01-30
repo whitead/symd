@@ -1,4 +1,5 @@
 #include "util.h"
+#include "force.h"
 
 #define PARAM_FILE_BUFFER 1024
 
@@ -182,22 +183,6 @@ run_params_t *read_parameters(char *file_name)
     params->box_size[i] = item->valuedouble;
     i++;
   }
-
-  nlist_parameters_t *nlist = NULL;
-  item = retrieve_item(root, default_root, "rcut");
-  if (item)
-  {
-    double rcut = item->valuedouble;
-    double skin = retrieve_item(root, default_root, "skin")->valuedouble;
-    if (skin == 0)
-    {
-      skin = 0.2 * rcut;
-      fprintf(stderr, "Warning: Assuming skin = %g\n", skin);
-    }
-    nlist = build_nlist_params(params->n_dims, params->n_particles,
-                               params->box_size, skin, rcut);
-  }
-
   //thermostats
   params->thermostat_parameters = NULL;
   if (!params->temperature)
@@ -225,39 +210,6 @@ run_params_t *read_parameters(char *file_name)
         exit(1);
       }
     }
-  }
-
-  // forces
-  item = retrieve_item(root, default_root, "force_type");
-  if (item)
-  {
-    const char *force_type = item->valuestring;
-
-    if (!strcmp(force_type, "harmonic"))
-    {
-      double k = retrieve_item(root, default_root, "harmonic_constant")->valuedouble;
-      params->force_parameters = build_harmonic(k);
-    }
-    else if (!strcmp(force_type, "lj"))
-    {
-      double epsilon = retrieve_item(root, default_root, "lj_epsilon")->valuedouble;
-      double sigma = retrieve_item(root, default_root, "lj_sigma")->valuedouble;
-      params->force_parameters = build_lj(epsilon, sigma, nlist);
-    }
-    else if (!strcmp(force_type, "soft"))
-    {
-      params->force_parameters = build_soft();
-    }
-    else
-    {
-      fprintf(stderr, "Could not understand force type %s\n", force_type);
-      exit(1);
-    }
-  }
-  else
-  {
-    fprintf(stderr, "Must specifiy a force_type\n");
-    exit(1);
   }
 
   //load input files
@@ -302,13 +254,62 @@ run_params_t *read_parameters(char *file_name)
     params->n_ghost_particles = params->n_particles * (params->group->size - 1);
     // remove velocties on ghost particles
     for (unsigned int i = params->n_particles; i < params->n_particles + params->n_ghost_particles; i++)
-      for (unsigned int j = 0 j < params->n_dims; j++)
+      for (unsigned int j = 0; j < params->n_dims; j++)
         params->initial_velocities[i * params->n_dims + j] = 0;
   }
   else
   {
     params->group = NULL;
     params->n_ghost_particles = 0;
+  }
+
+  // make nlist
+  nlist_parameters_t *nlist = NULL;
+  item = retrieve_item(root, default_root, "rcut");
+  if (item)
+  {
+    double rcut = item->valuedouble;
+    double skin = retrieve_item(root, default_root, "skin")->valuedouble;
+    if (skin == 0)
+    {
+      skin = 0.2 * rcut;
+      fprintf(stderr, "Warning: Assuming skin = %g\n", skin);
+    }
+    nlist = build_nlist_params(params->n_dims, params->n_particles, params->n_ghost_particles,
+                               params->box_size, skin, rcut);
+  }
+
+  // forces
+  item = retrieve_item(root, default_root, "force_type");
+  if (item)
+  {
+    const char *force_type = item->valuestring;
+
+    if (!strcmp(force_type, "harmonic"))
+    {
+      double k = retrieve_item(root, default_root, "harmonic_constant")->valuedouble;
+      params->force_parameters = build_harmonic(k);
+    }
+    else if (!strcmp(force_type, "lj"))
+    {
+      double epsilon = retrieve_item(root, default_root, "lj_epsilon")->valuedouble;
+      double sigma = retrieve_item(root, default_root, "lj_sigma")->valuedouble;
+      params->force_parameters = build_lj(epsilon, sigma, nlist);
+    }
+    else if (!strcmp(force_type, "soft"))
+    {
+      params->force_parameters = build_soft();
+    }
+    else
+    {
+      fprintf(stderr, "Could not understand force type %s\n", force_type);
+      exit(1);
+    }
+  }
+  else
+  {
+    fprintf(stderr, "Must specifiy a force_type\n");
+    exit(1);
   }
 
   //prepare output files

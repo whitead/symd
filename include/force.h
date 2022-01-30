@@ -2,25 +2,12 @@
 #include <math.h>
 #include "min_image.h"
 #include "nlist.h"
+#include "util.h"
 
 #ifndef FORCE_H_
 #define FORCE_H_
 
-typedef struct run_params_t run_params_t;
-
 typedef struct force_t force_t;
-
-typedef struct
-{
-  double k;
-} harmonic_parameters_t;
-
-typedef struct
-{
-  const double epsilon;
-  const double sigma;
-  nlist_parameters_t *nlist;
-} lj_parameters_t;
 
 /*
  * Calculates forces and rebuilds neighbor list
