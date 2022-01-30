@@ -5,42 +5,13 @@
 #include <stdio.h>
 #include <string.h>
 #include "thermostat.h"
-#include "force.h"
 #include "cJSON.h"
+#include "params.h"
 
 #ifndef UTIL_H_
 #define UTIL_H_
 
 #define MD_SUCCESS 0
-
-/*
-* Parameters needed to begin an MD run
-*
-*/
-typedef struct
-{
-
-  unsigned int steps;
-  unsigned int com_remove_period;
-  double time_step;
-  double temperature;
-  thermostat_t *thermostat_parameters;
-  force_t *force_parameters;
-  double *initial_positions;
-  double *initial_velocities;
-  double *masses;
-  double *box_size;
-  unsigned int n_dims;
-  unsigned int n_particles;
-  FILE *positions_file;
-  FILE *velocities_file;
-  FILE *forces_file;
-  unsigned int position_log_period;
-  unsigned int velocity_log_period;
-  unsigned int force_log_period;
-  unsigned int print_period;
-
-} Run_Params;
 
 /*
  * Generate a set of initial velocities from the appropiate chi-n distribution
@@ -75,7 +46,12 @@ double *load_matrix(char *filename, unsigned int nrow, unsigned int ncol, unsign
 /*
  * Read in the given parameters.
  */
-Run_Params *read_parameters(char *params_file);
+run_params_t *read_parameters(char *params_file);
+
+/*
+* Load group from JSON file
+*/
+group_t *load_group(char *filename, unsigned int n_dims);
 
 unsigned int process_uint(char ***pstrings, char *key, bool *success);
 
@@ -88,7 +64,7 @@ char *process_string(char ***pstrings, char *key, bool *success);
  */
 double remove_com(double *velocities, double *masses, unsigned int n_dims, unsigned int n_particles);
 
-//free all the memory bits in the Run_Params struct
-void free_run_params(Run_Params *params);
+//free all the memory bits in the run_params_t struct
+void free_run_params(run_params_t *params);
 
 #endif

@@ -4,7 +4,9 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(CMAKE_C_FLAGS_RELEASE "-Ofast -march=native -fmodulo-sched-allow-regmoves")
+string(APPEND CMAKE_C_FLAGS_DEBUG " -DDEBUG")
+
+set(CMAKE_C_FLAGS_RELEASE "-Ofast -fno-tree-pta -g -march=native -fmodulo-sched-allow-regmoves")
 
 # set the project name
 project(simple-md)
@@ -22,6 +24,7 @@ set(SOURCE_FILES src/cJSON.c
                 src/util.c
                 src/anderson_thermostat.c
                 src/bussi_thermostat.c
+                src/group.c
                 )
 
 # add the executable

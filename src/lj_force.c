@@ -3,6 +3,13 @@
 #include <string.h>
 #include <stdio.h>
 
+typedef struct
+{
+  const double epsilon;
+  const double sigma;
+  nlist_parameters_t *nlist;
+} lj_parameters_t;
+
 static inline double lj(double r, double epsilon, double sigma)
 {
   return 4 * epsilon * (6 * pow(sigma / r, 7) - 12 * pow(sigma / r, 13));
@@ -17,16 +24,19 @@ static inline double lj_trunc_shift(double r, double epsilon, double sigma, doub
   return lj(r, epsilon, sigma) - shift;
 }
 
-double lj_gather_forces(force_t *force_struct, double *positions, double *forces, double *masses,
-                        double *box_size, unsigned int n_dims, unsigned int n_particles)
+double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 {
-  lj_parameters_t *parameters = (lj_parameters_t *)force_struct->parameters;
+  unsigned n_dims = params->n_dims;
+  unsigned n_particles = params->n_particles;
+  double *box_size = params->box_size;
+  force_t *force_p = params->force_parameters;
+  lj_parameters_t *parameters = (lj_parameters_t *)force_p->parameters;
   const double epsilon = parameters->epsilon;
   const double sigma = parameters->sigma;
   nlist_parameters_t *nlist = parameters->nlist;
 
   //update neighbor list
-  update_nlist(positions, box_size, n_dims, n_particles, nlist);
+  update_nlist(positions, box_size, n_dims, n_particles, params->n_ghost_particles, nlist);
 
   unsigned int i, j, k, n;
   int offset;
@@ -77,7 +87,6 @@ double lj_gather_forces(force_t *force_struct, double *positions, double *forces
         }
       }
 #endif
-
       //iterate through neighbor list
       for (n = offset; n - offset < nlist->nlist_count[i]; n++)
       {
@@ -104,7 +113,8 @@ double lj_gather_forces(force_t *force_struct, double *positions, double *forces
         for (k = 0; k < n_dims; k++)
         {
           forces[i * n_dims + k] += force / r * force_vector[k];
-          forces[j * n_dims + k] -= force / r * force_vector[k];
+          if (j < params->n_particles)
+            forces[j * n_dims + k] -= force / r * force_vector[k];
         }
 
         penergy += 4 * epsilon * (pow(sigma / r, 12) - pow(sigma / r, 6)) - 4 * epsilon * (pow(sigma / rcut, 12) - pow(sigma / rcut, 6));

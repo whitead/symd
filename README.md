@@ -51,4 +51,4 @@ Example
 Examples may be run with:
 
     cd example_example
-    simple-md run_params.json
+    simple-md run_params_t.json

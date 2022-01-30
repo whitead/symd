@@ -1,5 +1,10 @@
 #include "main_loop.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include "force.h"
+#include "integrate.h"
+#include "thermostat.h"
+#include "group.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,7 +16,7 @@ int main(int argc, char *argv[])
   if (argc == 2)
     pfile = argv[1];
 
-  Run_Params *p = read_parameters(pfile);
+  run_params_t *p = read_parameters(pfile);
 
   //start main loop
   main_loop(p);
@@ -21,7 +26,7 @@ int main(int argc, char *argv[])
   return (0);
 }
 
-int main_loop(Run_Params *params)
+int main_loop(run_params_t *params)
 {
 
   unsigned int i;
@@ -34,7 +39,11 @@ int main_loop(Run_Params *params)
   double insta_temperature;
   double therm_conserved = 0;
 
-  params->force_parameters->gather(params->force_parameters, positions, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
+  // apply group if necessary
+  if (params->group)
+  {
+    fold_particles(params, positions, true);
+  }
 
   printf("%12s %12s %12s %12s %12s %12s %12s\n", "Step", "Time", "T", "PE", "KE", "E", "Htherm");
   //start at 0, so that we don't log on the first loop
@@ -44,12 +53,17 @@ int main_loop(Run_Params *params)
     //integrate 1
     integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
 
-    //remove COM if necessary
+    // apply group if necessary
+    if (params->group)
+    {
+      fold_particles(params, positions, false);
+      //fold_particles(params, velocities, false);
+    }
     if (i % params->com_remove_period == 0)
       remove_com(velocities, params->masses, params->n_dims, params->n_particles);
 
     //gather forces
-    penergy = params->force_parameters->gather(params->force_parameters, positions, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
+    penergy = params->force_parameters->gather(params, positions, forces);
 
     //integrate 2
     integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
@@ -66,27 +80,20 @@ int main_loop(Run_Params *params)
     if (i % params->position_log_period == 0)
     {
       sprintf(xyz_file_comment, "Frame: %d", i);
-      log_xyz(params->positions_file, positions, xyz_file_comment, params->n_dims, params->n_particles);
+      log_xyz(params->positions_file, positions, xyz_file_comment, params->n_dims, params->n_particles + params->n_ghost_particles);
     }
 
     if (i % params->velocity_log_period == 0)
-      log_array(params->velocities_file, velocities, params->n_dims, params->n_particles, true);
+      log_array(params->velocities_file, velocities, params->n_dims, params->n_particles + params->n_ghost_particles, true);
 
     if (i % params->force_log_period == 0)
-      log_array(params->forces_file, forces, params->n_dims, params->n_particles, true);
+      log_array(params->forces_file, forces, params->n_dims, params->n_particles + params->n_ghost_particles, true);
 
     if (i % params->print_period == 0)
     {
       printf("%12d %12g %12g %12g %12g %12g %12g\n", i, i * params->time_step, insta_temperature, penergy, kenergy, penergy + kenergy, penergy + kenergy - therm_conserved);
     }
   }
-
-  if (params->positions_file != NULL)
-    fclose(params->positions_file);
-  if (params->velocities_file != NULL)
-    fclose(params->velocities_file);
-  if (params->forces_file != NULL)
-    fclose(params->forces_file);
 
   free(forces);
 

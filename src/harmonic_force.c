@@ -1,8 +1,16 @@
 #include "force.h"
 
-double h_gather_forces(force_t *force, double *positions, double *forces, double *masses,
-                       double *box_size, unsigned int n_dims, unsigned int n_particles)
+typedef struct
 {
+  double k;
+} harmonic_parameters_t;
+
+double h_gather_forces(run_params_t *params, double *positions, double *forces)
+{
+
+  unsigned n_dims = params->n_dims;
+  unsigned n_particles = params->n_particles;
+  force_t *force = params->force_parameters;
   double k = ((harmonic_parameters_t *)force->parameters)->k;
   unsigned int i, j;
   double penergy = 0;

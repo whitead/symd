@@ -2,34 +2,17 @@
 #include <math.h>
 #include "min_image.h"
 #include "nlist.h"
+#include "params.h"
 
 #ifndef FORCE_H_
 #define FORCE_H_
 
-typedef struct force_t force_t;
-
-typedef struct
-{
-  double k;
-} harmonic_parameters_t;
-
-typedef struct
-{
-  const double epsilon;
-  const double sigma;
-  nlist_parameters_t *nlist;
-} lj_parameters_t;
-
 /*
  * Calculates forces and rebuilds neighbor list
  */
-typedef double (*gather_forces_t)(force_t *parameters,
+typedef double (*gather_forces_t)(run_params_t *parameters,
                                   double *positions,
-                                  double *forces,
-                                  double *masses,
-                                  double *box_size,
-                                  unsigned int n_dims,
-                                  unsigned int n_particles);
+                                  double *forces);
 //                      double *box_size, unsigned int n_dims, unsigned int n_particles)
 // double gather_forces(void *parameters, double *positions, double *forces, double *masses,
 //                      double *box_size, unsigned int n_dims, unsigned int n_particles);

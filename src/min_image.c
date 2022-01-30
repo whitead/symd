@@ -16,6 +16,10 @@ double min_image_dist(double dx, double img)
 double wrap(double x, double img)
 {
   if (img)
-    return x - floor(x / img) * img;
+  {
+    double cx = x + img / 2;
+    x = cx - floor(cx / img) * img;
+    return x - img / 2;
+  }
   return x;
 }
