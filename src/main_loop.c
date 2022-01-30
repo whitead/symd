@@ -34,7 +34,7 @@ int main_loop(Run_Params *params)
   double insta_temperature;
   double therm_conserved = 0;
 
-  params->force_parameters->gather(params->force_parameters->parameters, positions, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
+  params->force_parameters->gather(params->force_parameters, positions, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
 
   printf("%12s %12s %12s %12s %12s %12s %12s\n", "Step", "Time", "T", "PE", "KE", "E", "Htherm");
   //start at 0, so that we don't log on the first loop
@@ -49,14 +49,14 @@ int main_loop(Run_Params *params)
       remove_com(velocities, params->masses, params->n_dims, params->n_particles);
 
     //gather forces
-    penergy = params->force_parameters->gather(params->force_parameters->parameters, positions, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
+    penergy = params->force_parameters->gather(params->force_parameters, positions, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
 
     //integrate 2
     integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
 
     //thermostat
-    // if (params->temperature)
-    //   therm_conserved += thermostat(params->temperature, params->time_step, params->thermostat_parameters, positions, velocities, params->masses, params->n_dims, params->n_particles);
+    if (params->thermostat_parameters)
+      therm_conserved += params->thermostat_parameters->thermo_fxn(params->thermostat_parameters, params->temperature, params->time_step, positions, velocities, params->masses, params->n_dims, params->n_particles);
 
     //calculate important quantities
     kenergy = calculate_kenergy(velocities, params->masses, params->n_dims, params->n_particles);

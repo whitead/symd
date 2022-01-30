@@ -1,9 +1,9 @@
 #include "force.h"
 
-double h_gather_forces(void *parameters, double *positions, double *forces, double *masses,
+double h_gather_forces(force_t *force, double *positions, double *forces, double *masses,
                        double *box_size, unsigned int n_dims, unsigned int n_particles)
 {
-  double k = ((harmonic_parameters_t *)parameters)->k;
+  double k = ((harmonic_parameters_t *)force->parameters)->k;
   unsigned int i, j;
   double penergy = 0;
   double r;
@@ -24,10 +24,11 @@ double h_gather_forces(void *parameters, double *positions, double *forces, doub
   return (penergy);
 }
 
-void h_free_forces(void *parameters)
+void h_free_forces(force_t *force)
 {
-  harmonic_parameters_t *h_parameters = (harmonic_parameters_t *)parameters;
+  harmonic_parameters_t *h_parameters = (harmonic_parameters_t *)force->parameters;
   free(h_parameters);
+  free(force);
 }
 
 force_t *build_harmonic(double k)

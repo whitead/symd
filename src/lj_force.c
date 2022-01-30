@@ -17,12 +17,13 @@ static inline double lj_trunc_shift(double r, double epsilon, double sigma, doub
   return lj(r, epsilon, sigma) - shift;
 }
 
-double lj_gather_forces(void *parameters, double *positions, double *forces, double *masses,
+double lj_gather_forces(force_t *force_struct, double *positions, double *forces, double *masses,
                         double *box_size, unsigned int n_dims, unsigned int n_particles)
 {
-  const double epsilon = ((Lj_Parameters *)parameters)->epsilon;
-  const double sigma = ((Lj_Parameters *)parameters)->sigma;
-  Nlist_Parameters *nlist = ((Lj_Parameters *)parameters)->nlist;
+  lj_parameters_t *parameters = (lj_parameters_t *)force_struct->parameters;
+  const double epsilon = parameters->epsilon;
+  const double sigma = parameters->sigma;
+  nlist_parameters_t *nlist = parameters->nlist;
 
   //update neighbor list
   update_nlist(positions, box_size, n_dims, n_particles, nlist);
@@ -116,19 +117,19 @@ double lj_gather_forces(void *parameters, double *positions, double *forces, dou
   return (penergy);
 }
 
-void lj_free_forces(void *parameters)
+void lj_free_forces(force_t *force)
 {
-
-  Lj_Parameters *lj_parameters = (Lj_Parameters *)parameters;
-  Nlist_Parameters *nlist = ((Lj_Parameters *)lj_parameters)->nlist;
+  lj_parameters_t *lj_parameters = (lj_parameters_t *)force->parameters;
+  nlist_parameters_t *nlist = lj_parameters->nlist;
   free_nlist(nlist);
   free(lj_parameters);
+  free(force);
 }
 
-force_t *build_lj(double epsilon, double sigma, Nlist_Parameters *nlist)
+force_t *build_lj(double epsilon, double sigma, nlist_parameters_t *nlist)
 {
-  Lj_Parameters init = {.epsilon = epsilon, .sigma = sigma};
-  Lj_Parameters *parameters = (Lj_Parameters *)malloc(sizeof(Lj_Parameters));
+  lj_parameters_t init = {.epsilon = epsilon, .sigma = sigma};
+  lj_parameters_t *parameters = (lj_parameters_t *)malloc(sizeof(lj_parameters_t));
   memcpy(parameters, &init, sizeof(init));
   parameters->nlist = nlist;
   force_t *lj = (force_t *)malloc(sizeof(force_t));

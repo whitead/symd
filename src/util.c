@@ -5,7 +5,7 @@
 static const char *
     default_json = " { \"com_remove_period\" : 1000, \"skin\" : 0, \
     \"thermostat_seed\" : 1523, \"anderson_nu\" : 10.0,\
-    \"temperature\": 0, \"rcut\": 0,\
+    \"temperature\": 0, \"rcut\": 0, \"thermostat\": \"null\",\
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"velocity_seed\" : 543214, \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
      \"force_log_period\" : 0, \"box_size\": [0, 0, 0]} ";
@@ -169,8 +169,6 @@ Run_Params *read_parameters(char *file_name)
   i = 0;
   for (item = item->child; item != NULL; item = item->next)
   {
-    params->box_size[i] = item->valuedouble;
-    i++;
     if (i == params->n_dims)
     {
       // maybe it's default with no box?
@@ -179,12 +177,14 @@ Run_Params *read_parameters(char *file_name)
       fprintf(stderr, "Error: Number of box dimensions not equal to simulation dimension\n");
       exit(1);
     }
+    params->box_size[i] = item->valuedouble;
+    i++;
   }
 
   //neighbor list parameters
 #ifdef NLIST
 
-  Nlist_Parameters *nlist = NULL;
+  nlist_parameters_t *nlist = NULL;
   double rcut = retrieve_item(root, default_root, "rcut")->valuedouble;
   if (rcut)
   {
@@ -202,21 +202,32 @@ Run_Params *read_parameters(char *file_name)
 #endif //NLIST
 
   //thermostats
-#ifdef ANDERSON
-
-  unsigned int seed = (unsigned int)retrieve_item(root, default_root, "thermostat_seed")->valueint;
-  double collision_freq = retrieve_item(root, default_root, "anderson_nu")->valuedouble;
-  params->thermostat_parameters = build_anderson(seed, collision_freq);
-
-#endif //ANDERSON
-
-#ifdef BUSSI
-
-  unsigned int seed = (unsigned int)retrieve_item(root, default_root, "thermostat_seed")->valueint;
-  double taut = retrieve_item(root, default_root, "bussi_taut")->valuedouble;
-  params->thermostat_parameters = build_bussi(seed, taut);
-
-#endif //BUSSI
+  params->thermostat_parameters = NULL;
+  if (!params->temperature)
+  {
+    const char *thermostat = retrieve_item(root, default_root, "thermostat")->valuestring;
+    if (!strcmp(thermostat, "null"))
+    {
+      // do nothing
+    }
+    else if (!strcmp(thermostat, "anderson"))
+    {
+      unsigned int seed = (unsigned int)retrieve_item(root, default_root, "thermostat_seed")->valueint;
+      double collision_freq = retrieve_item(root, default_root, "anderson_nu")->valuedouble;
+      params->thermostat_parameters = build_anderson(seed, collision_freq);
+    }
+    else if (!strcmp(thermostat, "bussi"))
+    {
+      unsigned int seed = (unsigned int)retrieve_item(root, default_root, "thermostat_seed")->valueint;
+      double taut = retrieve_item(root, default_root, "bussi_taut")->valuedouble;
+      params->thermostat_parameters = build_bussi(seed, taut);
+    }
+    else
+    {
+      fprintf(stderr, "Could not understand thermostat type %s\n", thermostat);
+      exit(1);
+    }
+  }
 
   const char *force_type = retrieve_item(root, default_root, "force_type")->valuestring;
 
@@ -231,9 +242,14 @@ Run_Params *read_parameters(char *file_name)
     double sigma = retrieve_item(root, default_root, "lj_sigma")->valuedouble;
     params->force_parameters = build_lj(epsilon, sigma, nlist);
   }
+  else if (!strcmp(force_type, "soft"))
+  {
+    params->force_parameters = build_soft();
+  }
   else
   {
     fprintf(stderr, "Could not understand force type %s\n", force_type);
+    exit(1);
   }
 
   //load input files
@@ -454,8 +470,7 @@ void free_run_params(Run_Params *params)
 {
 
   // free_thermostat(params->thermostat_parameters);
-  params->force_parameters->free(params->force_parameters->parameters);
-  free(params->force_parameters);
+  params->force_parameters->free(params->force_parameters);
 
   free(params->initial_positions);
   free(params->initial_velocities);

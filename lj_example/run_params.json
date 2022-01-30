@@ -18,6 +18,7 @@
     "start_positions": "start_positions.xyz",
     "print_period": 100,
     "positions_log_file": "positions.xyz",
-    "position_log_period": 1,
-    "force_type": "lj"
+    "position_log_period": 1000,
+    "force_type": "lj",
+    "thermostat": "bussi"
 }

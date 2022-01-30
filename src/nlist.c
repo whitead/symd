@@ -11,28 +11,28 @@ unsigned int insert_grow(unsigned int index, unsigned int value, unsigned int **
 /*
  * build the neighbor list
  */
-void build_list(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, Nlist_Parameters *nlist);
+void build_list(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, nlist_parameters_t *nlist);
 
 /*
  * Precompute cells used for constructing neighbor lists.
  * Note: this is not ready to be called multiple times. If there
  * ever is barostatting, this needs work.
  */
-void build_cells(double *box_size, unsigned int n_dims, unsigned int n_particles, Nlist_Parameters *nlist);
+void build_cells(double *box_size, unsigned int n_dims, unsigned int n_particles, nlist_parameters_t *nlist);
 
-Nlist_Parameters *build_nlist_params(unsigned int n_dims, unsigned int n_particles, double *box_size, double skin, double rcut)
+nlist_parameters_t *build_nlist_params(unsigned int n_dims, unsigned int n_particles, double *box_size, double skin, double rcut)
 {
 
-  Nlist_Parameters init = {.rcut = rcut * rcut, .skin = skin * skin, .skin_rcut = (rcut + skin) * (rcut + skin)};
-  Nlist_Parameters *nlist = (Nlist_Parameters *)malloc(sizeof(Nlist_Parameters));
-  memcpy(nlist, &init, sizeof(Nlist_Parameters));
+  nlist_parameters_t init = {.rcut = rcut * rcut, .skin = skin * skin, .skin_rcut = (rcut + skin) * (rcut + skin)};
+  nlist_parameters_t *nlist = (nlist_parameters_t *)malloc(sizeof(nlist_parameters_t));
+  memcpy(nlist, &init, sizeof(nlist_parameters_t));
   nlist->nlist = NULL;
   nlist->last_positions = (double *)malloc(sizeof(double) * n_particles * n_dims);
   build_cells(box_size, n_dims, n_particles, nlist);
   return nlist;
 }
 
-void free_nlist(Nlist_Parameters *nlist)
+void free_nlist(nlist_parameters_t *nlist)
 {
 
   free(nlist->last_positions);
@@ -51,7 +51,7 @@ void update_nlist(double *positions,
                   double *box_size,
                   unsigned int n_dims,
                   unsigned int n_particles,
-                  Nlist_Parameters *nlist)
+                  nlist_parameters_t *nlist)
 {
 
   if (nlist->nlist == NULL)
@@ -111,7 +111,7 @@ unsigned int gen_index_r(int *array, int *dims, unsigned int index, unsigned int
   return index;
 }
 
-void build_cells(double *box_size, unsigned int n_dims, unsigned int n_particles, Nlist_Parameters *nlist)
+void build_cells(double *box_size, unsigned int n_dims, unsigned int n_particles, nlist_parameters_t *nlist)
 {
 
   //rebuild the list
@@ -193,7 +193,7 @@ void build_cells(double *box_size, unsigned int n_dims, unsigned int n_particles
 /*
  * Build neighbor list using cells in N-dimensions
  */
-void build_list(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, Nlist_Parameters *nlist)
+void build_list(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, nlist_parameters_t *nlist)
 {
 
   unsigned int total_n = 0;

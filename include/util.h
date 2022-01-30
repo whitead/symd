@@ -24,7 +24,7 @@ typedef struct
   unsigned int com_remove_period;
   double time_step;
   double temperature;
-  void *thermostat_parameters;
+  thermostat_t *thermostat_parameters;
   force_t *force_parameters;
   double *initial_positions;
   double *initial_velocities;

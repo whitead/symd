@@ -3,37 +3,25 @@
 #ifndef THERMOSTAT_H_
 #define THERMOSTAT_H_
 
-
+typedef struct thermostat_t thermostat_t;
 
 /*
- * Returns its conserved quantity. 0 for thermostats which don't coserve anything
+ * Returns its conserved quantity. 0 for thermostats which don't conserve anything
  */
-double thermostat(double temperature, double time_step, void* thermostat_parameters, double* positions, double* velocities, double* masses, unsigned int n_dims, unsigned int n_particles);
+typedef double (*thermostat_fxn_t)(thermostat_t *thermostat_parameters, double temperature, double time_step, double *positions, double *velocities, double *masses, unsigned int n_dims, unsigned int n_particles);
 
-void free_thermostat(void* thermostat_parameters);
+typedef void (*free_thermostat_t)(thermostat_t *thermostat_parameters);
 
-#ifdef ANDERSON
-#define THERMOSTAT
+struct thermostat_t
+{
+  gsl_rng *rng;
+  double param;
+  thermostat_fxn_t thermo_fxn;
+  free_thermostat_t free;
+};
 
-typedef struct {
-  gsl_rng * rng;
-  double nu;
-} Anderson_Params;
+thermostat_t *build_anderson(unsigned int seed, double collision_freq);
 
-void* build_anderson(unsigned int seed, double collision_freq);
-
-#endif
-
-#ifdef BUSSI
-#define THERMOSTAT
-
-typedef struct {
-  gsl_rng * rng;
-  double taut;
-} Bussi_Params;
-
-void* build_bussi(unsigned int seed, double taut);
-
-#endif
+thermostat_t *build_bussi(unsigned int seed, double taut);
 
 #endif //THERMOSTAT_H_
