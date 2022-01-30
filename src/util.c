@@ -7,7 +7,7 @@
 static const char *
     default_json = " { \"com_remove_period\" : 1000, \"skin\" : 0, \
     \"thermostat_seed\" : 1523, \"anderson_nu\" : 10.0,\
-    \"temperature\": 0, \"rcut\": 0,\
+    \"temperature\": 0, \"rcut\": 0, \"final_positions\": \"final_positions.xyz\",\
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"velocity_seed\" : 543214, \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
      \"force_log_period\" : 0, \"box_size\": [0, 0, 0]} ";
@@ -281,37 +281,31 @@ run_params_t *read_parameters(char *file_name)
   }
 
   // forces
-  item = retrieve_item(root, default_root, "force_type");
-  if (item)
+  const char *force_type = retrieve_item(root, default_root, "force_type")->valuestring;
+  if (!strcmp(force_type, "harmonic"))
   {
-    const char *force_type = item->valuestring;
-
-    if (!strcmp(force_type, "harmonic"))
-    {
-      double k = retrieve_item(root, default_root, "harmonic_constant")->valuedouble;
-      params->force_parameters = build_harmonic(k);
-    }
-    else if (!strcmp(force_type, "lj"))
-    {
-      double epsilon = retrieve_item(root, default_root, "lj_epsilon")->valuedouble;
-      double sigma = retrieve_item(root, default_root, "lj_sigma")->valuedouble;
-      params->force_parameters = build_lj(epsilon, sigma, nlist);
-    }
-    else if (!strcmp(force_type, "soft"))
-    {
-      params->force_parameters = build_soft();
-    }
-    else
-    {
-      fprintf(stderr, "Could not understand force type %s\n", force_type);
-      exit(1);
-    }
+    double k = retrieve_item(root, default_root, "harmonic_constant")->valuedouble;
+    params->force_parameters = build_harmonic(k);
+  }
+  else if (!strcmp(force_type, "lj"))
+  {
+    double epsilon = retrieve_item(root, default_root, "lj_epsilon")->valuedouble;
+    double sigma = retrieve_item(root, default_root, "lj_sigma")->valuedouble;
+    params->force_parameters = build_lj(epsilon, sigma, nlist);
+  }
+  else if (!strcmp(force_type, "soft"))
+  {
+    params->force_parameters = build_soft();
   }
   else
   {
-    fprintf(stderr, "Must specifiy a force_type\n");
+    fprintf(stderr, "Could not understand force type %s\n", force_type);
     exit(1);
   }
+
+  // final frame
+  item = retrieve_item(root, default_root, "final_positions");
+  params->final_positions_file = fopen(item->valuestring, "w");
 
   //prepare output files
   item = cJSON_GetObjectItem(root, "positions_log_file");

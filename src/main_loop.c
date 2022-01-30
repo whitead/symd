@@ -95,6 +95,9 @@ int main_loop(run_params_t *params)
     }
   }
 
+  log_array(params->final_positions_file, positions, params->n_dims,
+            params->n_particles + params->n_ghost_particles, false);
+
   free(forces);
 
   return MD_SUCCESS;

@@ -30,6 +30,7 @@ typedef struct
     unsigned int n_particles;
     unsigned int n_ghost_particles;
     FILE *positions_file;
+    FILE *final_positions_file;
     FILE *velocities_file;
     FILE *forces_file;
     unsigned int position_log_period;
