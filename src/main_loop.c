@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
   if (argc == 2)
     pfile = argv[1];
 
-  Run_Params *p = read_parameters(pfile);
+  run_params_t *p = read_parameters(pfile);
 
   //start main loop
   main_loop(p);
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
   return (0);
 }
 
-int main_loop(Run_Params *params)
+int main_loop(run_params_t *params)
 {
 
   unsigned int i;
@@ -47,6 +47,10 @@ int main_loop(Run_Params *params)
     //remove COM if necessary
     if (i % params->com_remove_period == 0)
       remove_com(velocities, params->masses, params->n_dims, params->n_particles);
+
+    // apply group if necessary
+    if (params->group)
+      fold_particles(params->group, positions, params->n_dims, params->n_particles);
 
     //gather forces
     penergy = params->force_parameters->gather(params->force_parameters, positions, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
@@ -80,13 +84,6 @@ int main_loop(Run_Params *params)
       printf("%12d %12g %12g %12g %12g %12g %12g\n", i, i * params->time_step, insta_temperature, penergy, kenergy, penergy + kenergy, penergy + kenergy - therm_conserved);
     }
   }
-
-  if (params->positions_file != NULL)
-    fclose(params->positions_file);
-  if (params->velocities_file != NULL)
-    fclose(params->velocities_file);
-  if (params->forces_file != NULL)
-    fclose(params->forces_file);
 
   free(forces);
 

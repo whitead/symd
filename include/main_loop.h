@@ -4,6 +4,6 @@
 #include "force.h"
 #include "integrate.h"
 #include "thermostat.h"
+#include "group.h"
 
-
-int main_loop(Run_Params* params);
+int main_loop(run_params_t *params);

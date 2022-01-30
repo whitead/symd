@@ -7,6 +7,7 @@
 #include "thermostat.h"
 #include "force.h"
 #include "cJSON.h"
+#include "group.h"
 
 #ifndef UTIL_H_
 #define UTIL_H_
@@ -26,6 +27,7 @@ typedef struct
   double temperature;
   thermostat_t *thermostat_parameters;
   force_t *force_parameters;
+  group_t *group;
   double *initial_positions;
   double *initial_velocities;
   double *masses;
@@ -40,7 +42,7 @@ typedef struct
   unsigned int force_log_period;
   unsigned int print_period;
 
-} Run_Params;
+} run_params_t;
 
 /*
  * Generate a set of initial velocities from the appropiate chi-n distribution
@@ -75,7 +77,12 @@ double *load_matrix(char *filename, unsigned int nrow, unsigned int ncol, unsign
 /*
  * Read in the given parameters.
  */
-Run_Params *read_parameters(char *params_file);
+run_params_t *read_parameters(char *params_file);
+
+/*
+* Load group from JSON file
+*/
+group_t *load_group(char *filename, unsigned int n_dims);
 
 unsigned int process_uint(char ***pstrings, char *key, bool *success);
 
@@ -88,7 +95,7 @@ char *process_string(char ***pstrings, char *key, bool *success);
  */
 double remove_com(double *velocities, double *masses, unsigned int n_dims, unsigned int n_particles);
 
-//free all the memory bits in the Run_Params struct
-void free_run_params(Run_Params *params);
+//free all the memory bits in the run_params_t struct
+void free_run_params(run_params_t *params);
 
 #endif

@@ -5,10 +5,12 @@
 static const char *
     default_json = " { \"com_remove_period\" : 1000, \"skin\" : 0, \
     \"thermostat_seed\" : 1523, \"anderson_nu\" : 10.0,\
-    \"temperature\": 0, \"rcut\": 0, \"thermostat\": \"null\",\
+    \"temperature\": 0, \"rcut\": 0,\
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"velocity_seed\" : 543214, \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
      \"force_log_period\" : 0, \"box_size\": [0, 0, 0]} ";
+
+void *load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message);
 
 double *generate_velocities(double temperature, unsigned int seed, double *masses, unsigned int n_dims, unsigned int n_particles)
 {
@@ -84,7 +86,7 @@ void load_json(char *filename, char **data)
     fseek(f, 0, SEEK_SET);
     //load data
     *data = (char *)malloc(len + 1);
-    fread(*data, 1, len, f);
+    const size_t read_size = fread(*data, 1, len, f);
     fclose(f);
   }
 }
@@ -124,7 +126,7 @@ cJSON *retrieve_item(cJSON *root, cJSON *default_root, const char *item_name)
   return item;
 }
 
-Run_Params *read_parameters(char *file_name)
+run_params_t *read_parameters(char *file_name)
 {
 
   char *data;
@@ -139,7 +141,7 @@ Run_Params *read_parameters(char *file_name)
     exit(1);
   }
 
-  Run_Params *params = (Run_Params *)malloc(sizeof(Run_Params));
+  run_params_t *params = (run_params_t *)malloc(sizeof(run_params_t));
 
   //get single value parameters
   params->steps = (unsigned int)retrieve_item(root, default_root, "steps")->valueint;
@@ -181,14 +183,11 @@ Run_Params *read_parameters(char *file_name)
     i++;
   }
 
-  //neighbor list parameters
-#ifdef NLIST
-
   nlist_parameters_t *nlist = NULL;
-  double rcut = retrieve_item(root, default_root, "rcut")->valuedouble;
-  if (rcut)
+  item = retrieve_item(root, default_root, "rcut");
+  if (item)
   {
-
+    double rcut = item->valuedouble;
     double skin = retrieve_item(root, default_root, "skin")->valuedouble;
     if (skin == 0)
     {
@@ -199,65 +198,96 @@ Run_Params *read_parameters(char *file_name)
                                params->box_size, skin, rcut);
   }
 
-#endif //NLIST
-
   //thermostats
   params->thermostat_parameters = NULL;
   if (!params->temperature)
   {
-    const char *thermostat = retrieve_item(root, default_root, "thermostat")->valuestring;
-    if (!strcmp(thermostat, "null"))
+    item = cJSON_GetObjectItem(root, "thermostat");
+    if (item)
     {
-      // do nothing
+      const char *thermostat = item->valuestring;
+
+      if (!strcmp(thermostat, "anderson"))
+      {
+        unsigned int seed = (unsigned int)retrieve_item(root, default_root, "thermostat_seed")->valueint;
+        double collision_freq = retrieve_item(root, default_root, "anderson_nu")->valuedouble;
+        params->thermostat_parameters = build_anderson(seed, collision_freq);
+      }
+      else if (!strcmp(thermostat, "bussi"))
+      {
+        unsigned int seed = (unsigned int)retrieve_item(root, default_root, "thermostat_seed")->valueint;
+        double taut = retrieve_item(root, default_root, "bussi_taut")->valuedouble;
+        params->thermostat_parameters = build_bussi(seed, taut);
+      }
+      else
+      {
+        fprintf(stderr, "Could not understand thermostat type %s\n", thermostat);
+        exit(1);
+      }
     }
-    else if (!strcmp(thermostat, "anderson"))
+  }
+
+  // forces
+  item = retrieve_item(root, default_root, "force_type");
+  if (item)
+  {
+    const char *force_type = item->valuestring;
+
+    if (!strcmp(force_type, "harmonic"))
     {
-      unsigned int seed = (unsigned int)retrieve_item(root, default_root, "thermostat_seed")->valueint;
-      double collision_freq = retrieve_item(root, default_root, "anderson_nu")->valuedouble;
-      params->thermostat_parameters = build_anderson(seed, collision_freq);
+      double k = retrieve_item(root, default_root, "harmonic_constant")->valuedouble;
+      params->force_parameters = build_harmonic(k);
     }
-    else if (!strcmp(thermostat, "bussi"))
+    else if (!strcmp(force_type, "lj"))
     {
-      unsigned int seed = (unsigned int)retrieve_item(root, default_root, "thermostat_seed")->valueint;
-      double taut = retrieve_item(root, default_root, "bussi_taut")->valuedouble;
-      params->thermostat_parameters = build_bussi(seed, taut);
+      double epsilon = retrieve_item(root, default_root, "lj_epsilon")->valuedouble;
+      double sigma = retrieve_item(root, default_root, "lj_sigma")->valuedouble;
+      params->force_parameters = build_lj(epsilon, sigma, nlist);
+    }
+    else if (!strcmp(force_type, "soft"))
+    {
+      params->force_parameters = build_soft();
     }
     else
     {
-      fprintf(stderr, "Could not understand thermostat type %s\n", thermostat);
+      fprintf(stderr, "Could not understand force type %s\n", force_type);
       exit(1);
     }
   }
-
-  const char *force_type = retrieve_item(root, default_root, "force_type")->valuestring;
-
-  if (!strcmp(force_type, "harmonic"))
+  else
   {
-    double k = retrieve_item(root, default_root, "harmonic_constant")->valuedouble;
-    params->force_parameters = build_harmonic(k);
+    fprintf(stderr, "Must specifiy a force_type\n");
+    exit(1);
   }
-  else if (!strcmp(force_type, "lj"))
+
+  // group
+  item = cJSON_GetObjectItem(root, "group");
+  if (item)
   {
-    double epsilon = retrieve_item(root, default_root, "lj_epsilon")->valuedouble;
-    double sigma = retrieve_item(root, default_root, "lj_sigma")->valuedouble;
-    params->force_parameters = build_lj(epsilon, sigma, nlist);
-  }
-  else if (!strcmp(force_type, "soft"))
-  {
-    params->force_parameters = build_soft();
+    params->group = load_group(item->valuestring, params->n_dims);
   }
   else
   {
-    fprintf(stderr, "Could not understand force type %s\n", force_type);
-    exit(1);
+    params->group = NULL;
   }
 
   //load input files
   char *positions_file = retrieve_item(root, default_root, "start_positions")->valuestring;
   params->initial_positions = load_matrix(positions_file, params->n_particles, params->n_dims, 0);
 
-  char *masses_file = retrieve_item(root, default_root, "masses_file")->valuestring;
-  params->masses = load_matrix(masses_file, params->n_particles, 1, 0);
+  item = cJSON_GetObjectItem(root, "masses_file");
+  if (item)
+  {
+    char *masses_file = item->valuestring;
+    params->masses = load_matrix(masses_file, params->n_particles, 1, 0);
+  }
+  else
+  {
+    fprintf(stderr, "Warning: Setting masses to 1.0\n");
+    params->masses = (double *)malloc(sizeof(double) * params->n_particles);
+    for (unsigned int i = 0; i < params->n_particles; i++)
+      params->masses[i] = 1.0;
+  }
 
   item = cJSON_GetObjectItem(root, "start_velocities");
   if (!item)
@@ -298,6 +328,87 @@ Run_Params *read_parameters(char *file_name)
   cJSON_Delete(default_root);
 
   return params;
+}
+
+group_t *load_group(char *filename, unsigned int n_dims)
+{
+  char *data;
+  load_json(filename, &data);
+  cJSON *root = cJSON_Parse(data);
+  cJSON *item;
+
+  if (!root)
+  {
+    fprintf(stderr, "Error in group JSON before: [%s]\n", cJSON_GetErrorPtr());
+    exit(1);
+  }
+
+  item = cJSON_GetObjectItem(root, "name");
+  cJSON *json_members = cJSON_GetObjectItem(root, "members");
+  if (!json_members || !item)
+  {
+    fprintf(stderr, "Malformed group JSON - must have members and name\n");
+    exit(1);
+  }
+
+  group_t *group = (group_t *)malloc(sizeof(group_t));
+  group->name = item->valuestring;
+  unsigned int i, j, size = 0;
+  g_t *tmp, *members = NULL;
+  double *g_mat, *i_mat;
+  // iterate over group members
+
+  for (json_members = json_members->child; json_members != NULL; json_members = json_members->next)
+  {
+
+    // grow
+    tmp = (g_t *)malloc(sizeof(g_t) * ++size);
+    if (members)
+    {
+      memcpy(tmp, members, sizeof(g_t) * (size - 1));
+      free(members);
+    }
+    members = tmp;
+
+    g_mat = (double *)malloc(sizeof(double) * n_dims * n_dims);
+    i_mat = (double *)malloc(sizeof(double) * n_dims * n_dims);
+    load_json_matrix(cJSON_GetObjectItem(json_members, "g"), g_mat, n_dims * n_dims, "g matrix");
+    load_json_matrix(cJSON_GetObjectItem(json_members, "i"), i_mat, n_dims * n_dims, "i matrix");
+    g_t g = {.g = g_mat, .i = i_mat};
+
+    // add new member
+    memcpy(&members[size - 1], &g, sizeof(g_t));
+  }
+  group->members = members;
+  group->size = size;
+
+  free(data);
+
+  return group;
+}
+
+void *load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message)
+{
+  if (!item)
+  {
+    fprintf(stderr, "Malformed group JSON - could not parse %s\n", message);
+    exit(1);
+  }
+  unsigned int i = 0;
+  for (item = item->child; item != NULL; item = item->next)
+  {
+    if (i == size)
+    {
+      fprintf(stderr, "Too many values in %s\n", message);
+      exit(1);
+    }
+    mat[i++] = item->valuedouble;
+  }
+  if (i != size)
+  {
+    fprintf(stderr, "Too few values in %s\n", message);
+    exit(1);
+  }
 }
 
 double calculate_kenergy(double *velocities, double *masses, unsigned int n_dims, unsigned int n_particles)
@@ -466,16 +577,26 @@ double remove_com(double *velocities, double *masses, unsigned int n_dims, unsig
   return sqrt(com_mag);
 }
 
-void free_run_params(Run_Params *params)
+void free_run_params(run_params_t *params)
 {
 
-  // free_thermostat(params->thermostat_parameters);
+  if (params->thermostat_parameters)
+    params->thermostat_parameters->free(params->thermostat_parameters);
   params->force_parameters->free(params->force_parameters);
 
   free(params->initial_positions);
   free(params->initial_velocities);
   free(params->masses);
   free(params->box_size);
+  if (params->group)
+    free_group(params->group);
+
+  if (params->positions_file)
+    fclose(params->positions_file);
+  if (params->velocities_file)
+    fclose(params->velocities_file);
+  if (params->forces_file)
+    fclose(params->forces_file);
 
   free(params);
 }

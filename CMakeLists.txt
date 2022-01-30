@@ -22,6 +22,7 @@ set(SOURCE_FILES src/cJSON.c
                 src/util.c
                 src/anderson_thermostat.c
                 src/bussi_thermostat.c
+                src/group.c
                 )
 
 # add the executable
