@@ -14,5 +14,6 @@
 	"masses_file": "masses.txt",
 	"start_positions": "start_positions.xyz",
 	"print_period": 1,
-	"positions_log_file": "positions.xyz"
+	"positions_log_file": "positions.xyz",
+	"force_type": "harmonic"
 }
