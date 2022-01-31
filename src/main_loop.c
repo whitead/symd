@@ -47,7 +47,7 @@ int main_loop(run_params_t *params)
 
   printf("%12s %12s %12s %12s %12s %12s %12s\n", "Step", "Time", "T", "PE", "KE", "E", "Htherm");
   //start at 0, so that we don't log on the first loop
-  for (i = 1; i <= params->steps; i++)
+  for (i = 0; i < params->steps; i++)
   {
 
     //integrate 1

@@ -10,6 +10,15 @@ typedef struct
   nlist_parameters_t *nlist;
 } lj_parameters_t;
 
+static inline double clip(double n, double lower, double upper)
+{
+  // Stack overflow
+  // TODO: Turn this off if you really want to be exact
+  n = 0.5 * (n + lower + fabs(n - lower));
+  n = 0.5 * (n + upper - fabs(upper - n));
+  return n;
+}
+
 static inline double lj(double r, double epsilon, double sigma)
 {
   return 4 * epsilon * (6 * pow(sigma / r, 7) - 12 * pow(sigma / r, 13));
@@ -21,7 +30,7 @@ static inline double lj_trunc_shift(double r, double epsilon, double sigma, doub
   {
     return 0;
   }
-  return lj(r, epsilon, sigma) - shift;
+  return clip(lj(r, epsilon, sigma) - shift, -20 * epsilon, 20 * epsilon);
 }
 
 double lj_gather_forces(run_params_t *params, double *positions, double *forces)
