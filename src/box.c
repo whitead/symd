@@ -46,7 +46,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
   // make random step along some sides
   if (params->cubic)
   {
-    double dx = 1.0 + gsl_rng_uniform(params->rng) * 0.002 - 0.001;
+    double dx = 1.0 + gsl_rng_uniform(params->rng) * 0.02 - 0.01;
     for (i = 0; i < n_dims; i++)
       new_box[i] *= dx;
   }
@@ -61,7 +61,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
         if (gsl_rng_uniform(params->rng) < 1.0 / n_dims)
         {
           //between 99% and 101%
-          new_box[i] *= 1.0 + gsl_rng_uniform(params->rng) * 0.002 - 0.001;
+          new_box[i] *= 1.0 + gsl_rng_uniform(params->rng) * 0.02 - 0.01;
           success = 1;
         }
       }
