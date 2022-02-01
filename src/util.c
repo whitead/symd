@@ -6,25 +6,21 @@
 
 static const char *
     default_json = " { \"com_remove_period\" : 1000, \"skin\" : 0, \
-    \"thermostat_seed\" : 1523, \"anderson_nu\" : 10.0,\
+    \"seed\" : 1523, \"anderson_nu\" : 10.0, \"pressure\": 0,\
     \"temperature\": 0, \"final_positions\": \"final_positions.xyz\",\
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
-    \"velocity_seed\" : 543214, \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
+    \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
+    \"box_update_period\": 0,\
      \"force_log_period\" : 0, \"box_size\": [0, 0, 0]} ";
 
 void *load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message);
 
-double *generate_velocities(double temperature, unsigned int seed, double *masses, unsigned int n_dims, unsigned int n_particles)
+double *generate_velocities(double temperature, gsl_rng *rng, double *masses, unsigned int n_dims, unsigned int n_particles)
 {
 
   double *velocities = (double *)malloc(sizeof(double) * n_dims * n_particles);
 
   unsigned int i, j;
-  gsl_rng *rng;
-
-  gsl_rng_env_setup();
-  rng = gsl_rng_alloc(gsl_rng_default);
-  gsl_rng_set(rng, seed);
 
   for (i = 0; i < n_particles; i++)
   {
@@ -41,8 +37,6 @@ double *generate_velocities(double temperature, unsigned int seed, double *masse
   double ke = calculate_kenergy(velocities, masses, n_dims, n_particles);
   printf("Generated velocity distribution with %g temperature\n", ke * 2 / (n_dims * n_particles));
 #endif
-
-  gsl_rng_free(rng);
 
   return (velocities);
 }
@@ -140,11 +134,12 @@ run_params_t *read_parameters(char *file_name)
 
   if (!root)
   {
-    fprintf(stderr, "Error before: [%s]\n", cJSON_GetErrorPtr());
+    fprintf(stderr, "JSON Error before: [%s]\n", cJSON_GetErrorPtr());
     exit(1);
   }
 
   run_params_t *params = (run_params_t *)malloc(sizeof(run_params_t));
+  params->rng = NULL;
 
   //get single value parameters
   params->steps = (unsigned int)retrieve_item(root, default_root, "steps")->valueint;
@@ -167,9 +162,17 @@ run_params_t *read_parameters(char *file_name)
   params->force_log_period = (unsigned int)retrieve_item(root, default_root, "force_log_period")->valueint;
   params->force_log_period = (params->force_log_period == 0 ? params->print_period : params->force_log_period);
 
+  unsigned int seed = (unsigned int)retrieve_item(root, default_root, "seed")->valueint;
+
+  gsl_rng_env_setup();
+  gsl_rng *rng = gsl_rng_alloc(gsl_rng_default);
+  gsl_rng_set(rng, seed);
+  params->rng = rng;
+
   params->box_size = (double *)calloc(params->n_dims, sizeof(double));
   //box size
   unsigned int i;
+  unsigned int cubic = 1;
   item = retrieve_item(root, default_root, "box_size");
   i = 0;
   for (item = item->child; item != NULL; item = item->next)
@@ -183,8 +186,23 @@ run_params_t *read_parameters(char *file_name)
       exit(1);
     }
     params->box_size[i] = item->valuedouble;
+    if (i > 0 && (params->box_size[i] - params->box_size[i - 1]) > 0.000001)
+      cubic &= 0;
     i++;
   }
+  if (i != params->n_dims)
+    fprintf(stderr, "Not enough box dims set\n");
+  if (cubic)
+    printf("Based on box dimensions, guessing you want to be cubic\n");
+
+  params->box_update_period = (unsigned int)retrieve_item(root, default_root, "box_update_period")->valueint;
+  if (params->box_update_period)
+  {
+    params->pressure = (double)retrieve_item(root, default_root, "pressure")->valuedouble;
+    // guess if cubic
+    params->cubic = cubic;
+  }
+
   //thermostats
   params->thermostat_parameters = NULL;
   if (params->temperature)
@@ -196,15 +214,13 @@ run_params_t *read_parameters(char *file_name)
 
       if (!strcmp(thermostat, "anderson"))
       {
-        unsigned int seed = (unsigned int)retrieve_item(root, default_root, "thermostat_seed")->valueint;
         double collision_freq = retrieve_item(root, default_root, "anderson_nu")->valuedouble;
-        params->thermostat_parameters = build_anderson(seed, collision_freq);
+        params->thermostat_parameters = build_anderson(collision_freq, params->rng);
       }
       else if (!strcmp(thermostat, "bussi"))
       {
-        unsigned int seed = (unsigned int)retrieve_item(root, default_root, "thermostat_seed")->valueint;
         double taut = retrieve_item(root, default_root, "bussi_taut")->valuedouble;
-        params->thermostat_parameters = build_bussi(seed, taut);
+        params->thermostat_parameters = build_bussi(taut, params->rng);
       }
       else
       {
@@ -213,6 +229,8 @@ run_params_t *read_parameters(char *file_name)
       }
     }
   }
+
+  item = cJSON_GetObjectItem(root, "masses_file");
 
   //load input files
   char *positions_file = retrieve_item(root, default_root, "start_positions")->valuestring;
@@ -235,9 +253,8 @@ run_params_t *read_parameters(char *file_name)
   item = cJSON_GetObjectItem(root, "start_velocities");
   if (!item)
   {
-    unsigned int velocity_seed = (unsigned int)retrieve_item(root, default_root, "velocity_seed")->valueint;
     params->initial_velocities =
-        generate_velocities(params->temperature, velocity_seed,
+        generate_velocities(params->temperature, params->rng,
                             params->masses, params->n_dims,
                             params->n_particles);
   }
@@ -601,6 +618,8 @@ void free_run_params(run_params_t *params)
     fclose(params->velocities_file);
   if (params->forces_file)
     fclose(params->forces_file);
+
+  gsl_rng_free(params->rng);
 
   free(params);
 }

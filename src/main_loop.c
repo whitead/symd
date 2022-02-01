@@ -5,12 +5,13 @@
 #include "integrate.h"
 #include "thermostat.h"
 #include "group.h"
+#include "box.h"
 
 int main(int argc, char *argv[])
 {
 
   char *pfile;
-  //process arguemnts to get parameters
+  //process arguments to get parameters
   pfile = NULL;
 
   if (argc == 2)
@@ -48,7 +49,9 @@ void main_loop(run_params_t *params)
     fold_particles(params, positions, true);
   }
 
-  printf("%12s %12s %12s %12s %12s %12s %12s\n", "Step", "Time", "T", "PE", "KE", "E", "Htherm");
+  printf("%12s %12s %12s %12s %12s %12s %12s %12s\n",
+         "Step", "Time", "T", "PE", "KE", "E", "Htherm",
+         "V");
   //start at 0, so that we don't log on the first loop
   for (i = 0; i < params->steps; i++)
   {
@@ -58,17 +61,6 @@ void main_loop(run_params_t *params)
     {
       sprintf(xyz_file_comment, "Frame: %d", i);
       log_xyz(params->positions_file, positions, xyz_file_comment, params->n_dims, params->n_particles + params->n_ghost_particles);
-    }
-
-    if (i % params->velocity_log_period == 0)
-      log_array(params->velocities_file, velocities, params->n_dims, params->n_particles + params->n_ghost_particles, true);
-
-    if (i % params->force_log_period == 0)
-      log_array(params->forces_file, forces, params->n_dims, params->n_particles + params->n_ghost_particles, true);
-
-    if (i % params->print_period == 0)
-    {
-      printf("%12d %12g %12g %12g %12g %12g %12g\n", i, i * params->time_step, insta_temperature, penergy, kenergy, penergy + kenergy, penergy + kenergy - therm_conserved);
     }
 
     //integrate 1
@@ -86,8 +78,24 @@ void main_loop(run_params_t *params)
     //gather forces
     penergy = params->force_parameters->gather(params, positions, forces);
 
+    // try update box
+    if (params->box_update_period && i % params->box_update_period == 0)
+    {
+      if (!try_rescale(params, positions, &penergy, forces))
+      {
+        //reset forces
+        penergy = params->force_parameters->gather(params, positions, forces);
+      }
+    }
+
     //integrate 2
     integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
+
+    if (i % params->velocity_log_period == 0)
+      log_array(params->velocities_file, velocities, params->n_dims, params->n_particles + params->n_ghost_particles, true);
+
+    if (i % params->force_log_period == 0)
+      log_array(params->forces_file, forces, params->n_dims, params->n_particles + params->n_ghost_particles, true);
 
     //thermostat
     if (params->thermostat_parameters)
@@ -96,6 +104,13 @@ void main_loop(run_params_t *params)
     //calculate important quantities
     kenergy = calculate_kenergy(velocities, params->masses, params->n_dims, params->n_particles);
     insta_temperature = kenergy * 2 / (params->n_particles * params->n_dims - params->n_dims);
+
+    if (i % params->print_period == 0)
+    {
+      printf("%12d %12g %12g %12g %12g %12g %12g %12g\n",
+             i, i * params->time_step, insta_temperature, penergy, kenergy,
+             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box_size, params->n_dims));
+    }
   }
   log_array(params->final_positions_file, positions, params->n_dims,
             params->n_particles + params->n_ghost_particles, false);

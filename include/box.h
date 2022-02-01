@@ -1,4 +1,4 @@
-#include <math.h>
+#include "params.h"
 
 #ifndef MIN_IMAGE_H_
 #define MIN_IMAGE_H_
@@ -12,5 +12,9 @@ double round(double number);
 double min_image_dist(double dx, double img);
 
 double wrap(double x, double img);
+
+double volume(double *box, unsigned int n_dims);
+
+int try_rescale(run_params_t *params, double *positions, double *penergy, double *forces);
 
 #endif

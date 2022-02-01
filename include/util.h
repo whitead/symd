@@ -12,12 +12,6 @@
 #define UTIL_H_
 
 /*
- * Generate a set of initial velocities from the appropiate chi-n distribution
- *
- */
-double *generate_velocities(double temperature, unsigned int seed, double *masses, unsigned int n_dims, unsigned int n_particles);
-
-/*
  * Calculate the unitless kinetic energy.
  *
  */

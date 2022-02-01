@@ -101,17 +101,11 @@ double b_thermostat(thermostat_t *params, double temperature, double time_step, 
 
 void b_free_thermostat(thermostat_t *params)
 {
-  gsl_rng_free(params->rng);
   free(params);
 }
 
-thermostat_t *build_bussi(unsigned int seed, double taut)
+thermostat_t *build_bussi(double taut, gsl_rng *rng)
 {
-  gsl_rng *rng;
-  gsl_rng_env_setup();
-  rng = gsl_rng_alloc(gsl_rng_default);
-  gsl_rng_set(rng, seed);
-
   thermostat_t *params = (thermostat_t *)malloc(sizeof(thermostat_t));
   params->param = taut;
   params->rng = rng;

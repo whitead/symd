@@ -213,8 +213,9 @@ class SimpleMD:
         self.pe = np.empty_like(self.temperature)
         self.te = np.empty_like(self.temperature)
         self.htherm = np.empty_like(self.temperature)
+        self.v = np.empty_like(self.temperature)
 
-        out_arrays = (self.temperature, self.pe, self.ke, self.te, self.htherm)
+        out_arrays = (self.temperature, self.pe, self.ke, self.te, self.htherm, self.v)
 
         proc = subprocess.Popen(
             self.exe,

@@ -14,8 +14,8 @@ static inline double clip(double n, double lower, double upper)
 {
   // Stack overflow
   // TODO: Turn this off if you really want to be exact
-  //n = 0.5 * (n + lower + fabs(n - lower));
-  //n = 0.5 * (n + upper - fabs(upper - n));
+  n = 0.5 * (n + lower + fabs(n - lower));
+  n = 0.5 * (n + upper - fabs(upper - n));
   return n;
 }
 
@@ -30,7 +30,7 @@ static inline double lj_trunc_shift(double r, double epsilon, double sigma, doub
   {
     return 0;
   }
-  return clip(lj(r, epsilon, sigma) - shift, -2000 * epsilon, 2000 * epsilon);
+  return clip(lj(r, epsilon, sigma) - shift, -20 * epsilon, 20 * epsilon);
 }
 
 double lj_gather_forces(run_params_t *params, double *positions, double *forces)
@@ -133,7 +133,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
     }
   }
 
-  return (penergy);
+  return penergy;
 }
 
 void lj_free_forces(force_t *force)

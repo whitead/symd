@@ -1,5 +1,5 @@
 #include "group.h"
-#include "min_image.h"
+#include "box.h"
 
 static inline double *action(double *g, double *output, double *data, unsigned int n_dims)
 {

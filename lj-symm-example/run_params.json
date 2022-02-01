@@ -1,10 +1,10 @@
 {
-    "steps": 1000000,
-    "time_step": 0.005,
+    "steps": 200000,
+    "time_step": 0.002,
     "temperature": 0.2,
     "velocity_seed": 456415615,
     "thermostat_seed": 1565,
-    "bussi_taut": 5,
+    "bussi_taut": 3,
     "rcut": 3,
     "lj_sigma": 1.0,
     "n_dims": 2,
@@ -12,13 +12,15 @@
         100,
         100
     ],
-    "n_particles": 1022,
+    "n_particles": 4095,
     "start_positions": "start_positions.xyz",
     "print_period": 100,
     "positions_log_file": "positions.xyz",
-    "position_log_period": 100,
+    "position_log_period": 200,
     "force_type": "lj",
     "group": "group.json",
     "thermostat": "bussi",
-    "com_remove_period": 10
+    "com_remove_period": 10,
+    "pressure": 100,
+    "box_update_period": 100
 }
