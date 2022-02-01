@@ -44,15 +44,15 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 				force_vector[0] += 0.01;
 				r = 0.01;
 			}
-			if (r < 1)
+			if (r < 1.5)
 			{
 
 #pragma omp critical
 				for (k = 0; k < n_dims; k++)
 				{
-					forces[i * n_dims + k] += -sin(PI * r) * PI * force_vector[k] / r;
+					forces[i * n_dims + k] += -sin(PI * r / 1.5) * PI * force_vector[k] / r;
 					if (j < params->n_particles)
-						forces[j * n_dims + k] += sin(PI * r) * PI * force_vector[k] / r;
+						forces[j * n_dims + k] += sin(PI * r / 1.5) * PI * force_vector[k] / r;
 				}
 
 				penergy += cos(PI * r);
