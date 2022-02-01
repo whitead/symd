@@ -1,10 +1,10 @@
 {
     "steps": 200000,
     "time_step": 0.002,
-    "temperature": 0.2,
+    "temperature": 0.01,
     "velocity_seed": 456415615,
     "thermostat_seed": 1565,
-    "bussi_taut": 3,
+    "bussi_taut": 1.5,
     "rcut": 3,
     "lj_sigma": 1.0,
     "n_dims": 2,
