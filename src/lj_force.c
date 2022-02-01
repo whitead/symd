@@ -115,7 +115,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         force = lj_trunc_shift(r, epsilon, sigma, rcut, lj_shift);
 
 #ifdef DEBUG
-        printf("F(%d - %d, %g) = %g\n", i, j, r, force);
+        printf("F(%d <-> %d, %g) = %g\n", i, j, r, force);
 #endif //DEBUG
 
 #pragma omp critical(update_forces)

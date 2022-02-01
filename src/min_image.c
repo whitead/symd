@@ -19,7 +19,7 @@ double wrap(double x, double img)
   {
     double cx = x + img / 2;
     x = cx - floor(cx / img) * img;
-    return x - img / 2;
+    x = x - img / 2;
   }
   return x;
 }

@@ -102,20 +102,20 @@ cJSON *retrieve_item(cJSON *root, cJSON *default_root, const char *item_name)
     item = cJSON_GetObjectItem(default_root, item_name);
     if (item)
     {
-      fprintf(stderr, "Warning: assuming default value for %s = ", item_name);
+      printf("Warning: assuming default value for %s = ", item_name);
       switch (item->type)
       {
       case cJSON_False:
-        fprintf(stderr, "false\n");
+        printf("false\n");
         break;
       case cJSON_True:
-        fprintf(stderr, "true\n");
+        printf("true\n");
         break;
       case cJSON_Number:
-        fprintf(stderr, "%g\n", item->valuedouble);
+        printf("%g\n", item->valuedouble);
         break;
       case cJSON_String:
-        fprintf(stderr, "%s\n", item->valuestring);
+        printf("%s\n", item->valuestring);
         break;
       }
     }
@@ -226,7 +226,7 @@ run_params_t *read_parameters(char *file_name)
   }
   else
   {
-    fprintf(stderr, "Warning: Setting masses to 1.0\n");
+    printf("Warning: Setting masses to 1.0\n");
     params->masses = (double *)malloc(sizeof(double) * params->n_particles);
     for (unsigned int i = 0; i < params->n_particles; i++)
       params->masses[i] = 1.0;
@@ -275,7 +275,7 @@ run_params_t *read_parameters(char *file_name)
     if (skin == 0)
     {
       skin = 0.2 * rcut;
-      fprintf(stderr, "Warning: Assuming skin = %g\n", skin);
+      printf("Warning: Assuming skin = %g\n", skin);
     }
     nlist = build_nlist_params(params->n_dims, params->n_particles, params->n_ghost_particles,
                                params->box_size, skin, rcut);
@@ -508,14 +508,12 @@ double *load_matrix(char *filename, unsigned int nrow, unsigned int ncol, unsign
           ;
       }
     }
-
     double *matrix = (double *)malloc(sizeof(double) * nrow * ncol);
     if (matrix == NULL)
     {
       perror("Out of memory\n");
       exit(1);
     }
-
     for (i = 0; i < nrow; i++)
     {
       for (j = 0; j < ncol; j++)

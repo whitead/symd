@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
   if (argc == 2)
     pfile = argv[1];
 
-  fprintf(stderr, "You are running version %s of simple-MD\n", VERSION);
+  printf("You are running version %s of simple-MD\n", VERSION);
 
   run_params_t *p = read_parameters(pfile);
 
@@ -34,7 +34,8 @@ void main_loop(run_params_t *params)
   unsigned int i;
   double *positions = params->initial_positions;
   double *velocities = params->initial_velocities;
-  double *forces = malloc(sizeof(double) * params->n_dims * params->n_particles);
+  // make sure initial forces are zeroed
+  double *forces = calloc(params->n_dims * params->n_particles, sizeof(double));
   char xyz_file_comment[100];
   double penergy = 0;
   double kenergy = 0;
@@ -51,6 +52,24 @@ void main_loop(run_params_t *params)
   //start at 0, so that we don't log on the first loop
   for (i = 0; i < params->steps; i++)
   {
+
+    //print
+    if (i % params->position_log_period == 0)
+    {
+      sprintf(xyz_file_comment, "Frame: %d", i);
+      log_xyz(params->positions_file, positions, xyz_file_comment, params->n_dims, params->n_particles + params->n_ghost_particles);
+    }
+
+    if (i % params->velocity_log_period == 0)
+      log_array(params->velocities_file, velocities, params->n_dims, params->n_particles + params->n_ghost_particles, true);
+
+    if (i % params->force_log_period == 0)
+      log_array(params->forces_file, forces, params->n_dims, params->n_particles + params->n_ghost_particles, true);
+
+    if (i % params->print_period == 0)
+    {
+      printf("%12d %12g %12g %12g %12g %12g %12g\n", i, i * params->time_step, insta_temperature, penergy, kenergy, penergy + kenergy, penergy + kenergy - therm_conserved);
+    }
 
     //integrate 1
     integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
@@ -77,24 +96,6 @@ void main_loop(run_params_t *params)
     //calculate important quantities
     kenergy = calculate_kenergy(velocities, params->masses, params->n_dims, params->n_particles);
     insta_temperature = kenergy * 2 / (params->n_particles * params->n_dims - params->n_dims);
-
-    //print
-    if (i % params->position_log_period == 0)
-    {
-      sprintf(xyz_file_comment, "Frame: %d", i);
-      log_xyz(params->positions_file, positions, xyz_file_comment, params->n_dims, params->n_particles + params->n_ghost_particles);
-    }
-
-    if (i % params->velocity_log_period == 0)
-      log_array(params->velocities_file, velocities, params->n_dims, params->n_particles + params->n_ghost_particles, true);
-
-    if (i % params->force_log_period == 0)
-      log_array(params->forces_file, forces, params->n_dims, params->n_particles + params->n_ghost_particles, true);
-
-    if (i % params->print_period == 0)
-    {
-      printf("%12d %12g %12g %12g %12g %12g %12g\n", i, i * params->time_step, insta_temperature, penergy, kenergy, penergy + kenergy, penergy + kenergy - therm_conserved);
-    }
   }
   log_array(params->final_positions_file, positions, params->n_dims,
             params->n_particles + params->n_ghost_particles, false);

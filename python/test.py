@@ -156,7 +156,7 @@ class ExecuteTest(Test):
 
     def run(self):
         md.execute()
-        if md.outerr != "":
+        if md.outerr != b"":
             self.summary = "Execute test stderr out:\n %s" % md.outerr
         else:
             self.passed = True

@@ -233,7 +233,6 @@ class SimpleMD:
             with open(self.runParams["log_file"], "wb") as f:
                 f.write(output)
         self.outerr = outerr
-        print(outerr.decode())
         index = 0
 
         for line in output.decode().split("\n"):
