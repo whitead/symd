@@ -20,7 +20,9 @@ double calculate_kenergy(double *velocities, double *masses, unsigned int n_dims
 /*
  * Write to file, which should be open, the given array in xyz format
  */
-void log_xyz(FILE *file, double *array, char *frame_string, unsigned n_dims, unsigned n_particles);
+void log_xyz(FILE *file, double *array, char *frame_string,
+             const char *element, unsigned n_dims, unsigned n_particles,
+             unsigned int total, int location);
 
 /*
  * Write to file, which should be open, the given array. If sum is true, then the cols will

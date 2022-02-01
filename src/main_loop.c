@@ -46,7 +46,7 @@ void main_loop(run_params_t *params)
   // apply group if necessary
   if (params->group)
   {
-    fold_particles(params, positions, true);
+    fold_particles(params, positions, true, false);
   }
 
   printf("%12s %12s %12s %12s %12s %12s %12s %12s\n",
@@ -60,7 +60,11 @@ void main_loop(run_params_t *params)
     if (i % params->position_log_period == 0)
     {
       sprintf(xyz_file_comment, "Frame: %d", i);
-      log_xyz(params->positions_file, positions, xyz_file_comment, params->n_dims, params->n_particles + params->n_ghost_particles);
+      log_xyz(params->positions_file, positions, xyz_file_comment, "Ar", params->n_dims,
+              params->n_particles, params->n_particles + params->n_ghost_particles, 0);
+      log_xyz(params->positions_file, &positions[params->n_particles], NULL, "C",
+              params->n_dims, params->n_ghost_particles,
+              params->n_particles + params->n_ghost_particles, 1);
     }
 
     if (i % params->velocity_log_period == 0)
@@ -72,7 +76,7 @@ void main_loop(run_params_t *params)
     // apply group if necessary
     if (params->group)
     {
-      fold_particles(params, positions, false);
+      fold_particles(params, positions, false, false);
       //fold_particles(params, velocities, false);
     }
     if (i % params->com_remove_period == 0)

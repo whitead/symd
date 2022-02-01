@@ -250,6 +250,20 @@ run_params_t *read_parameters(char *file_name)
       params->masses[i] = 1.0;
   }
 
+  // group - partition to ghost too
+  item = cJSON_GetObjectItem(root, "group");
+  if (item)
+  {
+    params->group = load_group(item->valuestring, params->n_dims);
+    params->n_particles = params->n_particles / params->group->size;
+    params->n_ghost_particles = params->n_particles * (params->group->size - 1);
+  }
+  else
+  {
+    params->group = NULL;
+    params->n_ghost_particles = 0;
+  }
+
   item = cJSON_GetObjectItem(root, "start_velocities");
   if (!item)
   {
@@ -262,24 +276,6 @@ run_params_t *read_parameters(char *file_name)
   {
     params->initial_velocities =
         load_matrix(item->valuestring, params->n_particles, params->n_dims, 0);
-  }
-
-  // group - partition to ghost too
-  item = cJSON_GetObjectItem(root, "group");
-  if (item)
-  {
-    params->group = load_group(item->valuestring, params->n_dims);
-    params->n_particles = params->n_particles / params->group->size;
-    params->n_ghost_particles = params->n_particles * (params->group->size - 1);
-    // remove velocties on ghost particles
-    for (unsigned int i = params->n_particles; i < params->n_particles + params->n_ghost_particles; i++)
-      for (unsigned int j = 0; j < params->n_dims; j++)
-        params->initial_velocities[i * params->n_dims + j] = 0;
-  }
-  else
-  {
-    params->group = NULL;
-    params->n_ghost_particles = 0;
   }
 
   // make nlist
@@ -354,6 +350,7 @@ run_params_t *read_parameters(char *file_name)
 group_t *load_group(char *filename, unsigned int n_dims)
 {
   char *data;
+  unsigned g_dims = n_dims + 1;
   load_json(filename, &data);
   cJSON *root = cJSON_Parse(data);
   cJSON *item;
@@ -391,10 +388,10 @@ group_t *load_group(char *filename, unsigned int n_dims)
     }
     members = tmp;
 
-    g_mat = (double *)malloc(sizeof(double) * n_dims * n_dims);
-    i_mat = (double *)malloc(sizeof(double) * n_dims * n_dims);
-    load_json_matrix(cJSON_GetObjectItem(json_members, "g"), g_mat, n_dims * n_dims, "g matrix");
-    load_json_matrix(cJSON_GetObjectItem(json_members, "i"), i_mat, n_dims * n_dims, "i matrix");
+    g_mat = (double *)malloc(sizeof(double) * g_dims * g_dims);
+    i_mat = (double *)malloc(sizeof(double) * g_dims * g_dims);
+    load_json_matrix(cJSON_GetObjectItem(json_members, "g"), g_mat, g_dims * g_dims, "g matrix");
+    load_json_matrix(cJSON_GetObjectItem(json_members, "i"), i_mat, g_dims * g_dims, "i matrix");
     g_t g = {.g = g_mat, .i = i_mat};
 
     // add new member
@@ -451,19 +448,21 @@ double calculate_kenergy(double *velocities, double *masses, unsigned int n_dims
   return (kenergy);
 }
 
-void log_xyz(FILE *file, double *array, char *frame_string, unsigned n_dims, unsigned n_particles)
+void log_xyz(FILE *file, double *array, char *frame_string,
+             const char *element, unsigned n_dims, unsigned n_particles,
+             unsigned int total, int location)
 {
 
   if (file == NULL)
     return;
 
   unsigned int i, j;
-
-  fprintf(file, "%d\n%s\n", n_particles, frame_string);
+  if (location == 0)
+    fprintf(file, "%d\n%s\n", total, frame_string);
 
   for (i = 0; i < n_particles; i++)
   {
-    fprintf(file, "Ar ");
+    fprintf(file, "%s ", element);
     for (j = 0; j < n_dims; j++)
     {
       fprintf(file, "%12g ", array[i * n_dims + j]);
@@ -474,8 +473,8 @@ void log_xyz(FILE *file, double *array, char *frame_string, unsigned n_dims, uns
     }
     fprintf(file, "\n");
   }
-
-  fflush(file);
+  if (location == 2)
+    fflush(file);
 }
 
 void log_array(FILE *file, double *array, unsigned n_cols, unsigned n_rows, bool do_sum)
