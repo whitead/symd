@@ -24,17 +24,11 @@ double a_thermostat(thermostat_t *params, double temperature, double time_step, 
 
 void a_free_thermostat(thermostat_t *params)
 {
-  gsl_rng_free(params->rng);
   free(params);
 }
 
-thermostat_t *build_anderson(unsigned int seed, double collision_freq)
+thermostat_t *build_anderson(double collision_freq, gsl_rng *rng)
 {
-  gsl_rng *rng;
-  gsl_rng_env_setup();
-  rng = gsl_rng_alloc(gsl_rng_default);
-  gsl_rng_set(rng, seed);
-
   thermostat_t *params = (thermostat_t *)malloc(sizeof(thermostat_t));
   params->param = collision_freq;
   params->rng = rng;

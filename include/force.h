@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
-#include "min_image.h"
+#include "box.h"
 #include "nlist.h"
 #include "params.h"
 

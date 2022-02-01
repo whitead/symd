@@ -1,4 +1,4 @@
-#include "min_image.h"
+#include "box.h"
 
 #define NLIST
 

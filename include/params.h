@@ -1,5 +1,10 @@
 
 #include <stdio.h>
+#include <gsl/gsl_rng.h>
+
+#ifndef VERSION
+#define VERSION unknown
+#endif
 
 #ifndef PARAMS_H_
 #define PARAMS_H_
@@ -19,6 +24,7 @@ typedef struct
     unsigned int com_remove_period;
     double time_step;
     double temperature;
+    double pressure;
     thermostat_t *thermostat_parameters;
     force_t *force_parameters;
     group_t *group;
@@ -26,6 +32,7 @@ typedef struct
     double *initial_velocities;
     double *masses;
     double *box_size;
+    int cubic;
     unsigned int n_dims;
     unsigned int n_particles;
     unsigned int n_ghost_particles;
@@ -36,7 +43,9 @@ typedef struct
     unsigned int position_log_period;
     unsigned int velocity_log_period;
     unsigned int force_log_period;
+    unsigned int box_update_period;
     unsigned int print_period;
+    gsl_rng *rng;
 
 } run_params_t;
 
