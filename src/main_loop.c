@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
   return (0);
 }
 
-int main_loop(run_params_t *params)
+void main_loop(run_params_t *params)
 {
 
   unsigned int i;
@@ -101,6 +101,4 @@ int main_loop(run_params_t *params)
             params->n_particles + params->n_ghost_particles, false);
 
   free(forces);
-
-  return MD_SUCCESS;
 }

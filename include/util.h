@@ -11,8 +11,6 @@
 #ifndef UTIL_H_
 #define UTIL_H_
 
-#define MD_SUCCESS 0
-
 /*
  * Generate a set of initial velocities from the appropiate chi-n distribution
  *
