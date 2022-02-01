@@ -15,7 +15,7 @@
 */positions.xyz
 */velocities.xyz
 */forces.xyz
-
+*/final_positions.xyz
 #python files
 *.pyc
 

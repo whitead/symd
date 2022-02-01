@@ -6,7 +6,17 @@ endif()
 
 string(APPEND CMAKE_C_FLAGS_DEBUG " -DDEBUG")
 
-set(CMAKE_C_FLAGS_RELEASE "-Ofast -fno-tree-pta -g -march=native -fmodulo-sched-allow-regmoves")
+string(APPEND CMAKE_C_FLAGS_RELEASE "-Ofast -fno-tree-pta -g -march=native -fmodulo-sched-allow-regmoves")
+
+execute_process (
+  COMMAND git describe --abbrev=4 --dirty --always --tags
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE GIT_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+add_definitions(-DVERSION="${GIT_COMMIT_HASH}")
+
 
 # set the project name
 project(simple-md)

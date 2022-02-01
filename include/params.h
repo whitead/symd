@@ -1,6 +1,10 @@
 
 #include <stdio.h>
 
+#ifndef VERSION
+#define VERSION unknown
+#endif
+
 #ifndef PARAMS_H_
 #define PARAMS_H_
 

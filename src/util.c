@@ -266,7 +266,7 @@ run_params_t *read_parameters(char *file_name)
 
   // make nlist
   nlist_parameters_t *nlist = NULL;
-  item = retrieve_item(root, default_root, "rcut");
+  item = cJSON_GetObjectItem(root, "rcut");
   if (item)
   {
     double rcut = item->valuedouble;
