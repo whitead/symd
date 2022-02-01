@@ -120,3 +120,32 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
     return 0;
   }
 }
+
+unsigned int _tilings(int *ns, unsigned int index,
+                      unsigned int cur_dim, unsigned int n_dims,
+                      unsigned int count, unsigned int output_length)
+{
+  int diff[3] = {0, -1, 1};
+  for (unsigned int i = 0; index < output_length && i < 3; i++)
+  {
+    if (cur_dim < n_dims - 1)
+      index = _tilings(ns, index, cur_dim + 1, n_dims, diff[i], output_length);
+    else
+    {
+      ns[index] = diff[i];
+      index++;
+    }
+  }
+  return index;
+}
+
+void tile(run_params_t *params, double *positions)
+{
+  unsigned int i, j, k, p = params->n_particles, n_dims = params->n_dims;
+  unsigned int start = p * params->group->size;
+
+  // get constant vectors to tilings
+  unsigned ntiles = pow(3, n_dims);
+  int *ns = (int *)malloc(ntiles * sizeof(int));
+  _tilings(ns, 0, 0, n_dims, 0, ntiles);
+}

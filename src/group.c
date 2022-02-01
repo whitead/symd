@@ -13,8 +13,8 @@ static inline double *action(double *g, double *output, double *data, unsigned i
 void *fold_particles(run_params_t *params, double *particles, bool reduce)
 {
     group_t *group = params->group;
-    unsigned int n_dims = params->n_dims, n_particles = params->n_particles + params->n_ghost_particles;
-    const unsigned int p = n_particles / group->size;
+    unsigned int n_dims = params->n_dims;
+    const unsigned int p = params->n_particles;
     unsigned int i, j, k;
     for (i = 0; i < p; i++)
     {
