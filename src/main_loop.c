@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
   if (argc == 2)
     pfile = argv[1];
 
-  printf("You are running version %s of simple-MD\n", VERSION);
+  fprintf(stderr, "You are running version %s of simple-MD\n", VERSION);
 
   run_params_t *p = read_parameters(pfile);
 
@@ -96,7 +96,6 @@ void main_loop(run_params_t *params)
       printf("%12d %12g %12g %12g %12g %12g %12g\n", i, i * params->time_step, insta_temperature, penergy, kenergy, penergy + kenergy, penergy + kenergy - therm_conserved);
     }
   }
-
   log_array(params->final_positions_file, positions, params->n_dims,
             params->n_particles + params->n_ghost_particles, false);
 

@@ -2,12 +2,12 @@
 #include "force.h"
 #include "group.h"
 
-#define PARAM_FILE_BUFFER 1024
+#define PARAM_FILE_BUFFER 4096
 
 static const char *
     default_json = " { \"com_remove_period\" : 1000, \"skin\" : 0, \
     \"thermostat_seed\" : 1523, \"anderson_nu\" : 10.0,\
-    \"temperature\": 0, \"rcut\": 0, \"final_positions\": \"final_positions.xyz\",\
+    \"temperature\": 0, \"final_positions\": \"final_positions.xyz\",\
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"velocity_seed\" : 543214, \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
      \"force_log_period\" : 0, \"box_size\": [0, 0, 0]} ";
@@ -72,6 +72,7 @@ void load_json(char *filename, char **data)
     if (ferror(f))
     {
       perror("Error reading input stream");
+      exit(1);
     }
 
     //trim to size
@@ -535,6 +536,8 @@ double *load_matrix(char *filename, unsigned int nrow, unsigned int ncol, unsign
   else
   {
     perror("Could not open file\n");
+    fprintf(stderr, "file: %s", filename);
+    exit(1);
   }
 
   return NULL;
