@@ -12,11 +12,19 @@ double round(double number)
 
 double min_image_dist(double dx, double img)
 {
+  if (img)
+    return dx - round(dx / img) * img;
   return dx;
 }
 
 double wrap(double x, double img)
 {
+  if (img)
+  {
+    double cx = x + img / 2;
+    x = cx - floor(cx / img) * img;
+    x = x - img / 2;
+  }
   return x;
 }
 
@@ -94,6 +102,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
     printf("Accepted with MHC %g\n", mhc);
 #endif
     //accepted
+    //TODO: rebuild cells in nlist
     *penergy = new_energy;
     free(params->box_size);
     params->box_size = new_box;

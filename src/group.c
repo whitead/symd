@@ -34,11 +34,6 @@ void *fold_particles(run_params_t *params, double *particles, bool reduce, bool 
         {
             for (j = 0; j < group->size; j++)
             {
-                // need to be wrapped
-                // non-ghost should be wrapped in integrate
-                for (k = 0; k < n_dims; k++)
-                    particles[j * p * n_dims + i * n_dims + k] =
-                        wrap(particles[j * p * n_dims + i * n_dims + k], params->box_size[k]);
                 action(group->members[j].i,
                        &particles[i * n_dims], &particles[j * p * n_dims + i * n_dims],
                        params->box_size, n_dims, vector ? 0.0 : 1.0);

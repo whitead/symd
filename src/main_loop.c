@@ -43,12 +43,14 @@ void main_loop(run_params_t *params)
   double insta_temperature;
   double therm_conserved = 0;
 
+  remove_com(positions, params->masses, params->n_dims, params->n_particles + params->n_ghost_particles);
+
   // apply group if necessary
   if (params->group)
   {
     fold_particles(params, positions, false, false);
   }
-  
+
   printf("%12s %12s %12s %12s %12s %12s %12s %12s\n",
          "Step", "Time", "T", "PE", "KE", "E", "Htherm",
          "V");

@@ -208,7 +208,7 @@ run_params_t *read_parameters(char *file_name)
   if (params->temperature)
   {
     item = cJSON_GetObjectItem(root, "thermostat");
-    if (item)
+    if (item && item->valuestring)
     {
       const char *thermostat = item->valuestring;
 
@@ -403,7 +403,6 @@ group_t *load_group(char *filename, unsigned int n_dims)
   group->members = members;
   group->size = size;
   group->tiling_start = tiling_start;
-  printf("tiling start %d\n", tiling_start);
 
   free(data);
 
@@ -562,7 +561,7 @@ double *load_matrix(char *filename, unsigned int nrow, unsigned int ncol, unsign
   return NULL;
 }
 
-double remove_com(double *velocities, double *masses, unsigned int n_dims, unsigned int n_particles)
+double remove_com(double *data, double *masses, unsigned int n_dims, unsigned int n_particles)
 {
 
   unsigned int i, k;
@@ -579,7 +578,7 @@ double remove_com(double *velocities, double *masses, unsigned int n_dims, unsig
     mass_sum += masses[i];
     for (k = 0; k < n_dims; k++)
     {
-      com[k] += velocities[i * n_dims + k] / masses[i];
+      com[k] += data[i * n_dims + k] / masses[i];
     }
   }
 
@@ -595,7 +594,7 @@ double remove_com(double *velocities, double *masses, unsigned int n_dims, unsig
   {
     for (k = 0; k < n_dims; k++)
     {
-      velocities[i * n_dims + k] -= com[k];
+      data[i * n_dims + k] -= com[k];
     }
   }
 

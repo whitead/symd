@@ -55,6 +55,10 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   double rcut = sqrt(nlist->rcut);
   double lj_shift = lj(rcut, epsilon, sigma);
 
+#ifdef DEBUG
+  check_nlist(params, nlist, positions, rcut);
+#endif
+
 //zero forces
 #pragma omp parallel for
   for (i = 0; i < n_particles; i++)
@@ -105,11 +109,14 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         //distance between particles
         for (k = 0; k < n_dims; k++)
         {
-          diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
           r += diff * diff;
           force_vector[k] = diff;
         }
 
+        if (r > rcut * rcut)
+          continue;
         r = sqrt(r);
         //LJ force and potential
         force = lj_trunc_shift(r, epsilon, sigma, rcut, lj_shift);

@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define BOX_M 2.0
+
 /*
  * Grow and insert a value as needed
  */
@@ -73,7 +75,7 @@ void update_nlist(double *positions,
     for (k = 0; k < n_dims; k++)
     {
       temp = (positions[i * n_dims + k] - nlist->last_positions[i * n_dims + k]);
-      temp = min_image_dist(temp, box_size[k]);
+      // temp = min_image_dist(temp, box_size[k]);
       dist += temp * temp;
     }
     if (dist > max1)
@@ -124,6 +126,13 @@ void build_cells(double *box_size,
   //rebuild the list
   unsigned int i;
   nlist->cell_number = (int *)malloc(sizeof(int) * n_dims);
+  double *m_box_size = (double *)malloc(sizeof(double) * n_dims);
+
+  // make our box bigger, since our tiled ghost particles
+  // will not wrap nicely.
+  memcpy(m_box_size, box_size, n_dims * sizeof(double));
+  for (i = 0; i < n_dims; i++)
+    m_box_size[i] *= BOX_M;
 
   //build cell list
   nlist->cell_number_total = 1;
@@ -131,7 +140,7 @@ void build_cells(double *box_size,
   for (i = 0; i < n_dims; i++)
   {
     nlist->cell_number[i] =
-        (int)(box_size[i] + width - 1) / width; // ceiling quotient
+        (int)(m_box_size[i] + width - 1) / width; // ceiling quotient
     //minimum
     if (nlist->cell_number[i] == 0)
       nlist->cell_number[i] = 1;
@@ -197,6 +206,8 @@ void build_cells(double *box_size,
   //prepare cell list and head
   nlist->head = (int *)malloc(sizeof(int) * nlist->cell_number_total);
   nlist->cell_list = (int *)malloc(sizeof(int) * (n_particles + n_ghost_particles));
+
+  free(m_box_size);
 }
 
 /*
@@ -210,7 +221,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   if (nlist->nlist == NULL)
   {
     //TODO: Maybe only need n_particles?
-    unsigned int ps = n_particles + n_ghost_particles;
+    unsigned int ps = n_particles;
     //first call, need to set-up some things
     nlist->nlist_count = (unsigned int *)malloc(sizeof(unsigned int) * ps);
     nlist->nlist = (unsigned int *)malloc(sizeof(unsigned int) * ps * (ps / 2));
@@ -224,6 +235,13 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   double dist, dx;
   int net_dcell;
   int icell;
+  double *m_box_size = (double *)malloc(sizeof(double) * n_dims);
+
+  // make our box bigger, since our tiled ghost particles
+  // will not wrap nicely.
+  memcpy(m_box_size, box_size, n_dims * sizeof(double));
+  for (i = 0; i < n_dims; i++)
+    m_box_size[i] *= BOX_M;
 
   //reset cell head
   for (i = 0; i < nlist->cell_number_total; i++)
@@ -237,7 +255,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
     for (k = 0; k < n_dims; k++)
     {
       // get 1D index of cell
-      icell = (int)(wrap(positions[i * n_dims + k], box_size[k]) / box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
+      icell = (int)(wrap(positions[i * n_dims + k], m_box_size[k]) / m_box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
     }
     //have cell_list point to cell for particle i
     nlist->cell_list[i] = nlist->head[icell];
@@ -258,7 +276,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
 #endif //DEBUG
 
   // TODO: maybe only need n_particles???
-  for (i = 0; i < n_particles + n_ghost_particles; i++)
+  for (i = 0; i < n_particles; i++)
   {
     //reset count
     nlist->nlist_count[i] = 0;
@@ -267,7 +285,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
     icell = 0;
     //find index of particle using polynomial indexing
     for (k = 0; k < n_dims; k++)
-      icell = (int)(wrap(positions[i * n_dims + k], box_size[k]) / box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
+      icell = (int)(wrap(positions[i * n_dims + k], m_box_size[k]) / m_box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
     //loop over neighbor cells
     for (ncell = 0; ncell < nlist->ncell_number; ncell++)
     {
@@ -290,7 +308,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
         for (k = 0; k < n_dims; k++)
         {
           dx = positions[i * n_dims + k] - positions[j * n_dims + k];
-          dx = min_image_dist(dx, box_size[k]);
+          dx = min_image_dist(dx, m_box_size[k]);
           dist += dx * dx;
         }
 
@@ -328,6 +346,8 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   for (i = 0; i < n_particles; i++)
     for (k = 0; k < n_dims; k++)
       nlist->last_positions[i * n_dims + k] = positions[i * n_dims + k];
+
+  free(m_box_size);
 }
 
 /* An insert that grows the array if necessary
@@ -348,4 +368,75 @@ unsigned int insert_grow(unsigned int index, unsigned int value, unsigned int **
   (*array)[index] = value;
 
   return length;
+}
+
+int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positions, double rcut)
+{
+  unsigned n_dims = params->n_dims;
+  unsigned n_particles = params->n_particles;
+  unsigned int i, j, k, n, nn, n2n, ngn;
+  double diff, r;
+
+  for (i = 0; i < n_particles; i++)
+  {
+    //iterate through neighbor list
+    nn = 0;
+    printf("particle %d nlist: \n", i);
+    for (n = 0; n < nlist->nlist_count[i]; n++)
+    {
+      j = nlist->nlist[n];
+      r = 0;
+
+      //distance between particles
+      for (k = 0; k < n_dims; k++)
+      {
+        // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+        // TODO: remove or not?
+        diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+        r += diff * diff;
+      }
+      if (r < rcut * rcut)
+      {
+        nn++;
+        printf("%d ", j);
+      }
+    }
+    n2n = 0;
+    printf("\nparticle %d real neighs: \n", i);
+    for (j = 0; j < n_particles; j++)
+    {
+      if (i != j)
+      {
+        r = 0;
+        for (k = 0; k < n_dims; k++)
+        {
+          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+          r += diff * diff;
+        }
+        if (r < rcut * rcut)
+        {
+          n2n++;
+          printf("%d ", j);
+        }
+      }
+    }
+    ngn = 0;
+    printf("\nparticle %d ghost neighs: \n", i);
+    for (j = n_particles; j < params->n_ghost_particles + n_particles; j++)
+    {
+      r = 0;
+      for (k = 0; k < n_dims; k++)
+      {
+        diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+        r += diff * diff;
+      }
+      if (r < rcut * rcut)
+      {
+        ngn++;
+        printf("%d ", j);
+      }
+    }
+    printf("\nParticle %d has %d on nlist and actually has %d real neighbors and %d ghost neigbhors\n",
+           i, nn, n2n, ngn);
+  }
 }
