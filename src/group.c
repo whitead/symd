@@ -8,8 +8,12 @@ static inline double *action(double *g, double *output, double *data, double *bo
     for (i = 0; i < n_dims; i++)
     {
         for (j = 0; j < n_dims; j++)
+        {
+            // printf("output[i(%d)] (%f) = data[j] (%f) * g[i * (n_dims + 1) + j (%d)] (%f)\n", i, output[i], data[j], i * (n_dims + 1) + j, g[i * (n_dims + 1) + j]);
             output[i] += data[j] * g[i * (n_dims + 1) + j];
+        }
         // w coord
+        // printf("output[i(%d)] (%f) += s (%f) * g[i * (n_dims + 1) + j] (%f) * box[i] (%f);\n", i, output[i], s, g[i * (n_dims + 1) + j], box[i]);
         output[i] += s * g[i * (n_dims + 1) + j] * box[i];
     }
     return output;
@@ -26,40 +30,40 @@ void *fold_particles(run_params_t *params, double *particles, bool reduce, bool 
     for (i = 0; i < p; i++)
     {
         // fold to common partition
-        // if (reduce)
-        // {
-        //     for (j = 0; j < group->size; j++)
-        //     {
-        //         // need to be wrapped
-        //         // non-ghost should be wrapped in integrate
-        //         for (k = 0; k < n_dims; k++)
-        //             particles[j * p * n_dims + i * n_dims + k] =
-        //                 wrap(particles[j * p * n_dims + i * n_dims + k], params->box_size[k]);
-        //         action(group->members[j].i,
-        //                &particles[i * n_dims], &particles[j * p * n_dims + i * n_dims],
-        //                params->box_size, n_dims, vector ? 0.0 : 1.0);
-        //     }
-        //     // average
-        //     for (k = 0; k < n_dims; k++)
-        //         particles[i * n_dims + k] /= group->size;
-        // }
+        if (reduce)
+        {
+            for (j = 0; j < group->size; j++)
+            {
+                // need to be wrapped
+                // non-ghost should be wrapped in integrate
+                for (k = 0; k < n_dims; k++)
+                    particles[j * p * n_dims + i * n_dims + k] =
+                        wrap(particles[j * p * n_dims + i * n_dims + k], params->box_size[k]);
+                action(group->members[j].i,
+                       &particles[i * n_dims], &particles[j * p * n_dims + i * n_dims],
+                       params->box_size, n_dims, vector ? 0.0 : 1.0);
+            }
+            // average
+            for (k = 0; k < n_dims; k++)
+                particles[i * n_dims + k] /= group->size;
+        }
 
         // get minimum image
         if (!vector)
         {
-
             // unfold
-            for (j = 1; j < group->size; j++)
+            for (j = group->tiling_start; j < group->size; j++)
             {
                 memset(&particles[j * p * n_dims + i * n_dims], 0, sizeof(double) * n_dims);
                 action(group->members[j].g, &particles[j * p * n_dims + i * n_dims],
                        &particles[i * n_dims], params->box_size, n_dims, vector ? 0.0 : 1.0);
+                // printf("particles[j (%d) * p * n_dims + i * n_dims] = %f %f\n", j, particles[j * p * n_dims + i * n_dims], particles[j * p * n_dims + i * n_dims + 1]);
             }
 
             r0 = 0;
             for (k = 0; k < n_dims; k++)
                 r0 += pow(particles[i * n_dims + k], 2);
-            for (j = 1; j < group->size; j++)
+            for (j = group->tiling_start; j < group->size; j++)
             {
                 // check if minimum image
                 r = 0;

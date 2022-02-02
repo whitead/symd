@@ -46,9 +46,9 @@ void main_loop(run_params_t *params)
   // apply group if necessary
   if (params->group)
   {
-    fold_particles(params, positions, true, false);
+    fold_particles(params, positions, false, false);
   }
-
+  
   printf("%12s %12s %12s %12s %12s %12s %12s %12s\n",
          "Step", "Time", "T", "PE", "KE", "E", "Htherm",
          "V");
@@ -62,7 +62,7 @@ void main_loop(run_params_t *params)
       sprintf(xyz_file_comment, "Frame: %d", i);
       log_xyz(params->positions_file, positions, xyz_file_comment, "Ar", params->n_dims,
               params->n_particles, params->n_particles + params->n_ghost_particles, 0);
-      log_xyz(params->positions_file, &positions[params->n_particles], NULL, "C",
+      log_xyz(params->positions_file, &positions[params->n_particles * params->n_dims], NULL, "C",
               params->n_dims, params->n_ghost_particles,
               params->n_particles + params->n_ghost_particles, 1);
     }
@@ -75,10 +75,8 @@ void main_loop(run_params_t *params)
 
     // apply group if necessary
     if (params->group)
-    {
       fold_particles(params, positions, false, false);
-      //fold_particles(params, velocities, false);
-    }
+
     if (i % params->com_remove_period == 0)
       remove_com(velocities, params->masses, params->n_dims, params->n_particles);
 
@@ -91,7 +89,7 @@ void main_loop(run_params_t *params)
       if (!try_rescale(params, positions, &penergy, forces))
       {
         //reset forces
-        penergy = params->force_parameters->gather(params, positions, forces);
+        // penergy = params->force_parameters->gather(params, positions, forces);
       }
     }
 

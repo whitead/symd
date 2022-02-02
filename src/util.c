@@ -371,7 +371,7 @@ group_t *load_group(char *filename, unsigned int n_dims)
 
   group_t *group = (group_t *)malloc(sizeof(group_t));
   group->name = item->valuestring;
-  unsigned int i, j, size = 0;
+  unsigned int i, j, size = 0, tiling_start = 0;
   g_t *tmp, *members = NULL;
   double *g_mat, *i_mat;
   // iterate over group members
@@ -392,13 +392,18 @@ group_t *load_group(char *filename, unsigned int n_dims)
     i_mat = (double *)malloc(sizeof(double) * g_dims * g_dims);
     load_json_matrix(cJSON_GetObjectItem(json_members, "g"), g_mat, g_dims * g_dims, "g matrix");
     load_json_matrix(cJSON_GetObjectItem(json_members, "i"), i_mat, g_dims * g_dims, "i matrix");
-    g_t g = {.g = g_mat, .i = i_mat};
+    item = cJSON_GetObjectItem(json_members, "t");
+    g_t g = {.g = g_mat, .i = i_mat, .tiling = item->valueint};
 
+    if (!g.tiling)
+      tiling_start++;
     // add new member
     memcpy(&members[size - 1], &g, sizeof(g_t));
   }
   group->members = members;
   group->size = size;
+  group->tiling_start = tiling_start;
+  printf("tiling start %d\n", tiling_start);
 
   free(data);
 

@@ -85,8 +85,10 @@ double b_thermostat(thermostat_t *params, double temperature, double time_step, 
 #endif
 
   scaling_factor = sqrt(new_kenergy / kenergy);
+  if (scaling_factor != scaling_factor)
+    scaling_factor = 1;
 
-  //update velocities
+    //update velocities
 #pragma omp parallel for
   for (i = 0; i < n_particles; i++)
   {
