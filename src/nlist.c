@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define BOX_M 2.0
+#define BOX_M 4.0
 
 /*
  * Grow and insert a value as needed
@@ -94,7 +94,10 @@ void update_nlist(double *positions,
 #endif
     build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
   }
-
+  //**********************
+  //TODO: This line below should be removed
+  //**********************
+  //build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
   return;
 }
 
@@ -154,8 +157,11 @@ void build_cells(double *box_size,
     nlist->ncell_number = nlist->cell_number_total;
 
 #ifdef DEBUG
-  printf("cell number total: %d\n", nlist->cell_number_total);
-  printf("cell number: %d\n", nlist->ncell_number);
+  printf("cell number total: %d (", nlist->cell_number_total);
+  for (i = 0; i < n_dims; i++)
+    printf("%d ", nlist->cell_number[i]);
+  printf(")\ncell number total: %d\n", nlist->cell_number_total);
+  printf("neighbor of neighbor cells: %d\n", nlist->ncell_number);
 #endif //DEBUG
 
   nlist->adjacent_cells = (int *)malloc(sizeof(int) * nlist->ncell_number);
@@ -164,7 +170,7 @@ void build_cells(double *box_size,
   gen_index_r(nlist->adjacent_cells, nlist->cell_number, 0, 0, n_dims, 0, nlist->ncell_number);
 
 #ifdef DEBUG
-  printf("offset:\n");
+  printf("The neighbors offset:\n");
   for (i = 0; i < nlist->ncell_number; i++)
     printf("%d\n", nlist->adjacent_cells[i]);
 #endif //DEBUG
@@ -221,7 +227,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   if (nlist->nlist == NULL)
   {
     //TODO: Maybe only need n_particles?
-    unsigned int ps = n_particles;
+    unsigned int ps = n_particles + n_ghost_particles;
     //first call, need to set-up some things
     nlist->nlist_count = (unsigned int *)malloc(sizeof(unsigned int) * ps);
     nlist->nlist = (unsigned int *)malloc(sizeof(unsigned int) * ps * (ps / 2));
@@ -276,7 +282,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
 #endif //DEBUG
 
   // TODO: maybe only need n_particles???
-  for (i = 0; i < n_particles; i++)
+  for (i = 0; i < n_particles + n_ghost_particles; i++)
   {
     //reset count
     nlist->nlist_count[i] = 0;
@@ -330,10 +336,10 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   unsigned int count = 0;
   for (i = 0; i < n_particles; i++)
   {
-    printf("nlist_count[%d]:%d\n", i, nlist->nlist_count[i]);
+    printf("nlist_count[%d] = %d\n\t", i, nlist->nlist_count[i]);
     for (j = 0; j < nlist->nlist_count[i]; j++)
     {
-      printf("\t%d ", nlist->nlist[count]);
+      printf("%d ", nlist->nlist[count]);
       count++;
     }
     printf("\n");
@@ -370,19 +376,21 @@ unsigned int insert_grow(unsigned int index, unsigned int value, unsigned int **
   return length;
 }
 
+#ifdef DEBUG
+
 int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positions, double rcut)
 {
   unsigned n_dims = params->n_dims;
   unsigned n_particles = params->n_particles;
-  unsigned int i, j, k, n, nn, n2n, ngn;
+  unsigned int i, j, k, n, ni, nn, n2n, ngn;
   double diff, r;
 
-  for (i = 0; i < n_particles; i++)
+  for (i = 0, n = 0; i < n_particles; i++)
   {
     //iterate through neighbor list
     nn = 0;
     printf("particle %d nlist: \n", i);
-    for (n = 0; n < nlist->nlist_count[i]; n++)
+    for (ni = 0; ni < nlist->nlist_count[i]; n++, ni++)
     {
       j = nlist->nlist[n];
       r = 0;
@@ -403,21 +411,19 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
     }
     n2n = 0;
     printf("\nparticle %d real neighs: \n", i);
-    for (j = 0; j < n_particles; j++)
+    // stop at i, as we do in nlist code to avoid double couting
+    for (j = i + 1; j < n_particles; j++)
     {
-      if (i != j)
+      r = 0;
+      for (k = 0; k < n_dims; k++)
       {
-        r = 0;
-        for (k = 0; k < n_dims; k++)
-        {
-          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
-          r += diff * diff;
-        }
-        if (r < rcut * rcut)
-        {
-          n2n++;
-          printf("%d ", j);
-        }
+        diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+        r += diff * diff;
+      }
+      if (r < rcut * rcut)
+      {
+        n2n++;
+        printf("%d ", j);
       }
     }
     ngn = 0;
@@ -436,7 +442,32 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
         printf("%d ", j);
       }
     }
-    printf("\nParticle %d has %d on nlist and actually has %d real neighbors and %d ghost neigbhors\n",
+    printf("\nParticle %d has %d on nlist and actually has %d real neighbors and %d ghost neighbors\n",
            i, nn, n2n, ngn);
+    if (nn != n2n + ngn)
+    {
+      printf("Invalid nlist detected (see above)\n");
+      printf("Nlist: \n");
+      n -= nlist->nlist_count[i];
+      for (ni = 0; ni < nlist->nlist_count[i]; n++, ni++)
+      {
+        j = nlist->nlist[n];
+        r = 0;
+
+        //distance between particles
+        for (k = 0; k < n_dims; k++)
+        {
+          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+          // TODO: remove or not?
+          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+          r += diff * diff;
+        }
+        printf("%d - %d. r: %f, rcut: %f\n", i, j, sqrt(r), rcut);
+      }
+
+      exit(1);
+    }
   }
 }
+
+#endif

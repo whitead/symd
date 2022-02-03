@@ -19,6 +19,6 @@ struct group_t
     g_t *members;
 };
 
-void *fold_particles(run_params_t *group, double *particles, bool reduce, bool vector);
+void *fold_particles(run_params_t *group, double *particles, double *velocities, bool reduce);
 void free_group(group_t *g);
 #endif // GROUP_H_

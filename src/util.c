@@ -10,7 +10,7 @@ static const char *
     \"temperature\": 0, \"final_positions\": \"final_positions.xyz\",\
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
-    \"box_update_period\": 0,\
+    \"box_update_period\": 0, \"force_type\": null,\
      \"force_log_period\" : 0, \"box_size\": [0, 0, 0]} ";
 
 void *load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message);
@@ -296,7 +296,11 @@ run_params_t *read_parameters(char *file_name)
 
   // forces
   const char *force_type = retrieve_item(root, default_root, "force_type")->valuestring;
-  if (!strcmp(force_type, "harmonic"))
+  if (!force_type)
+  {
+    params->force_parameters = NULL;
+  }
+  else if (!strcmp(force_type, "harmonic"))
   {
     double k = retrieve_item(root, default_root, "harmonic_constant")->valuedouble;
     params->force_parameters = build_harmonic(k);
@@ -606,7 +610,8 @@ void free_run_params(run_params_t *params)
 
   if (params->thermostat_parameters)
     params->thermostat_parameters->free(params->thermostat_parameters);
-  params->force_parameters->free(params->force_parameters);
+  if (params->force_parameters)
+    params->force_parameters->free(params->force_parameters);
 
   free(params->initial_positions);
   free(params->initial_velocities);

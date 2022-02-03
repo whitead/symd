@@ -14,8 +14,8 @@ static inline double clip(double n, double lower, double upper)
 {
   // Stack overflow
   // TODO: Turn this off if you really want to be exact
-  n = 0.5 * (n + lower + fabs(n - lower));
-  n = 0.5 * (n + upper - fabs(upper - n));
+  //n = 0.5 * (n + lower + fabs(n - lower));
+  //n = 0.5 * (n + upper - fabs(upper - n));
   return n;
 }
 

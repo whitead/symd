@@ -19,7 +19,7 @@ static inline double *action(double *g, double *output, double *data, double *bo
     return output;
 }
 
-void *fold_particles(run_params_t *params, double *particles, bool reduce, bool vector)
+void *fold_particles(run_params_t *params, double *particles, double *velocities, bool reduce)
 {
     group_t *group = params->group;
     unsigned int n_dims = params->n_dims;
@@ -36,39 +36,36 @@ void *fold_particles(run_params_t *params, double *particles, bool reduce, bool 
             {
                 action(group->members[j].i,
                        &particles[i * n_dims], &particles[j * p * n_dims + i * n_dims],
-                       params->box_size, n_dims, vector ? 0.0 : 1.0);
+                       params->box_size, n_dims, 1.0);
             }
             // average
             for (k = 0; k < n_dims; k++)
                 particles[i * n_dims + k] /= group->size;
         }
 
-        // get minimum image
-        if (!vector)
+        //get minimum image
+        // unfold
+        for (j = group->tiling_start; j < group->size; j++)
         {
-            // unfold
-            for (j = group->tiling_start; j < group->size; j++)
-            {
-                memset(&particles[j * p * n_dims + i * n_dims], 0, sizeof(double) * n_dims);
-                action(group->members[j].g, &particles[j * p * n_dims + i * n_dims],
-                       &particles[i * n_dims], params->box_size, n_dims, vector ? 0.0 : 1.0);
-                // printf("particles[j (%d) * p * n_dims + i * n_dims] = %f %f\n", j, particles[j * p * n_dims + i * n_dims], particles[j * p * n_dims + i * n_dims + 1]);
-            }
+            memset(&particles[j * p * n_dims + i * n_dims], 0, sizeof(double) * n_dims);
+            action(group->members[j].g, &particles[j * p * n_dims + i * n_dims],
+                   &particles[i * n_dims], params->box_size, n_dims, 1.0);
+            // printf("particles[j (%d) * p * n_dims + i * n_dims] = %f %f\n", j, particles[j * p * n_dims + i * n_dims], particles[j * p * n_dims + i * n_dims + 1]);
+        }
 
-            r0 = 0;
+        r0 = 0;
+        for (k = 0; k < n_dims; k++)
+            r0 += pow(particles[i * n_dims + k], 2);
+        for (j = group->tiling_start; j < group->size; j++)
+        {
+            // check if minimum image
+            r = 0;
             for (k = 0; k < n_dims; k++)
-                r0 += pow(particles[i * n_dims + k], 2);
-            for (j = group->tiling_start; j < group->size; j++)
+                r += pow(particles[j * p * n_dims + i * n_dims + k], 2);
+            if (r < r0)
             {
-                // check if minimum image
-                r = 0;
-                for (k = 0; k < n_dims; k++)
-                    r += pow(particles[j * p * n_dims + i * n_dims + k], 2);
-                if (r < r0)
-                {
-                    r0 = r;
-                    memcpy(&particles[i * n_dims], &particles[j * p * n_dims + i * n_dims], sizeof(double) * n_dims);
-                }
+                r0 = r;
+                memcpy(&particles[i * n_dims], &particles[j * p * n_dims + i * n_dims], sizeof(double) * n_dims);
             }
         }
 
@@ -77,7 +74,7 @@ void *fold_particles(run_params_t *params, double *particles, bool reduce, bool 
         {
             memset(&particles[j * p * n_dims + i * n_dims], 0, sizeof(double) * n_dims);
             action(group->members[j].g, &particles[j * p * n_dims + i * n_dims],
-                   &particles[i * n_dims], params->box_size, n_dims, vector ? 0.0 : 1.0);
+                   &particles[i * n_dims], params->box_size, n_dims, 1.0);
         }
     }
 }

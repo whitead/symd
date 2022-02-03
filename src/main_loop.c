@@ -47,9 +47,10 @@ void main_loop(run_params_t *params)
 
   // apply group if necessary
   if (params->group)
-  {
-    fold_particles(params, positions, false, false);
-  }
+    fold_particles(params, positions, velocities, false);
+  //gather forces
+  if (params->force_parameters)
+    penergy = params->force_parameters->gather(params, positions, forces);
 
   printf("%12s %12s %12s %12s %12s %12s %12s %12s\n",
          "Step", "Time", "T", "PE", "KE", "E", "Htherm",
@@ -62,6 +63,7 @@ void main_loop(run_params_t *params)
     if (i % params->position_log_period == 0)
     {
       sprintf(xyz_file_comment, "Frame: %d", i);
+      //TODO: Output each group with separate symbol
       log_xyz(params->positions_file, positions, xyz_file_comment, "Ar", params->n_dims,
               params->n_particles, params->n_particles + params->n_ghost_particles, 0);
       log_xyz(params->positions_file, &positions[params->n_particles * params->n_dims], NULL, "C",
@@ -77,13 +79,14 @@ void main_loop(run_params_t *params)
 
     // apply group if necessary
     if (params->group)
-      fold_particles(params, positions, false, false);
+      fold_particles(params, positions, velocities, false);
 
     if (i % params->com_remove_period == 0)
       remove_com(velocities, params->masses, params->n_dims, params->n_particles);
 
     //gather forces
-    penergy = params->force_parameters->gather(params, positions, forces);
+    if (params->force_parameters)
+      penergy = params->force_parameters->gather(params, positions, forces);
 
     // try update box
     if (params->box_update_period && i % params->box_update_period == 0)
