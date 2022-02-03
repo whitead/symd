@@ -19,7 +19,7 @@ add_definitions(-DVERSION="${GIT_COMMIT_HASH}")
 
 
 # set the project name
-project(simple-md)
+project(symd)
 
 # add sources
 include_directories(include)
@@ -38,10 +38,10 @@ set(SOURCE_FILES src/cJSON.c
                 )
 
 # add the executable
-add_executable(simple-md ${SOURCE_FILES})
+add_executable(symd ${SOURCE_FILES})
 
 find_package(GSL REQUIRED)    # See below (2)
-target_link_libraries(simple-md GSL::gsl GSL::gslcblas)
-target_link_libraries(simple-md m)
+target_link_libraries(symd GSL::gsl GSL::gslcblas)
+target_link_libraries(symd m)
 find_package(OpenMP REQUIRED)
-target_link_libraries(simple-md OpenMP::OpenMP_CXX)
+target_link_libraries(symd OpenMP::OpenMP_CXX)

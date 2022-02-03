@@ -58,7 +58,7 @@ class SimpleMD:
         }
 
         self.exePrefix = exePrefix
-        self.exe = os.path.join(exePrefix, 'simple-md')
+        self.exe = os.path.join(exePrefix, 'symd')
         if temperature != None:
             self.runParams["temperature"] = temperature
 
@@ -215,7 +215,8 @@ class SimpleMD:
         self.htherm = np.empty_like(self.temperature)
         self.v = np.empty_like(self.temperature)
 
-        out_arrays = (self.temperature, self.pe, self.ke, self.te, self.htherm, self.v)
+        out_arrays = (self.temperature, self.pe, self.ke,
+                      self.te, self.htherm, self.v)
 
         proc = subprocess.Popen(
             self.exe,
