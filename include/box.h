@@ -17,4 +17,6 @@ double volume(double *box, unsigned int n_dims);
 
 int try_rescale(run_params_t *params, double *positions, double *penergy, double *forces);
 
+void tile(run_params_t *params, double *positions);
+
 #endif

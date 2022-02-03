@@ -44,4 +44,9 @@ nlist_parameters_t *build_nlist_params(unsigned int n_dims, unsigned int n_parti
 
 void free_nlist(nlist_parameters_t *nlist);
 
+/*
+* For debugging
+*/
+int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positions, double rcut);
+
 #endif

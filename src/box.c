@@ -102,6 +102,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
     printf("Accepted with MHC %g\n", mhc);
 #endif
     //accepted
+    //TODO: rebuild cells in nlist
     *penergy = new_energy;
     free(params->box_size);
     params->box_size = new_box;

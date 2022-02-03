@@ -14,7 +14,7 @@ void integrate_1(double time_step, double *positions, double *velocities,
       k = i * n_dims + j;
       velocities[k] += time_step * forces[k] / (2 * masses[i]);
       positions[k] += time_step * velocities[k];
-      positions[k] = wrap(positions[k], box_size[j]);
+      // positions[k] = wrap(positions[k], box_size[j]);
     }
   }
 }
