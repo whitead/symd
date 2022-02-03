@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+//TODO: Should be 2.0 in principle? - Check this
 #define BOX_M 4.0
 
 /*

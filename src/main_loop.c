@@ -48,7 +48,7 @@ void main_loop(run_params_t *params)
   // apply group if necessary
   if (params->group)
     fold_particles(params, positions, velocities, false);
-  //gather forces
+  //gather forces -> must be here so we don't do integrate 1 without forces
   if (params->force_parameters)
     penergy = params->force_parameters->gather(params, positions, forces);
 
