@@ -19,7 +19,7 @@ static inline double *action(double *g, double *output, double *data, double *bo
     return output;
 }
 
-void *fold_particles(run_params_t *params, double *particles, double *velocities, bool reduce)
+void *fold_particles(run_params_t *params, double *particles, bool reduce)
 {
     group_t *group = params->group;
     unsigned int n_dims = params->n_dims;
@@ -65,7 +65,7 @@ void *fold_particles(run_params_t *params, double *particles, double *velocities
             if (r < r0)
             {
                 r0 = r;
-                memcpy(&particles[i * n_dims], &particles[j * p * n_dims + i * n_dims], sizeof(double) * n_dims);
+                //memcpy(&particles[i * n_dims], &particles[j * p * n_dims + i * n_dims], sizeof(double) * n_dims);
             }
         }
 

@@ -255,6 +255,11 @@ run_params_t *read_parameters(char *file_name)
   if (item)
   {
     params->group = load_group(item->valuestring, params->n_dims);
+#ifdef DEBUG
+    printf("Splitting %d particles into %d real particles and %d ghost for group with %d elements\n",
+           params->n_particles, params->n_particles / params->group->size, params->n_particles / params->group->size * (params->group->size - 1),
+           params->group->size);
+#endif
     params->n_particles = params->n_particles / params->group->size;
     params->n_ghost_particles = params->n_particles * (params->group->size - 1);
   }
