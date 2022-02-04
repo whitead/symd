@@ -169,6 +169,7 @@ run_params_t *read_parameters(char *file_name)
   gsl_rng_set(rng, seed);
   params->rng = rng;
 
+  params->box = (box_t*) malloc(sizeof(box_t));
   params->box->box_size = (double *)calloc(params->n_dims, sizeof(double));
   //box size
   unsigned int i;
@@ -624,7 +625,7 @@ void free_run_params(run_params_t *params)
   free(params->box->box_size);
   if (params->box->group)
     free_group(params->box->group);
-
+  free(params->box);
   if (params->positions_file)
     fclose(params->positions_file);
   if (params->velocities_file)
