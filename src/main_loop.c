@@ -46,7 +46,7 @@ void main_loop(run_params_t *params)
   remove_com(positions, params->masses, params->n_dims, params->n_particles + params->n_ghost_particles);
 
   // apply group if necessary
-  if (params->group)
+  if (params->box->group)
     fold_particles(params, positions, false);
   //gather forces -> must be here so we don't do integrate 1 without forces
   if (params->force_parameters)
@@ -75,10 +75,10 @@ void main_loop(run_params_t *params)
       log_array(params->velocities_file, velocities, params->n_dims, params->n_particles + params->n_ghost_particles, true);
 
     //integrate 1
-    integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
+    integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, params->n_dims, params->n_particles);
 
     // apply group if necessary
-    if (params->group)
+    if (params->box->group)
       fold_particles(params, positions, false);
 
     if (i % params->com_remove_period == 0)
@@ -103,7 +103,7 @@ void main_loop(run_params_t *params)
       log_array(params->forces_file, forces, params->n_dims, params->n_particles + params->n_ghost_particles, true);
 
     //integrate 2
-    integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
+    integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, params->n_dims, params->n_particles);
 
     //thermostat
     if (params->thermostat_parameters)
@@ -117,7 +117,7 @@ void main_loop(run_params_t *params)
     {
       printf("%12d %12g %12g %12g %12g %12g %12g %12g\n",
              i, i * params->time_step, insta_temperature, penergy, kenergy,
-             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box_size, params->n_dims));
+             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box->box_size, params->n_dims));
     }
   }
   log_array(params->final_positions_file, positions, params->n_dims,

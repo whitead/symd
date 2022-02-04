@@ -13,7 +13,7 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 
 	unsigned int n_dims = params->n_dims, n_particles = params->n_particles;
 	unsigned int n_ghost_particles = params->n_ghost_particles;
-	double *box_size = params->box_size;
+	double *box_size = params->box->box_size;
 	unsigned int i, j, k;
 	double penergy = 0;
 	double r;

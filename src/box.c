@@ -40,9 +40,9 @@ double volume(double *box, unsigned int n_dims)
 int try_rescale(run_params_t *params, double *positions, double *penergy, double *forces)
 {
   unsigned int i, j, n_dims = params->n_dims;
-  double newV, oldV = volume(params->box_size, params->n_dims);
+  double newV, oldV = volume(params->box->box_size, params->n_dims);
   double *new_box = (double *)malloc(sizeof(double) * n_dims);
-  memcpy(new_box, params->box_size, sizeof(double) * n_dims);
+  memcpy(new_box, params->box->box_size, sizeof(double) * n_dims);
 
   // make random step along some sides
   if (params->cubic)
@@ -73,7 +73,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
   printf("old box: ");
   for (i = 0; i < n_dims; i++)
   {
-    printf("%g ", params->box_size[i]);
+    printf("%g ", params->box->box_size[i]);
   }
   printf("\n");
   printf("Proposed new box: ");
@@ -89,7 +89,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
   //rescale coordinates
   for (i = 0; i < params->n_ghost_particles + params->n_particles; i++)
     for (j = 0; j < n_dims; j++)
-      positions[i * n_dims + j] *= new_box[j] / params->box_size[j];
+      positions[i * n_dims + j] *= new_box[j] / params->box->box_size[j];
 
   double new_energy = params->force_parameters->gather(params, positions, forces);
 
@@ -105,8 +105,8 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
     //accepted
     //TODO: rebuild cells in nlist
     *penergy = new_energy;
-    free(params->box_size);
-    params->box_size = new_box;
+    free(params->box->box_size);
+    params->box->box_size = new_box;
     return 1;
   }
   else
@@ -117,7 +117,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
     //undo rescale coordinates
     for (i = 0; i < params->n_ghost_particles + params->n_particles; i++)
       for (j = 0; j < n_dims; j++)
-        positions[i * n_dims + j] /= new_box[j] / params->box_size[j];
+        positions[i * n_dims + j] /= new_box[j] / params->box->box_size[j];
     free(new_box);
     return 0;
   }

@@ -169,7 +169,7 @@ run_params_t *read_parameters(char *file_name)
   gsl_rng_set(rng, seed);
   params->rng = rng;
 
-  params->box_size = (double *)calloc(params->n_dims, sizeof(double));
+  params->box->box_size = (double *)calloc(params->n_dims, sizeof(double));
   //box size
   unsigned int i;
   unsigned int cubic = 1;
@@ -180,13 +180,13 @@ run_params_t *read_parameters(char *file_name)
     if (i == params->n_dims)
     {
       // maybe it's default with no box?
-      if (params->box_size[0] == 0)
+      if (params->box->box_size[0] == 0)
         break;
       fprintf(stderr, "Error: Number of box dimensions not equal to simulation dimension\n");
       exit(1);
     }
-    params->box_size[i] = item->valuedouble;
-    if (i > 0 && (params->box_size[i] - params->box_size[i - 1]) > 0.000001)
+    params->box->box_size[i] = item->valuedouble;
+    if (i > 0 && (params->box->box_size[i] - params->box->box_size[i - 1]) > 0.000001)
       cubic &= 0;
     i++;
   }
@@ -254,18 +254,18 @@ run_params_t *read_parameters(char *file_name)
   item = cJSON_GetObjectItem(root, "group");
   if (item)
   {
-    params->group = load_group(item->valuestring, params->n_dims);
+    params->box->group = load_group(item->valuestring, params->n_dims);
 #ifdef DEBUG
     printf("Splitting %d particles into %d real particles and %d ghost for group with %d elements\n",
-           params->n_particles, params->n_particles / params->group->size, params->n_particles / params->group->size * (params->group->size - 1),
-           params->group->size);
+           params->n_particles, params->n_particles / params->box->group->size, params->n_particles / params->box->group->size * (params->box->group->size - 1),
+           params->box->group->size);
 #endif
-    params->n_particles = params->n_particles / params->group->size;
-    params->n_ghost_particles = params->n_particles * (params->group->size - 1);
+    params->n_particles = params->n_particles / params->box->group->size;
+    params->n_ghost_particles = params->n_particles * (params->box->group->size - 1);
   }
   else
   {
-    params->group = NULL;
+    params->box->group = NULL;
     params->n_ghost_particles = 0;
   }
 
@@ -296,7 +296,7 @@ run_params_t *read_parameters(char *file_name)
       printf("Warning: Assuming skin = %g\n", skin);
     }
     nlist = build_nlist_params(params->n_dims, params->n_particles, params->n_ghost_particles,
-                               params->box_size, skin, rcut);
+                               params->box->box_size, skin, rcut);
   }
 
   // forces
@@ -621,9 +621,9 @@ void free_run_params(run_params_t *params)
   free(params->initial_positions);
   free(params->initial_velocities);
   free(params->masses);
-  free(params->box_size);
-  if (params->group)
-    free_group(params->group);
+  free(params->box->box_size);
+  if (params->box->group)
+    free_group(params->box->group);
 
   if (params->positions_file)
     fclose(params->positions_file);

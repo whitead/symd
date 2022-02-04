@@ -37,7 +37,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 {
   unsigned n_dims = params->n_dims;
   unsigned n_particles = params->n_particles;
-  double *box_size = params->box_size;
+  double *box_size = params->box->box_size;
   force_t *force_p = params->force_parameters;
   lj_parameters_t *parameters = (lj_parameters_t *)force_p->parameters;
   const double epsilon = parameters->epsilon;

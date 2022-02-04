@@ -12,6 +12,7 @@
 typedef struct force_t force_t;
 typedef struct thermostat_t thermostat_t;
 typedef struct group_t group_t;
+typedef struct box_t box_t;
 
 /*
 * Parameters needed to begin an MD run
@@ -27,7 +28,7 @@ typedef struct
     double pressure;
     thermostat_t *thermostat_parameters;
     force_t *force_parameters;
-    group_t *group;
+    box_t *box;
     double *initial_positions;
     double *initial_velocities;
     double *masses;

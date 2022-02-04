@@ -19,4 +19,9 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
 
 void tile(run_params_t *params, double *positions);
 
+struct box_t {
+    double* box_size;
+    group_t* group;
+};
+
 #endif
