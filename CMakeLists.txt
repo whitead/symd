@@ -6,7 +6,9 @@ endif()
 
 string(APPEND CMAKE_C_FLAGS_DEBUG " -DDEBUG")
 
-string(APPEND CMAKE_C_FLAGS_RELEASE "-Ofast -fno-tree-pta -g -march=native -fmodulo-sched-allow-regmoves")
+if (GCC)
+  string(APPEND CMAKE_C_FLAGS_RELEASE "-Ofast -fno-tree-pta -g -march=native -fmodulo-sched-allow-regmoves")
+endif()
 
 execute_process (
   COMMAND git describe --abbrev=4 --dirty --always --tags
