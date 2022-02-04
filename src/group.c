@@ -1,5 +1,6 @@
 #include "group.h"
 #include "box.h"
+#include <string.h>
 #include <math.h>
 
 static inline double *action(double *g, double *output, double *data, double *box, unsigned int n_dims, double s)
