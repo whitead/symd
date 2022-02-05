@@ -19,6 +19,7 @@ struct group_t
     g_t *members;
 };
 
+double *action(double *g, double *output, double *data, double *box, unsigned int n_dims, double s);
 void *fold_particles(run_params_t *group, double *particles, bool reduce);
 void free_group(group_t *g);
 #endif // GROUP_H_

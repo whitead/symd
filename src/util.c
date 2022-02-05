@@ -169,8 +169,9 @@ run_params_t *read_parameters(char *file_name)
   gsl_rng_set(rng, seed);
   params->rng = rng;
 
-  params->box = (box_t*) malloc(sizeof(box_t));
+  params->box = (box_t *)malloc(sizeof(box_t));
   params->box->box_size = (double *)calloc(params->n_dims, sizeof(double));
+  params->box->n_dims = params->n_dims;
   //box size
   unsigned int i;
   unsigned int cubic = 1;

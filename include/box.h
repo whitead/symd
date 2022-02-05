@@ -1,4 +1,5 @@
 #include "params.h"
+#include "group.h"
 
 #ifndef MIN_IMAGE_H_
 #define MIN_IMAGE_H_
@@ -19,9 +20,15 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
 
 void tile(run_params_t *params, double *positions);
 
-struct box_t {
-    double* box_size;
-    group_t* group;
+g_t *box_dist_start(box_t *box);
+g_t *box_dist_next(box_t *box, g_t *g, double *dx, double *r);
+unsigned int box_dist_size(box_t *box);
+
+struct box_t
+{
+    double *box_size;
+    unsigned int n_dims;
+    group_t *group;
 };
 
 #endif

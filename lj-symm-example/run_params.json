@@ -1,5 +1,5 @@
 {
-    "steps": 1000,
+    "steps": 1,
     "time_step": 0.002,
     "temperature": 0.01,
     "velocity_seed": 456415615,
@@ -9,15 +9,15 @@
     "lj_sigma": 1.0,
     "n_dims": 2,
     "box_size": [
-        25,
-        25
+        3,
+        3
     ],
-    "n_particles": 1024,
+    "n_particles": 36,
     "start_positions": "start_positions.xyz",
     "print_period": 100,
     "positions_log_file": "positions.xyz",
     "position_log_period": 5,
-    "force_type": "soft",
+    "force_type": "lj",
     "group": "group.json",
     "thermostat": "bussi",
     "com_remove_period": 10

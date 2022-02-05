@@ -3,18 +3,20 @@
 #include <string.h>
 #include <math.h>
 
-static inline double *action(double *g, double *output, double *data, double *box, unsigned int n_dims, double s)
+double *action(double *g, double *output, double *data, double *box, unsigned int n_dims, double s)
 {
     unsigned int i, j;
     for (i = 0; i < n_dims; i++)
     {
         for (j = 0; j < n_dims; j++)
         {
-            // printf("output[i(%d)] (%f) = data[j] (%f) * g[i * (n_dims + 1) + j (%d)] (%f)\n", i, output[i], data[j], i * (n_dims + 1) + j, g[i * (n_dims + 1) + j]);
+            printf("output[i(%d)] (%f) = data[j] (%f) * g[i * (n_dims + 1) + j (%d)] (%f)\n", i,
+                   output[i], data[j], i * (n_dims + 1) + j, g[i * (n_dims + 1) + j]);
             output[i] += data[j] * g[i * (n_dims + 1) + j];
         }
         // w coord
-        // printf("output[i(%d)] (%f) += s (%f) * g[i * (n_dims + 1) + j] (%f) * box[i] (%f);\n", i, output[i], s, g[i * (n_dims + 1) + j], box[i]);
+        printf("output[i(%d)] (%f) += s (%f) * g[i * (n_dims + 1) + j] (%f) * box[i] (%f);\n",
+               i, output[i], s, g[i * (n_dims + 1) + j], box[i]);
         output[i] += s * g[i * (n_dims + 1) + j] * box[i];
     }
     return output;

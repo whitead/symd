@@ -19,24 +19,19 @@ static inline double clip(double n, double lower, double upper)
   return n;
 }
 
-static inline double lj(double r, double epsilon, double sigma)
+static inline double lj(double r, double epsilon, double sigma, double *energy)
 {
-  return 4 * epsilon * (6 * pow(sigma / r, 7) - 12 * pow(sigma / r, 13));
-}
-
-static inline double lj_trunc_shift(double r, double epsilon, double sigma, double rc, double shift)
-{
-  if (r >= rc)
-  {
-    return 0;
-  }
-  return clip(lj(r, epsilon, sigma) - shift, -20 * epsilon, 20 * epsilon);
+  double ri6 = pow(sigma / r, 6);
+  double ri12 = ri6 * ri6;
+  *energy += 4 * epsilon * (ri6 - ri12);
+  return 4 * epsilon * (6 * ri6 * sigma / r - 12 * ri12 * sigma / r);
 }
 
 double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 {
-  unsigned n_dims = params->n_dims;
-  unsigned n_particles = params->n_particles;
+  unsigned int n_dims = params->n_dims;
+  unsigned int n_groups = box_dist_size(params->box);
+  unsigned int n_particles = params->n_particles;
   double *box_size = params->box->box_size;
   force_t *force_p = params->force_parameters;
   lj_parameters_t *parameters = (lj_parameters_t *)force_p->parameters;
@@ -47,13 +42,16 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   //update neighbor list
   update_nlist(positions, box_size, n_dims, n_particles, params->n_ghost_particles, nlist);
 
-  unsigned int i, j, k, n;
+  unsigned int i, j, k, l, n;
+  g_t *g;
   int offset;
   double penergy = 0;
+  double e;
   double r, force, diff;
-  double force_vector[n_dims];
+  double dist_vector[n_dims * (n_groups + 1)];
   double rcut = sqrt(nlist->rcut);
-  double lj_shift = lj(rcut, epsilon, sigma);
+  double e_shift;
+  double lj_shift = lj(rcut, epsilon, sigma, &e_shift);
 
 #ifdef DEBUG
   check_nlist(params, nlist, positions, rcut);
@@ -74,8 +72,9 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
       //are not easy to spread out across the workers,
       //hence the conditionals.
 
-#pragma omp parallel default(shared) private(offset, n, i, j, k, r, force, force_vector, diff) \
-    reduction(+                                                                                \
+#pragma omp parallel default(shared) private(offset, n, i, j, k, l, e, g, r, \
+                                             force, dist_vector, diff)       \
+    reduction(+                                                              \
               : penergy)
   {
 
@@ -104,36 +103,54 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
       for (n = offset; n - offset < nlist->nlist_count[i]; n++)
       {
         j = nlist->nlist[n];
-        r = 0;
+        e = 0;
+        memset(dist_vector, 0, sizeof(double) * n_dims * n_groups + 1);
 
-        //distance between particles
-        for (k = 0; k < n_dims; k++)
-        {
-          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
-          r += diff * diff;
-          force_vector[k] = diff;
-        }
-
-        if (r > rcut * rcut)
+        // band-aid
+        if (j >= params->n_particles)
           continue;
-        r = sqrt(r);
-        //LJ force and potential
-        force = lj_trunc_shift(r, epsilon, sigma, rcut, lj_shift);
+
+        // get distance vector
+        // put in 0 position
+        for (k = 0; k < n_dims; k++)
+          dist_vector[k] = positions[j * n_dims + k] - positions[i * n_dims + k];
+
+        // find dist vector images
+        // start at 1, because no need to look at identity
+        for (g = box_dist_start(params->box), l = 1; l - 1 < n_groups; l++)
+        {
+          g = box_dist_next(params->box, g, &dist_vector[l * n_dims], dist_vector);
+          r = 0;
+          for (k = 0; k < n_dims; k++)
+            r += dist_vector[l * n_dims + k] * dist_vector[l * n_dims + k];
+          //TODO: check if "if" is better?
+          r = sqrt(r);
+          //LJ force and potential
+          // r < rcut is indicator for cutoff
+          diff = r < rcut;
+          force = lj(r, epsilon * diff, sigma, &e);
+          force -= diff * lj_shift;
+          e -= diff * e_shift;
 
 #ifdef DEBUG
-        printf("F(%d <-> %d, %g) = %g\n", i, j, r, force);
+          printf("d(%d <-> %d (group %d), %g) = ", i, j, l, r);
+          for (k = 0; k < n_dims; k++)
+            printf("%g ", dist_vector[l * n_dims + k]);
+          printf("\nF(%d <-> %d (group %d), %g) = %g\n", i, j, l, r, force);
 #endif //DEBUG
 
-#pragma omp critical(update_forces)
-        for (k = 0; k < n_dims; k++)
-        {
-          forces[i * n_dims + k] += force / r * force_vector[k];
-          if (j < params->n_particles)
-            forces[j * n_dims + k] -= force / r * force_vector[k];
+          // set dist vector to be force now, with check on cut
+          for (k = 0; k < n_dims; k++)
+            dist_vector[l * n_dims + k] *= force / r;
         }
 
-        penergy += 4 * epsilon * (pow(sigma / r, 12) - pow(sigma / r, 6)) - 4 * epsilon * (pow(sigma / rcut, 12) - pow(sigma / rcut, 6));
+#pragma omp critical(update_forces)
+        for (l = 0; l < n_groups + 1; l++)
+        {
+          for (k = 0; k < n_dims; k++)
+            forces[i * n_dims + k] += dist_vector[l * n_dims + k];
+          penergy += e;
+        }
       }
 
       offset += nlist->nlist_count[i];

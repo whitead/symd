@@ -1,7 +1,10 @@
 Symmetric Molecular Dynamics Engine
 =========================
 
-TODO
+TODO:
+
+1. You can have dynamic allocated arrays in C99
+2. Then you can replace n_dims by preprocessor
 
 Compiling
 -------------------------

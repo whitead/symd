@@ -18,6 +18,24 @@ double min_image_dist(double dx, double img)
   return dx;
 }
 
+g_t *box_dist_start(box_t *box)
+{
+  return box->group->members;
+}
+
+g_t *box_dist_next(box_t *box, g_t *g, double *r, double *dx)
+{
+  // apply action on vector
+  action(g, r, dx, box->box_size, box->n_dims, 0.0);
+  g++;
+  return g;
+}
+
+unsigned int box_dist_size(box_t *box)
+{
+  return box->group->size;
+}
+
 double wrap(double x, double img)
 {
   if (img)
