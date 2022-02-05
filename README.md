@@ -1,7 +1,10 @@
 Symmetric Molecular Dynamics Engine
 =========================
 
-TODO
+TODO:
+
+1. Switch to dynamic arrays
+2. n_dims becomes pre-processor
 
 Compiling
 -------------------------

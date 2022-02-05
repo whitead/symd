@@ -77,6 +77,11 @@ void load_json(char *filename, char **data)
   { //file
     //get file length
     f = fopen(filename, "rb");
+    if (!f)
+    {
+      fprintf(stderr, "Failed to read file: %s\n", filename);
+      exit(1);
+    }
     fseek(f, 0, SEEK_END);
     long len = ftell(f);
     //reset file
@@ -251,6 +256,8 @@ run_params_t *read_parameters(char *file_name)
   }
 
   // group - partition to ghost too
+  params->group = NULL;
+  params->n_ghost_particles = 0;
   item = cJSON_GetObjectItem(root, "group");
   if (item)
   {
@@ -262,11 +269,6 @@ run_params_t *read_parameters(char *file_name)
 #endif
     params->n_particles = params->n_particles / params->group->size;
     params->n_ghost_particles = params->n_particles * (params->group->size - 1);
-  }
-  else
-  {
-    params->group = NULL;
-    params->n_ghost_particles = 0;
   }
 
   item = cJSON_GetObjectItem(root, "start_velocities");
