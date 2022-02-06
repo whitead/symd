@@ -82,7 +82,7 @@ void main_loop(run_params_t *params)
       log_array(params->velocities_file, velocities, params->n_dims, params->n_particles + params->n_ghost_particles, true);
 
     //integrate 1
-    integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
+    integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, params->n_dims, params->n_particles);
 
     // apply group if necessary
     if (params->group)
@@ -95,22 +95,22 @@ void main_loop(run_params_t *params)
     if (params->force_parameters)
       penergy = params->force_parameters->gather(params, positions, forces);
 
-    // try update box
-    if (params->box_update_period && i % params->box_update_period == 0)
-    {
-      if (!try_rescale(params, positions, &penergy, forces))
-      {
-        //reset forces
-        // penergy = params->force_parameters->gather(params, positions, forces);
-      }
-    }
+    // // try update box
+    // if (params->box_update_period && i % params->box_update_period == 0)
+    // {
+    //   if (!try_rescale(params, positions, &penergy, forces))
+    //   {
+    //     //reset forces
+    //     penergy = params->force_parameters->gather(params, positions, forces);
+    //   }
+    // }
 
     //output forces
     if (i % params->force_log_period == 0)
       log_array(params->forces_file, forces, params->n_dims, params->n_particles + params->n_ghost_particles, true);
 
     //integrate 2
-    integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box_size, params->n_dims, params->n_particles);
+    integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, params->n_dims, params->n_particles);
 
     //thermostat
     if (params->thermostat_parameters)
@@ -124,7 +124,7 @@ void main_loop(run_params_t *params)
     {
       printf("%12d %12g %12g %12g %12g %12g %12g %12g\n",
              i, i * params->time_step, insta_temperature, penergy, kenergy,
-             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box_size, params->n_dims));
+             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box->box_size, params->n_dims));
     }
     if (insta_temperature > 1000)
     {
