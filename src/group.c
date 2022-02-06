@@ -10,13 +10,13 @@ double *action(double *g, double *output, double *data, double *box, unsigned in
     {
         for (j = 0; j < n_dims; j++)
         {
-            printf("output[i(%d)] (%f) = data[j] (%f) * g[i * (n_dims + 1) + j (%d)] (%f)\n", i,
-                   output[i], data[j], i * (n_dims + 1) + j, g[i * (n_dims + 1) + j]);
+            // printf("output[i(%d)] (%f) = data[j] (%f) * g[i * (n_dims + 1) + j (%d)] (%f)\n", i,
+            //        output[i], data[j], i * (n_dims + 1) + j, g[i * (n_dims + 1) + j]);
             output[i] += data[j] * g[i * (n_dims + 1) + j];
         }
         // w coord
-        printf("output[i(%d)] (%f) += s (%f) * g[i * (n_dims + 1) + j] (%f) * box[i] (%f);\n",
-               i, output[i], s, g[i * (n_dims + 1) + j], box[i]);
+        // printf("output[i(%d)] (%f) += s (%f) * g[i * (n_dims + 1) + j] (%f) * box[i] (%f);\n",
+        //        i, output[i], s, g[i * (n_dims + 1) + j], box[i]);
         output[i] += s * g[i * (n_dims + 1) + j] * box[i];
     }
     return output;
@@ -72,7 +72,7 @@ void *fold_particles(run_params_t *params, double *particles, double *velocities
                 // compute new velocities
                 memset(&velocities[p * n_dims], 0, sizeof(double) * n_dims);
                 action(group->members[j].g, &velocities[p * n_dims],
-                       &velocities[i * n_dims], params->box_size, n_dims, 0.0);
+                       &velocities[i * n_dims], params->box->box_size, n_dims, 0.0);
                 //TODO: Not sure if this was bug or actually needed
                 memcpy(&velocities[i * n_dims], &velocities[p * n_dims], sizeof(double) * n_dims);
             }

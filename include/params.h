@@ -32,8 +32,6 @@ typedef struct
     double *initial_positions;
     double *initial_velocities;
     double *masses;
-    double *box_size;
-    int cubic;
     unsigned int n_dims;
     unsigned int n_particles;
     unsigned int n_ghost_particles;

@@ -352,8 +352,6 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   for (i = 0; i < n_particles; i++)
     for (k = 0; k < n_dims; k++)
       nlist->last_positions[i * n_dims + k] = positions[i * n_dims + k];
-
-  free(m_box_size);
 }
 
 /* An insert that grows the array if necessary

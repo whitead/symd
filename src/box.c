@@ -45,7 +45,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
   memcpy(new_box, params->box->box_size, sizeof(double) * n_dims);
 
   // make random step along some sides
-  if (params->cubic)
+  if (params->box->kind == PBC_CUBIC)
   {
     double dx = 1.0 + gsl_rng_uniform(params->rng) * 0.02 - 0.01;
     for (i = 0; i < n_dims; i++)

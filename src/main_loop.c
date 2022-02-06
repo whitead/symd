@@ -47,7 +47,7 @@ void main_loop(run_params_t *params)
   remove_com(positions, params->masses, params->n_dims, params->n_particles + params->n_ghost_particles);
 
   // apply group if necessary
-  if (params->group)
+  if (params->box->group)
     fold_particles(params, positions, velocities, false);
 
   //gather forces -> must be here so we don't do integrate 1 without forces
@@ -67,7 +67,7 @@ void main_loop(run_params_t *params)
       sprintf(xyz_file_comment, "Frame: %d", i);
       log_xyz(params->positions_file, positions, xyz_file_comment, elements, params->n_dims,
               params->n_particles, params->n_particles + params->n_ghost_particles, 0);
-      for (j = 1; j < params->group->size; j++)
+      for (j = 1; j < params->box->group->size; j++)
         log_xyz(params->positions_file, &positions[params->n_particles * params->n_dims * j], NULL, elements,
                 params->n_dims, params->n_particles,
                 params->n_particles + params->n_ghost_particles, 1);
@@ -85,7 +85,7 @@ void main_loop(run_params_t *params)
     integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, params->n_dims, params->n_particles);
 
     // apply group if necessary
-    if (params->group)
+    if (params->box->group)
       fold_particles(params, positions, velocities, false);
 
     if (i % params->com_remove_period == 0)

@@ -4,11 +4,20 @@
 #ifndef MIN_IMAGE_H_
 #define MIN_IMAGE_H_
 
+typedef enum box_e_
+{
+    UNWRAPPED,
+    PBC,
+    PBC_CUBIC,
+    GROUP
+} box_e;
+
 /*
  * Minimum image distance functions
  *
  */
-double round(double number);
+double
+round(double number);
 
 double min_image_dist(double dx, double img);
 
@@ -29,6 +38,7 @@ struct box_t
     double *box_size;
     unsigned int n_dims;
     group_t *group;
+    box_e kind;
 };
 
 #endif

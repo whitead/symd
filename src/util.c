@@ -199,16 +199,6 @@ run_params_t *read_parameters(char *file_name)
   }
   if (i != params->n_dims)
     fprintf(stderr, "Not enough box dims set\n");
-  if (cubic)
-    printf("Based on box dimensions, guessing you want to be cubic\n");
-
-  params->box_update_period = (unsigned int)retrieve_item(root, default_root, "box_update_period")->valueint;
-  if (params->box_update_period)
-  {
-    params->pressure = (double)retrieve_item(root, default_root, "pressure")->valuedouble;
-    // guess if cubic
-    params->cubic = cubic;
-  }
 
   //thermostats
   params->thermostat_parameters = NULL;
@@ -258,7 +248,7 @@ run_params_t *read_parameters(char *file_name)
   }
 
   // group - partition to ghost too
-  params->group = NULL;
+  params->box->group = NULL;
   params->n_ghost_particles = 0;
   item = cJSON_GetObjectItem(root, "group");
   if (item)
@@ -271,6 +261,46 @@ run_params_t *read_parameters(char *file_name)
 #endif
     params->n_particles = params->n_particles / params->box->group->size;
     params->n_ghost_particles = params->n_particles * (params->box->group->size - 1);
+  }
+
+  // figure out box type
+  params->box->kind = UNWRAPPED;
+  // check if tiled group
+  if (params->box->group)
+  {
+    for (i = 0; i < params->box->group->size; i++)
+      if (params->box->group->members[i].tiling)
+        params->box->kind = GROUP;
+  }
+  // check if box and non-tiled group
+  if (params->box->box_size && !(params->box->kind == GROUP))
+  {
+    if (cubic)
+      params->box->kind = PBC_CUBIC;
+    else
+      params->box->kind = PBC;
+  }
+
+  printf("Box type is ");
+  switch (params->box->kind)
+  {
+  case UNWRAPPED:
+    printf("UNWRAPPED\n");
+    break;
+  case PBC:
+    printf("PBC\n");
+    break;
+  case PBC_CUBIC:
+    printf("PBC_CUBIC\n");
+    break;
+  case GROUP:
+    printf("GROUP\n");
+  }
+
+  params->box_update_period = (unsigned int)retrieve_item(root, default_root, "box_update_period")->valueint;
+  if (params->box_update_period)
+  {
+    params->pressure = (double)retrieve_item(root, default_root, "pressure")->valuedouble;
   }
 
   item = cJSON_GetObjectItem(root, "start_velocities");

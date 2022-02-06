@@ -10,15 +10,6 @@ typedef struct
   nlist_parameters_t *nlist;
 } lj_parameters_t;
 
-static inline double clip(double n, double lower, double upper)
-{
-  // Stack overflow
-  // TODO: Turn this off if you really want to be exact
-  //n = 0.5 * (n + lower + fabs(n - lower));
-  //n = 0.5 * (n + upper - fabs(upper - n));
-  return n;
-}
-
 static inline double lj(double r, double epsilon, double sigma, double *energy)
 {
   double ri6 = pow(sigma / r, 6);
@@ -30,7 +21,6 @@ static inline double lj(double r, double epsilon, double sigma, double *energy)
 double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 {
   unsigned int n_dims = params->n_dims;
-  unsigned int n_groups = box_dist_size(params->box);
   unsigned int n_particles = params->n_particles;
   double *box_size = params->box->box_size;
   force_t *force_p = params->force_parameters;
@@ -42,15 +32,13 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   //update neighbor list
   update_nlist(positions, box_size, n_dims, n_particles, params->n_ghost_particles, nlist);
 
-  unsigned int i, j, k, l, n;
-  g_t *g;
+  unsigned int i, j, k, n;
   int offset;
   double penergy = 0;
-  double e;
   double r, force, diff;
-  double dist_vector[n_dims * (n_groups + 1)];
+  double force_vector[n_dims];
   double rcut = sqrt(nlist->rcut);
-  double e_shift;
+  double e_shift, e;
   double lj_shift = lj(rcut, epsilon, sigma, &e_shift);
 
 #ifdef DEBUG
@@ -72,9 +60,8 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
       //are not easy to spread out across the workers,
       //hence the conditionals.
 
-#pragma omp parallel default(shared) private(offset, n, i, j, k, l, e, g, r, \
-                                             force, dist_vector, diff)       \
-    reduction(+                                                              \
+#pragma omp parallel default(shared) private(offset, n, i, j, k, r, force, e, force_vector, diff) \
+    reduction(+                                                                                   \
               : penergy)
   {
 
@@ -106,7 +93,6 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
       for (j = i + 1; j < n_particles + params->n_ghost_particles; j++)
       {
         r = 0;
-
         // get distance vector
         // put in 0 position
         for (k = 0; k < n_dims; k++)
@@ -121,33 +107,27 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
           continue;
         r = sqrt(r);
         //LJ force and potential
-        force = lj_trunc_shift(r, epsilon, sigma, rcut, lj_shift);
+        force = lj(r, epsilon, sigma, &e) - lj_shift;
 #ifdef DEBUG
-        printf("d(%d <-> %d (group %d), %g) = ", i, j, l, r);
-        for (k = 0; k < n_dims; k++)
-          printf("%g ", dist_vector[l * n_dims + k]);
-        printf("\nF(%d <-> %d (group %d), %g) = %g\n", i, j, l, r, force);
+        printf("F(%d <-> %d, %g) = %g\n", i, j, r, force);
 #endif //DEBUG
 
-        // set dist vector to be force now, with check on cut
-        for (k = 0; k < n_dims; k++)
-          dist_vector[l * n_dims + k] *= force / r;
-      }
-
 #pragma omp critical(update_forces)
-      for (l = 0; l < n_groups + 1; l++)
-      {
         for (k = 0; k < n_dims; k++)
-          forces[i * n_dims + k] += dist_vector[l * n_dims + k];
-        penergy += e;
+        {
+          forces[i * n_dims + k] += force / r * force_vector[k];
+          if (j < params->n_particles)
+            forces[j * n_dims + k] -= force / r * force_vector[k];
+        }
+
+        penergy += e - e_shift;
       }
+
+      offset += nlist->nlist_count[i];
     }
-
-    offset += nlist->nlist_count[i];
   }
-}
 
-return penergy;
+  return penergy;
 }
 
 void lj_free_forces(force_t *force)

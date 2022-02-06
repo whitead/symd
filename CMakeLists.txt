@@ -7,7 +7,7 @@ endif()
 string(APPEND CMAKE_C_FLAGS_DEBUG " -DDEBUG")
 
 if (GCC)
-  string(APPEND CMAKE_C_FLAGS_RELEASE "-Ofast -fno-tree-pta -g -march=native -fmodulo-sched-allow-regmoves")
+  string(APPEND CMAKE_C_FLAGS_RELEASE "-Ofast -fno-tree-pta -g -march=native -fmodulo-sched -fmodulo-sched-allow-regmoves")
 endif()
 
 execute_process (
