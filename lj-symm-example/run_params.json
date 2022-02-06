@@ -12,13 +12,13 @@
         100,
         100
     ],
-    "n_particles": 245,
+    "n_particles": 256,
     "start_positions": "start_positions.xyz",
     "print_period": 100,
     "positions_log_file": "positions.xyz",
     "position_log_period": 50,
     "force_type": "lj",
     "group": "group.json",
-    "thermostat": "bussi",
+    "thermostat": null,
     "com_remove_period": 10
 }

@@ -101,16 +101,18 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
       }
 #endif
       //iterate through neighbor list
-      for (n = offset; n - offset < nlist->nlist_count[i]; n++)
+      // for (n = offset; n - offset < nlist->nlist_count[i]; n++)
+      // {
+      //   j = nlist->nlist[n];
+      for (j = i + 1; j < n_particles + params->n_ghost_particles; j++)
       {
-        j = nlist->nlist[n];
         r = 0;
 
         //distance between particles
         for (k = 0; k < n_dims; k++)
         {
-          diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-          //diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+          //diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
           r += diff * diff;
           force_vector[k] = diff;
         }
