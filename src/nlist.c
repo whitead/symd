@@ -5,7 +5,7 @@
 #include <math.h>
 
 //TODO: Should be 2.0 in principle? - Check this
-#define BOX_M 4.0
+#define BOX_M 2.0
 
 /*
  * Grow and insert a value as needed
@@ -94,12 +94,12 @@ void update_nlist(double *positions,
 #ifdef DEBUG
     printf("updating nlist due to %f + %f > %f\n", max1, max2, nlist->skin);
 #endif
-    build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
+    //build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
   }
   //**********************
   //TODO: This line below should be removed
   //**********************
-  //build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
+  build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
   return;
 }
 

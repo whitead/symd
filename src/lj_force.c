@@ -109,8 +109,8 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         //distance between particles
         for (k = 0; k < n_dims; k++)
         {
-          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+          diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+          //diff = positions[j * n_dims + k] - positions[i * n_dims + k];
           r += diff * diff;
           force_vector[k] = diff;
         }
@@ -120,7 +120,6 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         r = sqrt(r);
         //LJ force and potential
         force = lj_trunc_shift(r, epsilon, sigma, rcut, lj_shift);
-
 #ifdef DEBUG
         printf("F(%d <-> %d, %g) = %g\n", i, j, r, force);
 #endif //DEBUG

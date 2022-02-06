@@ -18,7 +18,7 @@ void *load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *
 double *generate_velocities(double temperature, gsl_rng *rng, double *masses, unsigned int n_dims, unsigned int n_particles)
 {
 
-  double *velocities = (double *)malloc(sizeof(double) * n_dims * n_particles);
+  double *velocities = (double *)malloc(sizeof(double) * n_dims * (n_particles + 1));
 
   unsigned int i, j;
 

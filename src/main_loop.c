@@ -33,6 +33,7 @@ void main_loop(run_params_t *params)
 {
 
   unsigned int i;
+  int do_exit = 0;
   double *positions = params->initial_positions;
   double *velocities = params->initial_velocities;
   // make sure initial forces are zeroed
@@ -47,7 +48,8 @@ void main_loop(run_params_t *params)
 
   // apply group if necessary
   if (params->group)
-    fold_particles(params, positions, false);
+    fold_particles(params, positions, velocities, false);
+
   //gather forces -> must be here so we don't do integrate 1 without forces
   if (params->force_parameters)
     penergy = params->force_parameters->gather(params, positions, forces);
@@ -60,7 +62,7 @@ void main_loop(run_params_t *params)
   {
 
     //output
-    if (i % params->position_log_period == 0)
+    if (do_exit || i % params->position_log_period == 0)
     {
       sprintf(xyz_file_comment, "Frame: %d", i);
       //TODO: Output each group with separate symbol
@@ -69,6 +71,11 @@ void main_loop(run_params_t *params)
       log_xyz(params->positions_file, &positions[params->n_particles * params->n_dims], NULL, "C",
               params->n_dims, params->n_ghost_particles,
               params->n_particles + params->n_ghost_particles, 1);
+    }
+    if (do_exit)
+    {
+      fprintf(stderr, "Exiting due to high temperature\n");
+      exit(1);
     }
 
     if (i % params->velocity_log_period == 0)
@@ -79,7 +86,7 @@ void main_loop(run_params_t *params)
 
     // apply group if necessary
     if (params->group)
-      fold_particles(params, positions, false);
+      fold_particles(params, positions, velocities, false);
 
     if (i % params->com_remove_period == 0)
       remove_com(velocities, params->masses, params->n_dims, params->n_particles);
@@ -118,6 +125,10 @@ void main_loop(run_params_t *params)
       printf("%12d %12g %12g %12g %12g %12g %12g %12g\n",
              i, i * params->time_step, insta_temperature, penergy, kenergy,
              penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box_size, params->n_dims));
+    }
+    if (insta_temperature > 1000)
+    {
+      do_exit = 1;
     }
   }
   log_array(params->final_positions_file, positions, params->n_dims,
