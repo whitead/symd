@@ -131,7 +131,7 @@ void build_cells(double *box_size,
   //rebuild the list
   unsigned int i;
   nlist->cell_number = (int *)malloc(sizeof(int) * n_dims);
-  double *m_box_size = (double *)malloc(sizeof(double) * n_dims);
+  double m_box_size[n_dims];
 
   // make our box bigger, since our tiled ghost particles
   // will not wrap nicely.
@@ -214,8 +214,6 @@ void build_cells(double *box_size,
   //prepare cell list and head
   nlist->head = (int *)malloc(sizeof(int) * nlist->cell_number_total);
   nlist->cell_list = (int *)malloc(sizeof(int) * (n_particles + n_ghost_particles));
-
-  free(m_box_size);
 }
 
 /*
@@ -243,7 +241,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   double dist, dx;
   int net_dcell;
   int icell;
-  double *m_box_size = (double *)malloc(sizeof(double) * n_dims);
+  double m_box_size[n_dims];
 
   // make our box bigger, since our tiled ghost particles
   // will not wrap nicely.

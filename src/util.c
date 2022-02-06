@@ -464,7 +464,7 @@ double calculate_kenergy(double *velocities, double *masses, unsigned int n_dims
 }
 
 void log_xyz(FILE *file, double *array, char *frame_string,
-             const char *element, unsigned n_dims, unsigned n_particles,
+             const char *elements[], unsigned n_dims, unsigned n_particles,
              unsigned int total, int location)
 {
 
@@ -477,7 +477,7 @@ void log_xyz(FILE *file, double *array, char *frame_string,
 
   for (i = 0; i < n_particles; i++)
   {
-    fprintf(file, "%s ", element);
+    fprintf(file, "%s ", elements[i]);
     for (j = 0; j < n_dims; j++)
     {
       fprintf(file, "%12g ", array[i * n_dims + j]);

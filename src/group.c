@@ -67,11 +67,11 @@ void *fold_particles(run_params_t *params, double *particles, double *velocities
             {
                 r0 = r;
                 memcpy(&particles[i * n_dims], &particles[j * p * n_dims + i * n_dims], sizeof(double) * n_dims);
-                printf("Swapping group %d*******\n", j);
                 // compute new velocities
                 memset(&velocities[p * n_dims], 0, sizeof(double) * n_dims);
                 action(group->members[j].g, &velocities[p * n_dims],
                        &velocities[i * n_dims], params->box_size, n_dims, 0.0);
+                //TODO: Not sure if this was bug or actually needed
                 memcpy(&velocities[i * n_dims], &velocities[p * n_dims], sizeof(double) * n_dims);
             }
         }

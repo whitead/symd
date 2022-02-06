@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 void main_loop(run_params_t *params)
 {
 
-  unsigned int i;
+  unsigned int i, j;
   int do_exit = 0;
   double *positions = params->initial_positions;
   double *velocities = params->initial_velocities;
@@ -65,12 +65,12 @@ void main_loop(run_params_t *params)
     if (do_exit || i % params->position_log_period == 0)
     {
       sprintf(xyz_file_comment, "Frame: %d", i);
-      //TODO: Output each group with separate symbol
-      log_xyz(params->positions_file, positions, xyz_file_comment, "Ar", params->n_dims,
+      log_xyz(params->positions_file, positions, xyz_file_comment, elements, params->n_dims,
               params->n_particles, params->n_particles + params->n_ghost_particles, 0);
-      log_xyz(params->positions_file, &positions[params->n_particles * params->n_dims], NULL, "C",
-              params->n_dims, params->n_ghost_particles,
-              params->n_particles + params->n_ghost_particles, 1);
+      for (j = 1; j < params->group->size; j++)
+        log_xyz(params->positions_file, &positions[params->n_particles * params->n_dims * j], NULL, elements,
+                params->n_dims, params->n_particles,
+                params->n_particles + params->n_ghost_particles, 1);
     }
     if (do_exit)
     {

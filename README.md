@@ -3,8 +3,22 @@ Symmetric Molecular Dynamics Engine
 
 TODO:
 
-1. Switch to dynamic arrays
+Improve speed for dimensions (low priority)
+1. Switch to dynamic arrays (as you go) DONE
 2. n_dims becomes pre-processor
+
+Nlist broken?
+1. Investigate - might just be inconsistent when we had jumps but is ok
+
+Groups
+1. Better checks on validity!
+
+NPT
+1. Need to work with Bravais lattice directly (encode in json), otherwise we violate
+
+
+PBC
+1. Make flag or something so that we can actually have both rect/cubic PBC and our translation groups
 
 Compiling
 -------------------------

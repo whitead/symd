@@ -41,7 +41,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
 {
   unsigned int i, j, n_dims = params->n_dims;
   double newV, oldV = volume(params->box_size, params->n_dims);
-  double *new_box = (double *)malloc(sizeof(double) * n_dims);
+  double new_box[n_dims];
   memcpy(new_box, params->box_size, sizeof(double) * n_dims);
 
   // make random step along some sides
@@ -105,8 +105,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
     //accepted
     //TODO: rebuild cells in nlist
     *penergy = new_energy;
-    free(params->box_size);
-    params->box_size = new_box;
+    memcpy(params->box_size, new_box, sizeof(double) * n_dims);
     return 1;
   }
   else
@@ -118,7 +117,6 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
     for (i = 0; i < params->n_ghost_particles + params->n_particles; i++)
       for (j = 0; j < n_dims; j++)
         positions[i * n_dims + j] /= new_box[j] / params->box_size[j];
-    free(new_box);
     return 0;
   }
 }
