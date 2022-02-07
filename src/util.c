@@ -275,9 +275,11 @@ run_params_t *read_parameters(char *file_name)
     for (i = 0; i < params->box->group->size; i++)
       if (params->box->group->members[i].tiling)
         params->box->kind = GROUP;
+    if (params->box->kind == GROUP && cubic)
+      params->box->kind = GROUP_CUBIC;
   }
   // check if box and non-tiled group
-  if (params->box->box_size && !(params->box->kind == GROUP))
+  if (params->box->box_size && params->box->kind == UNWRAPPED)
   {
     if (cubic)
       params->box->kind = PBC_CUBIC;
@@ -296,6 +298,9 @@ run_params_t *read_parameters(char *file_name)
     break;
   case PBC_CUBIC:
     printf("PBC_CUBIC\n");
+    break;
+  case GROUP_CUBIC:
+    printf("GROUP_CUBIC\n");
     break;
   case GROUP:
     printf("GROUP\n");

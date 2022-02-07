@@ -380,6 +380,7 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
 {
   unsigned n_dims = params->n_dims;
   unsigned n_particles = params->n_particles;
+  double *box_size = params->box->box_size;
   unsigned int i, j, k, n, ni, nn, n2n, ngn;
   double diff, r;
 

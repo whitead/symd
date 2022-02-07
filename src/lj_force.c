@@ -30,7 +30,8 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   nlist_parameters_t *nlist = parameters->nlist;
 
   //update neighbor list
-  update_nlist(positions, box_size, n_dims, n_particles, params->n_ghost_particles, nlist);
+  //TODO: Turn back on
+  //update_nlist(positions, box_size, n_dims, n_particles, params->n_ghost_particles, nlist);
 
   unsigned int i, j, k, n;
   int offset;
@@ -42,7 +43,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   double lj_shift = lj(rcut, epsilon, sigma, &e_shift);
 
 #ifdef DEBUG
-  check_nlist(params, nlist, positions, rcut);
+  //check_nlist(params, nlist, positions, rcut);
 #endif
 
 //zero forces
@@ -122,8 +123,8 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 
         penergy += e - e_shift;
       }
-
-      offset += nlist->nlist_count[i];
+      //TODO: Turn back on when nlsit is working
+      //offset += nlist->nlist_count[i];
     }
   }
 

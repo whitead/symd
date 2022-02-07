@@ -9,7 +9,8 @@ typedef enum box_e_
     UNWRAPPED,
     PBC,
     PBC_CUBIC,
-    GROUP
+    GROUP,
+    GROUP_CUBIC
 } box_e;
 
 /*

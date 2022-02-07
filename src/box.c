@@ -45,13 +45,13 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
   memcpy(new_box, params->box->box_size, sizeof(double) * n_dims);
 
   // make random step along some sides
-  if (params->box->kind == PBC_CUBIC)
+  if (params->box->kind == PBC_CUBIC || params->box->kind == GROUP_CUBIC)
   {
     double dx = 1.0 + gsl_rng_uniform(params->rng) * 0.02 - 0.01;
     for (i = 0; i < n_dims; i++)
       new_box[i] *= dx;
   }
-  else
+  else if (params->box->kind == PBC)
   {
     // scale by .1% at most because it sounds reasonable
     int success = 0;
@@ -103,7 +103,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
     printf("Accepted with MHC %g\n", mhc);
 #endif
     //accepted
-    //TODO: rebuild cells in nlist
+    //TODO: rebuild cells in nlist - shouldn't matter if cubic
     *penergy = new_energy;
     memcpy(params->box->box_size, new_box, sizeof(double) * n_dims);
     return 1;
