@@ -11,7 +11,7 @@ static const char *
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
     \"box_update_period\": 0, \"force_type\": null,\
-     \"force_log_period\" : 0, \"box_size\": [0, 0, 0]} ";
+     \"force_log_period\" : 0} ";
 
 void *load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message);
 
@@ -180,25 +180,29 @@ run_params_t *read_parameters(char *file_name)
   //box size
   unsigned int i;
   unsigned int cubic = 1;
-  item = retrieve_item(root, default_root, "box_size");
-  i = 0;
-  for (item = item->child; item != NULL; item = item->next)
+  item = cJSON_GetObjectItem(root, "box_size");
+  if (item)
   {
-    if (i == params->n_dims)
+    i = 0;
+
+    for (item = item->child; item != NULL; item = item->next)
     {
-      // maybe it's default with no box?
-      if (params->box->box_size[0] == 0)
-        break;
-      fprintf(stderr, "Error: Number of box dimensions not equal to simulation dimension\n");
-      exit(1);
+      if (i == params->n_dims)
+      {
+        // maybe it's default with no box?
+        if (params->box->box_size[0] == 0)
+          break;
+        fprintf(stderr, "Error: Number of box dimensions not equal to simulation dimension\n");
+        exit(1);
+      }
+      params->box->box_size[i] = item->valuedouble;
+      if (i > 0 && (params->box->box_size[i] - params->box->box_size[i - 1]) > 0.000001)
+        cubic &= 0;
+      i++;
     }
-    params->box->box_size[i] = item->valuedouble;
-    if (i > 0 && (params->box->box_size[i] - params->box->box_size[i - 1]) > 0.000001)
-      cubic &= 0;
-    i++;
+    if (i != params->n_dims)
+      fprintf(stderr, "Not enough box dims set\n");
   }
-  if (i != params->n_dims)
-    fprintf(stderr, "Not enough box dims set\n");
 
   //thermostats
   params->thermostat_parameters = NULL;
