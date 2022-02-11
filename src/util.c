@@ -176,6 +176,8 @@ run_params_t *read_parameters(char *file_name)
 
   params->box = (box_t *)malloc(sizeof(box_t));
   params->box->box_size = (double *)calloc(params->n_dims, sizeof(double));
+  params->box->b_vectors = (double *)calloc(params->n_dims * params->n_dims, sizeof(double));
+  params->box->unorm_b_vectors = (double *)calloc(params->n_dims * params->n_dims, sizeof(double));
   params->box->n_dims = params->n_dims;
   //box size
   unsigned int i;
@@ -196,8 +198,7 @@ run_params_t *read_parameters(char *file_name)
         exit(1);
       }
       params->box->box_size[i] = item->valuedouble;
-      if (i > 0 && (params->box->box_size[i] - params->box->box_size[i - 1]) > 0.000001)
-        cubic &= 0;
+      params->box->unorm_b_vectors[i * params->n_dims + i % params->n_dims] = item->valuedouble;
       i++;
     }
     if (i != params->n_dims)
@@ -236,6 +237,7 @@ run_params_t *read_parameters(char *file_name)
   //load input files
   char *positions_file = retrieve_item(root, default_root, "start_positions")->valuestring;
   params->initial_positions = load_matrix(positions_file, params->n_particles, params->n_dims, 0);
+  params->scaled_positions = (double*) malloc(sizeof(double) * params->n_particles);
 
   item = cJSON_GetObjectItem(root, "masses_file");
   if (item)

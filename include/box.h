@@ -37,6 +37,8 @@ unsigned int box_dist_size(box_t *box);
 struct box_t
 {
     double *box_size;
+    double *b_vectors;
+    double *unorm_b_vectors;
     unsigned int n_dims;
     group_t *group;
     box_e kind;

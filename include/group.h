@@ -17,6 +17,7 @@ struct group_t
     unsigned int size;
     unsigned int tiling_start;
     g_t *members;
+    double* projector;
 };
 
 void *fold_particles(run_params_t *group, double *particles, double *velocities, bool reduce);

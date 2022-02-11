@@ -31,6 +31,7 @@ typedef struct
     box_t *box;
     double *initial_positions;
     double *initial_velocities;
+    double* scaled_positions;
     double *masses;
     unsigned int n_dims;
     unsigned int n_particles;
