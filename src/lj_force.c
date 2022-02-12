@@ -29,9 +29,9 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   const double sigma = parameters->sigma;
   nlist_parameters_t *nlist = parameters->nlist;
 
-  //update neighbor list
-  //TODO: Turn back on
-  //update_nlist(positions, box_size, n_dims, n_particles, params->n_ghost_particles, nlist);
+  // update neighbor list
+  // TODO: Turn back on
+  // update_nlist(positions, box_size, n_dims, n_particles, params->n_ghost_particles, nlist);
 
   unsigned int i, j, k, n;
   int offset;
@@ -43,23 +43,23 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   double lj_shift = lj(rcut, epsilon, sigma, &e_shift);
 
 #ifdef DEBUG
-  //check_nlist(params, nlist, positions, rcut);
+  // check_nlist(params, nlist, positions, rcut);
 #endif
 
-//zero forces
+// zero forces
 #pragma omp parallel for
   for (i = 0; i < n_particles; i++)
     for (k = 0; k < n_dims; k++)
       forces[i * n_dims + k] = 0;
 
-      //iterate through all particles
+      // iterate through all particles
 
-      //This seems strange at first,
-      //but it really just distributes
-      //the work across the threads
-      //The only trick is that the neighborlists
-      //are not easy to spread out across the workers,
-      //hence the conditionals.
+      // This seems strange at first,
+      // but it really just distributes
+      // the work across the threads
+      // The only trick is that the neighborlists
+      // are not easy to spread out across the workers,
+      // hence the conditionals.
 
 #pragma omp parallel default(shared) private(offset, n, i, j, k, r, force, e, force_vector, diff) \
     reduction(+                                                                                   \
@@ -67,9 +67,9 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   {
 
 #ifdef _OPENMP
-    offset = -1; //indicator
+    offset = -1; // indicator
 #else
-    offset = 0; //zeroed
+    offset = 0; // zeroed
 #endif
 
 #pragma omp for
@@ -77,7 +77,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
     {
 
 #ifdef _OPENMP
-      //accumulate the offset now that we know i
+      // accumulate the offset now that we know i
       if (offset == -1)
       {
         offset = 0;
@@ -87,10 +87,10 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         }
       }
 #endif
-      //iterate through neighbor list
-      // for (n = offset; n - offset < nlist->nlist_count[i]; n++)
-      // {
-      //   j = nlist->nlist[n];
+      // iterate through neighbor list
+      //  for (n = offset; n - offset < nlist->nlist_count[i]; n++)
+      //  {
+      //    j = nlist->nlist[n];
       for (j = i + 1; j < n_particles + params->n_ghost_particles; j++)
       {
         r = 0;
@@ -99,7 +99,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         for (k = 0; k < n_dims; k++)
         {
           diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-          //diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+          // diff = positions[j * n_dims + k] - positions[i * n_dims + k];
           r += diff * diff;
           force_vector[k] = diff;
         }
@@ -107,11 +107,11 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         if (r > rcut * rcut)
           continue;
         r = sqrt(r);
-        //LJ force and potential
+        // LJ force and potential
         force = lj(r, epsilon, sigma, &e) - lj_shift;
 #ifdef DEBUG
         printf("F(%d <-> %d, %g) = %g\n", i, j, r, force);
-#endif //DEBUG
+#endif // DEBUG
 
 #pragma omp critical(update_forces)
         for (k = 0; k < n_dims; k++)
@@ -123,8 +123,8 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 
         penergy += e - e_shift;
       }
-      //TODO: Turn back on when nlsit is working
-      //offset += nlist->nlist_count[i];
+      // TODO: Turn back on when nlsit is working
+      // offset += nlist->nlist_count[i];
     }
   }
 

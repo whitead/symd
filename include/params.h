@@ -14,10 +14,12 @@ typedef struct thermostat_t thermostat_t;
 typedef struct group_t group_t;
 typedef struct box_t box_t;
 
+typedef double SCALAR;
+
 /*
-* Parameters needed to begin an MD run
-*
-*/
+ * Parameters needed to begin an MD run
+ *
+ */
 typedef struct
 {
 
@@ -31,7 +33,7 @@ typedef struct
     box_t *box;
     double *initial_positions;
     double *initial_velocities;
-    double* scaled_positions;
+    double *scaled_positions;
     double *masses;
     unsigned int n_dims;
     unsigned int n_particles;

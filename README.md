@@ -11,12 +11,13 @@ Improve speed for dimensions (low priority)
 Nlist broken?
 1. Investigate - might just be inconsistent when we had jumps but is ok
 
-Groups
-1. Better checks on validity!
+1. unscale_wrap_coords, unscal_coords, tile_coords,unscale_coords
+2. only load asymmetric unit
+3. tiling should not be done via groups
 
-NPT
-1. Finish Python C code generation to work with Bravais Lattices
-2.
+
+volume - https://en.wikipedia.org/wiki/Levi-Civita_symbol#Generalization_to_n_dimensions
+https://math.stackexchange.com/questions/1605690/how-to-extend-the-parallelepiped-volume-formula-to-higher-dimensions
 
 
 Compiling

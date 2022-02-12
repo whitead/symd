@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
 
   char *pfile;
-  //process arguments to get parameters
+  // process arguments to get parameters
   pfile = NULL;
 
   if (argc == 2)
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
   run_params_t *p = read_parameters(pfile);
 
-  //start main loop
+  // start main loop
   main_loop(p);
 
   free_run_params(p);
@@ -48,20 +48,20 @@ void main_loop(run_params_t *params)
 
   // apply group if necessary
   if (params->box->group)
-    fold_particles(params, positions, velocities, false);
+    fold_particles(params, positions);
 
-  //gather forces -> must be here so we don't do integrate 1 without forces
+  // gather forces -> must be here so we don't do integrate 1 without forces
   if (params->force_parameters)
     penergy = params->force_parameters->gather(params, positions, forces);
 
   printf("%12s %12s %12s %12s %12s %12s %12s %12s\n",
          "Step", "Time", "T", "PE", "KE", "E", "Htherm",
          "V");
-  //start at 0, so that we don't log on the first loop
+  // start at 0, so that we don't log on the first loop
   for (i = 0; i < params->steps; i++)
   {
 
-    //output
+    // output
     if (do_exit || i % params->position_log_period == 0)
     {
       sprintf(xyz_file_comment, "Frame: %d", i);
@@ -81,42 +81,42 @@ void main_loop(run_params_t *params)
     if (i % params->velocity_log_period == 0)
       log_array(params->velocities_file, velocities, params->n_dims, params->n_particles + params->n_ghost_particles, true);
 
-    //integrate 1
+    // integrate 1
     integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, params->n_dims, params->n_particles);
 
     // apply group if necessary
     if (params->box->group)
-      fold_particles(params, positions, velocities, false);
+      fold_particles(params, positions);
 
     if (i % params->com_remove_period == 0)
       remove_com(velocities, params->masses, params->n_dims, params->n_particles);
 
-    //gather forces
+    // gather forces
     if (params->force_parameters)
       penergy = params->force_parameters->gather(params, positions, forces);
 
     // try update box
-    if (params->box_update_period && i % params->box_update_period == 0)
-    {
-      if (!try_rescale(params, positions, &penergy, forces))
-      {
-        //reset forces
-        penergy = params->force_parameters->gather(params, positions, forces);
-      }
-    }
+    // if (params->box_update_period && i % params->box_update_period == 0)
+    // {
+    //   if (!try_rescale(params, positions, &penergy, forces))
+    //   {
+    //     // reset forces
+    //     penergy = params->force_parameters->gather(params, positions, forces);
+    //   }
+    // }
 
-    //output forces
+    // output forces
     if (i % params->force_log_period == 0)
       log_array(params->forces_file, forces, params->n_dims, params->n_particles + params->n_ghost_particles, true);
 
-    //integrate 2
+    // integrate 2
     integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, params->n_dims, params->n_particles);
 
-    //thermostat
+    // thermostat
     if (params->thermostat_parameters)
       therm_conserved += params->thermostat_parameters->thermo_fxn(params->thermostat_parameters, params->temperature, params->time_step, positions, velocities, params->masses, params->n_dims, params->n_particles);
 
-    //calculate important quantities
+    // calculate important quantities
     kenergy = calculate_kenergy(velocities, params->masses, params->n_dims, params->n_particles);
     insta_temperature = kenergy * 2 / (params->n_particles * params->n_dims - params->n_dims);
 
