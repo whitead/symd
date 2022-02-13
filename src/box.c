@@ -13,20 +13,12 @@ double round(double number)
 
 double min_image_dist(double dx, double img)
 {
-  if (img)
-    return dx - round(dx / img) * img;
-  return dx;
+  return dx - round(dx / img) * img;
 }
 
 double wrap(double x, double img)
 {
-  if (img)
-  {
-    double cx = x + img / 2;
-    x = cx - floor(cx / img) * img;
-    x = x - img / 2;
-  }
-  return x;
+  return x - floor(x / img) * img;
 }
 
 void scale_wrap_coords(SCALAR *dest, SCALAR *src, box_t *box)
