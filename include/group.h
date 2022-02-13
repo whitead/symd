@@ -8,14 +8,12 @@ typedef struct
 {
     SCALAR *g;
     SCALAR *i;
-    int tiling;
 } g_t;
 
 struct group_t
 {
     const char *name;
     unsigned int size;
-    unsigned int tiling_start;
     g_t *members;
     SCALAR *projector;
 };

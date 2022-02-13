@@ -44,8 +44,6 @@ void main_loop(run_params_t *params)
   double insta_temperature;
   double therm_conserved = 0;
 
-  remove_com(positions, params->masses, params->n_dims, params->n_particles + params->n_ghost_particles);
-
   // apply group if necessary
   if (params->box->group)
     fold_particles(params, positions);

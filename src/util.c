@@ -267,13 +267,12 @@ run_params_t *read_parameters(char *file_name)
   {
     group = load_group(item->valuestring, params->n_dims);
     params->box = make_box(sdata, group, params->n_dims, retrieve_item(root, default_root, "images")->valueint);
-    free(sdata);
     sdata = NULL;
+    params->n_ghost_particles = params->n_particles * params->box->group->size * params->box->n_tilings - params->n_particles;
 #ifdef DEBUG
     printf("Duplicating %d particles into %d real particles and %d ghost for group with %d elements and %d tilings\n",
-           params->n_particles, params->n_particles, params->n_particles * (params->box->group->size - 1) * params->box->n_tilings, params->box->group->size, params->box->n_tilings);
+           params->n_particles, params->n_particles, params->n_ghost_particles, params->box->group->size, params->box->n_tilings);
 #endif
-    params->n_ghost_particles = params->n_particles * (params->box->group->size - 1) * params->box->n_tilings;
     sdata = (SCALAR *)malloc(sizeof(SCALAR) * (params->n_ghost_particles + params->n_particles));
     memcpy(sdata, params->initial_positions, sizeof(SCALAR) * params->n_particles);
     free(params->initial_positions);
@@ -283,9 +282,12 @@ run_params_t *read_parameters(char *file_name)
   else
   {
     params->box = make_box(sdata, NULL, params->n_dims, retrieve_item(root, default_root, "images")->valueint);
-    free(sdata);
     sdata = NULL;
   }
+
+  for (i = 0; i < params->n_particles; i++)
+    unscale_coords(&params->initial_positions[i * params->n_dims],
+                   &params->initial_positions[i * params->n_dims], params->box);
 
   params->box_update_period = (unsigned int)retrieve_item(root, default_root, "box_update_period")->valueint;
   if (params->box_update_period)
@@ -404,7 +406,7 @@ group_t *load_group(char *filename, unsigned int n_dims)
 
   group_t *group = (group_t *)malloc(sizeof(group_t));
   group->name = item->valuestring;
-  unsigned int i, j, size = 0, tiling_start = 0;
+  unsigned int i, j, size = 0;
   g_t *tmp, *members = NULL;
   double *g_mat, *i_mat;
   // iterate over group members
@@ -425,17 +427,18 @@ group_t *load_group(char *filename, unsigned int n_dims)
     i_mat = (double *)malloc(sizeof(double) * g_dims * g_dims);
     load_json_matrix(cJSON_GetObjectItem(json_members, "g"), g_mat, g_dims * g_dims, "g matrix");
     load_json_matrix(cJSON_GetObjectItem(json_members, "i"), i_mat, g_dims * g_dims, "i matrix");
-    item = cJSON_GetObjectItem(json_members, "t");
-    g_t g = {.g = g_mat, .i = i_mat, .tiling = item->valueint};
+    g_t g = {.g = g_mat, .i = i_mat};
 
-    if (!g.tiling)
-      tiling_start++;
     // add new member
     memcpy(&members[size - 1], &g, sizeof(g_t));
   }
   group->members = members;
   group->size = size;
-  group->tiling_start = tiling_start;
+
+  g_mat = (double *)malloc(sizeof(double) * n_dims * n_dims * n_dims * n_dims);
+  load_json_matrix(cJSON_GetObjectItem(root, "projector"), g_mat, n_dims * n_dims * n_dims * n_dims, "projector");
+
+  group->projector = g_mat;
 
   free(data);
 
@@ -645,10 +648,7 @@ void free_run_params(run_params_t *params)
   free(params->initial_positions);
   free(params->initial_velocities);
   free(params->masses);
-  free(params->box->box_size);
-  if (params->box->group)
-    free_group(params->box->group);
-  free(params->box);
+  free_box(params->box);
   if (params->positions_file)
     fclose(params->positions_file);
   if (params->velocities_file)

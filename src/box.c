@@ -62,12 +62,25 @@ void tiling(int *result, unsigned int cur_dim, unsigned int n, unsigned n_dims)
     result[cur_dim * n_dims + i] = (int)(i)-n;
 }
 
+void free_box(box_t *box)
+{
+  if (box->group)
+    free_group(box->group);
+  free(box->box_size);
+  free(box->b_vectors);
+  free(box->ib_vectors);
+  free(box->unorm_b_vectors);
+  free(box->tilings);
+  free(box);
+}
+
 box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int n_dims, unsigned int images)
 {
 
   box_t *box = (box_t *)malloc(sizeof(box_t));
   box->box_size = (SCALAR *)calloc(n_dims, sizeof(SCALAR));
   box->b_vectors = (SCALAR *)calloc(n_dims * n_dims, sizeof(SCALAR));
+  box->ib_vectors = (SCALAR *)malloc(n_dims * n_dims * sizeof(SCALAR));
   box->unorm_b_vectors = unorm_b_vectors;
   box->n_dims = n_dims;
   box->group = group;
@@ -78,7 +91,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int n_dims, un
   if (group)
     for (i = 0; i < n_dims * n_dims; i++)
       for (j = 0; j < n_dims * n_dims; j++)
-        box->b_vectors[i] += unorm_b_vectors[j] * group->projector[i * n_dims + j];
+        box->b_vectors[i] += unorm_b_vectors[j] * group->projector[i * n_dims * n_dims + j];
   else
     box->b_vectors = unorm_b_vectors;
 
@@ -106,27 +119,28 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int n_dims, un
   printf("Box is size ");
   for (i = 0; i < n_dims; i++)
     printf("%f ", box->box_size[i]);
-  printf("Unormed vectors:\n");
+  printf("\nUnormed vectors:\n");
   for (i = 0; i < n_dims; i++)
   {
-    printf("%d ", i);
+    printf("%d: ", i);
     for (j = 0; j < n_dims; j++)
       printf("%f ", box->unorm_b_vectors[i * n_dims + j]);
   }
-  printf("Projected vectors:\n");
+  printf("\nProjected vectors:\n");
   for (i = 0; i < n_dims; i++)
   {
-    printf("%d ", i);
+    printf("%d: ", i);
     for (j = 0; j < n_dims; j++)
       printf("%f ", box->b_vectors[i * n_dims + j]);
   }
-  printf("Inverse Projected vectors:\n");
+  printf("\nInverse Projected vectors:\n");
   for (i = 0; i < n_dims; i++)
   {
-    printf("%d ", i);
+    printf("%d: ", i);
     for (j = 0; j < n_dims; j++)
       printf("%f ", box->ib_vectors[i * n_dims + j]);
   }
+  printf("\n");
 #endif
 
   // build out tilings
@@ -140,7 +154,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int n_dims, un
   // used to omit origin
   unsigned int past_zero = 0;
   int v;
-  box->tilings = malloc(sizeof(int) * ntot - 1);
+  box->tilings = malloc(sizeof(int) * (ntot - 1) * n_dims);
   for (i = 0; i < ntot; i++)
   {
     l = i;
