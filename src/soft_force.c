@@ -19,7 +19,7 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 	double r;
 	double force_vector[n_dims];
 
-	//zero forces
+	// zero forces
 #pragma omp parallel for
 	for (i = 0; i < n_particles; i++)
 		for (k = 0; k < n_dims; k++)
@@ -35,13 +35,13 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 			r = 0;
 			for (k = 0; k < n_dims; k++)
 			{
-				force_vector[k] = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-				//force_vector[k] = positions[j * n_dims + k] - positions[i * n_dims + k];
+				// force_vector[k] = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+				force_vector[k] = positions[j * n_dims + k] - positions[i * n_dims + k];
 				r += force_vector[k] * force_vector[k];
 			}
 			r = sqrt(r);
 			if (r < 0.00000001)
-			{ //perturb
+			{ // perturb
 				force_vector[0] += 0.01;
 				r = 0.01;
 			}
@@ -56,7 +56,7 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 				}
 #ifdef DEBUG
 				printf("F(%d <-> %d, %g) = %g\n", i, j, r, -sin(PI * r / 1.5));
-#endif //DEBUG
+#endif // DEBUG
 				penergy += cos(PI * r / 1.5);
 			}
 			else
