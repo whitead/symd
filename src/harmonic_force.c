@@ -8,7 +8,7 @@ typedef struct
 double h_gather_forces(run_params_t *params, double *positions, double *forces)
 {
 
-  unsigned n_dims = params->n_dims;
+  unsigned n_dims = N_DIMS;
   unsigned n_particles = params->n_particles;
   force_t *force = params->force_parameters;
   double k = ((harmonic_parameters_t *)force->parameters)->k;

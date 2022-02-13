@@ -37,7 +37,7 @@ void main_loop(run_params_t *params)
   double *positions = params->initial_positions;
   double *velocities = params->initial_velocities;
   // make sure initial forces are zeroed
-  double *forces = calloc(params->n_dims * params->n_particles, sizeof(double));
+  double *forces = calloc(N_DIMS * params->n_particles, sizeof(double));
   char xyz_file_comment[100];
   double penergy = 0;
   double kenergy = 0;
@@ -67,16 +67,16 @@ void main_loop(run_params_t *params)
       {
         // asymmetric
         if (j == 0)
-          log_xyz(params->positions_file, positions, xyz_file_comment, elements, params->n_dims,
+          log_xyz(params->positions_file, positions, xyz_file_comment, elements, N_DIMS,
                   params->n_particles, params->n_particles + params->n_ghost_particles, 0);
         else // non-tiled
-          log_xyz(params->positions_file, &positions[params->n_dims * params->n_particles * j], NULL, elements, params->n_dims,
+          log_xyz(params->positions_file, &positions[N_DIMS * params->n_particles * j], NULL, elements, N_DIMS,
                   params->n_particles, params->n_particles + params->n_ghost_particles, 1);
         for (k = 0; k < params->box->n_tilings; k++)
           log_xyz(params->positions_file,
-                  &positions[params->n_dims * (params->n_particles * ((k + 1) * params->box->group->size + j))],
+                  &positions[N_DIMS * (params->n_particles * ((k + 1) * params->box->group->size + j))],
                   NULL, elements,
-                  params->n_dims, params->n_particles,
+                  N_DIMS, params->n_particles,
                   params->n_particles + params->n_ghost_particles, 1);
       }
     }
@@ -88,17 +88,17 @@ void main_loop(run_params_t *params)
     }
 
     if (i % params->velocity_log_period == 0)
-      log_array(params->velocities_file, velocities, params->n_dims, params->n_particles + params->n_ghost_particles, true);
+      log_array(params->velocities_file, velocities, N_DIMS, params->n_particles + params->n_ghost_particles, true);
 
     // integrate 1
-    integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, params->n_dims, params->n_particles);
+    integrate_1(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, N_DIMS, params->n_particles);
 
     // apply group if necessary
     if (params->box->group)
       fold_particles(params, positions);
 
     if (i % params->com_remove_period == 0)
-      remove_com(velocities, params->masses, params->n_dims, params->n_particles);
+      remove_com(velocities, params->masses, N_DIMS, params->n_particles);
 
     // gather forces
     if (params->force_parameters)
@@ -116,31 +116,31 @@ void main_loop(run_params_t *params)
 
     // output forces
     if (i % params->force_log_period == 0)
-      log_array(params->forces_file, forces, params->n_dims, params->n_particles + params->n_ghost_particles, true);
+      log_array(params->forces_file, forces, N_DIMS, params->n_particles + params->n_ghost_particles, true);
 
     // integrate 2
-    integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, params->n_dims, params->n_particles);
+    integrate_2(params->time_step, positions, velocities, forces, params->masses, params->box->box_size, N_DIMS, params->n_particles);
 
     // thermostat
     if (params->thermostat_parameters)
-      therm_conserved += params->thermostat_parameters->thermo_fxn(params->thermostat_parameters, params->temperature, params->time_step, positions, velocities, params->masses, params->n_dims, params->n_particles);
+      therm_conserved += params->thermostat_parameters->thermo_fxn(params->thermostat_parameters, params->temperature, params->time_step, positions, velocities, params->masses, N_DIMS, params->n_particles);
 
     // calculate important quantities
-    kenergy = calculate_kenergy(velocities, params->masses, params->n_dims, params->n_particles);
-    insta_temperature = kenergy * 2 / (params->n_particles * params->n_dims - params->n_dims);
+    kenergy = calculate_kenergy(velocities, params->masses, N_DIMS, params->n_particles);
+    insta_temperature = kenergy * 2 / (params->n_particles * N_DIMS - N_DIMS);
 
     if (i % params->print_period == 0)
     {
       printf("%12d %12g %12g %12g %12g %12g %12g %12g\n",
              i, i * params->time_step, insta_temperature, penergy, kenergy,
-             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box->box_size, params->n_dims));
+             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box->box_size, N_DIMS));
     }
     if (insta_temperature != insta_temperature || insta_temperature > 1000)
     {
       do_exit = 1;
     }
   }
-  log_array(params->final_positions_file, positions, params->n_dims,
+  log_array(params->final_positions_file, positions, N_DIMS,
             params->n_particles + params->n_ghost_particles, false);
 
   free(forces);

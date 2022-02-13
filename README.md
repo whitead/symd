@@ -5,10 +5,6 @@ TODO:
 
 Find TODO
 
-Improve speed for dimensions (low priority)
-1. n_dims becomes pre-processor
-2. Use OPenMP in group action
-
 Nlist broken?
 1. Revise to use enclosing cubes and check implementation
 2. Investigate - might just be inconsistent when we had jumps but is ok
@@ -19,6 +15,7 @@ NPT
 
 3D
 1. Write out matrix inverse
+2. Compiler Flag
 
 Science
 1. Wyckoff Monte Carlo

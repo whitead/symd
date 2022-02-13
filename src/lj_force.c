@@ -20,7 +20,7 @@ static inline double lj(double r, double epsilon, double sigma, double *energy)
 
 double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 {
-  unsigned int n_dims = params->n_dims;
+  unsigned int n_dims = N_DIMS;
   unsigned int n_particles = params->n_particles;
   double *box_size = params->box->box_size;
   force_t *force_p = params->force_parameters;

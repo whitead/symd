@@ -19,36 +19,37 @@ void *action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALA
 void *fold_particles(run_params_t *params, SCALAR *positions)
 {
     group_t *group = params->box->group;
-    unsigned int n_dims = params->n_dims;
     const unsigned int p = params->n_particles;
-    SCALAR temp[n_dims];
+    SCALAR temp[N_DIMS];
     unsigned int i, j, k, l;
-    // update scaled and wrap
+// update scaled and wrap
+#pragma omp parallel for default(shared) private(i)
     for (i = 0; i < p; i++)
-        scale_wrap_coords(&params->scaled_positions[i * n_dims], &positions[i * n_dims], params->box);
+        scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
 
-    // unfold and update
+        // unfold and update
+#pragma omp parallel for default(shared) private(i, j, k, l, temp)
     for (i = 0; i < p; i++)
     {
         for (j = 0; j < group->size; j++)
         {
             // unfold scaled, store temporarily in positions
 
-            action(group->members[j].g, &positions[j * p * n_dims + i * n_dims],
-                   &params->scaled_positions[i * n_dims], n_dims, 1.0);
+            action(group->members[j].g, &positions[j * p * N_DIMS + i * N_DIMS],
+                   &params->scaled_positions[i * N_DIMS], N_DIMS, 1.0);
 
             // tile and unscale
             for (k = 0; k < params->box->n_tilings; k++)
             {
-                for (l = 0; l < n_dims; l++)
-                    temp[l] = positions[j * p * n_dims + i * n_dims + l] + params->box->tilings[k * n_dims + l];
-                unscale_coords(&positions[n_dims * (p * ((k + 1) * group->size + j) + i)],
+                for (l = 0; l < N_DIMS; l++)
+                    temp[l] = positions[j * p * N_DIMS + i * N_DIMS + l] + params->box->tilings[k * N_DIMS + l];
+                unscale_coords(&positions[N_DIMS * (p * ((k + 1) * group->size + j) + i)],
                                temp, params->box);
             }
             // unscale default non-tiling
             unscale_coords(temp,
-                           &positions[j * p * n_dims + i * n_dims], params->box);
-            memcpy(&positions[j * p * n_dims + i * n_dims], temp, params->n_dims * sizeof(SCALAR));
+                           &positions[j * p * N_DIMS + i * N_DIMS], params->box);
+            memcpy(&positions[j * p * N_DIMS + i * N_DIMS], temp, N_DIMS * sizeof(SCALAR));
         }
     }
 }

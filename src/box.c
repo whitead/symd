@@ -184,8 +184,8 @@ double volume(double *box, unsigned int n_dims)
 
 // int try_rescale(run_params_t *params, double *positions, double *penergy, double *forces)
 // {
-//   unsigned int i, j, n_dims = params->n_dims;
-//   double newV, oldV = volume(params->box->box_size, params->n_dims);
+//   unsigned int i, j, n_dims = N_DIMS;
+//   double newV, oldV = volume(params->box->box_size, N_DIMS);
 //   double new_box[n_dims];
 //   memcpy(new_box, params->box->box_size, sizeof(double) * n_dims);
 

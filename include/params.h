@@ -35,7 +35,6 @@ typedef struct
     double *initial_velocities;
     double *scaled_positions;
     double *masses;
-    unsigned int n_dims;
     unsigned int n_particles;
     unsigned int n_ghost_particles;
     FILE *positions_file;

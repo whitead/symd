@@ -155,7 +155,6 @@ run_params_t *read_parameters(char *file_name)
 
   params->temperature = retrieve_item(root, default_root, "temperature")->valuedouble;
 
-  params->n_dims = (unsigned int)retrieve_item(root, default_root, "n_dims")->valueint;
   params->n_particles = (unsigned int)retrieve_item(root, default_root, "n_particles")->valueint;
 
   params->print_period = (unsigned int)retrieve_item(root, default_root, "print_period")->valueint;
@@ -177,7 +176,7 @@ run_params_t *read_parameters(char *file_name)
   params->rng = rng;
 
   // box size
-  sdata = (SCALAR *)calloc(params->n_dims * params->n_dims, sizeof(SCALAR));
+  sdata = (SCALAR *)calloc(N_DIMS * N_DIMS, sizeof(SCALAR));
   unsigned int i;
   item = cJSON_GetObjectItem(root, "box");
   if (item)
@@ -186,7 +185,7 @@ run_params_t *read_parameters(char *file_name)
 
     for (item = item->child; item != NULL; item = item->next)
     {
-      if (i == params->n_dims)
+      if (i == N_DIMS)
       {
         // maybe it's default with no box?
         if (sdata[0] == 0)
@@ -197,15 +196,15 @@ run_params_t *read_parameters(char *file_name)
       sdata[i] = item->valuedouble;
       i++;
     }
-    if (i != params->n_dims && i != params->n_dims * params->n_dims)
+    if (i != N_DIMS && i != N_DIMS * N_DIMS)
       fprintf(stderr, "Not enough box dims set\n");
     // convert if was sizes, not basis vectors
-    if (i == params->n_dims)
+    if (i == N_DIMS)
     {
       // evil wrapping
-      for (i = params->n_dims - 1; i < params->n_dims; i--)
-        sdata[i * params->n_dims + i] = sdata[i];
-      for (i = 1; i < params->n_dims; i++)
+      for (i = N_DIMS - 1; i < N_DIMS; i--)
+        sdata[i * N_DIMS + i] = sdata[i];
+      for (i = 1; i < N_DIMS; i++)
         sdata[i] = 0;
     }
   }
@@ -241,8 +240,8 @@ run_params_t *read_parameters(char *file_name)
 
   // load input files
   char *positions_file = retrieve_item(root, default_root, "start_positions")->valuestring;
-  params->initial_positions = load_matrix(positions_file, params->n_particles, params->n_dims, 0);
-  params->scaled_positions = (double *)malloc(sizeof(double) * params->n_particles * params->n_dims);
+  params->initial_positions = load_matrix(positions_file, params->n_particles, N_DIMS, 0);
+  params->scaled_positions = (double *)malloc(sizeof(double) * params->n_particles * N_DIMS);
 
   item = cJSON_GetObjectItem(root, "masses_file");
   if (item)
@@ -265,8 +264,8 @@ run_params_t *read_parameters(char *file_name)
   item = cJSON_GetObjectItem(root, "group");
   if (item)
   {
-    group = load_group(item->valuestring, params->n_dims);
-    params->box = make_box(sdata, group, params->n_dims, retrieve_item(root, default_root, "images")->valueint);
+    group = load_group(item->valuestring, N_DIMS);
+    params->box = make_box(sdata, group, N_DIMS, retrieve_item(root, default_root, "images")->valueint);
     sdata = NULL;
     params->n_ghost_particles = params->n_particles * (params->box->group->size - 1) + params->n_particles * params->box->group->size * params->box->n_tilings;
 #ifdef DEBUG
@@ -275,12 +274,12 @@ run_params_t *read_parameters(char *file_name)
 #endif
 
     // make new longer list
-    sdata = (SCALAR *)malloc(sizeof(SCALAR) * params->n_dims * (params->n_ghost_particles + params->n_particles));
+    sdata = (SCALAR *)malloc(sizeof(SCALAR) * N_DIMS * (params->n_ghost_particles + params->n_particles));
 
     // before we're done, use it to unscale
     for (i = 0; i < params->n_particles; i++)
-      unscale_coords(&sdata[i * params->n_dims],
-                     &params->initial_positions[i * params->n_dims], params->box);
+      unscale_coords(&sdata[i * N_DIMS],
+                     &params->initial_positions[i * N_DIMS], params->box);
     // ok now done
     free(params->initial_positions);
     params->initial_positions = sdata;
@@ -288,7 +287,7 @@ run_params_t *read_parameters(char *file_name)
   }
   else
   {
-    params->box = make_box(sdata, NULL, params->n_dims, retrieve_item(root, default_root, "images")->valueint);
+    params->box = make_box(sdata, NULL, N_DIMS, retrieve_item(root, default_root, "images")->valueint);
     sdata = NULL;
   }
 
@@ -303,13 +302,13 @@ run_params_t *read_parameters(char *file_name)
   {
     params->initial_velocities =
         generate_velocities(params->temperature, params->rng,
-                            params->masses, params->n_dims,
+                            params->masses, N_DIMS,
                             params->n_particles);
   }
   else
   {
     params->initial_velocities =
-        load_matrix(item->valuestring, params->n_particles, params->n_dims, 0);
+        load_matrix(item->valuestring, params->n_particles, N_DIMS, 0);
   }
 
   // make nlist
@@ -324,7 +323,7 @@ run_params_t *read_parameters(char *file_name)
       skin = 0.2 * rcut;
       printf("Warning: Assuming skin = %g\n", skin);
     }
-    nlist = build_nlist_params(params->n_dims, params->n_particles, params->n_ghost_particles,
+    nlist = build_nlist_params(N_DIMS, params->n_particles, params->n_ghost_particles,
                                params->box->box_size, skin, rcut);
   }
 
