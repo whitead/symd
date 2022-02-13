@@ -6,19 +6,18 @@
 
 typedef struct
 {
-    double *g;
-    double *i;
-    int tiling;
+    SCALAR *g;
+    SCALAR *i;
 } g_t;
 
 struct group_t
 {
     const char *name;
     unsigned int size;
-    unsigned int tiling_start;
     g_t *members;
+    SCALAR *projector;
 };
 
-void *fold_particles(run_params_t *group, double *particles, double *velocities, bool reduce);
+void *fold_particles(run_params_t *group, SCALAR *positions);
 void free_group(group_t *g);
 #endif // GROUP_H_

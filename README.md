@@ -6,19 +6,19 @@ TODO:
 Improve speed for dimensions (low priority)
 1. Switch to dynamic arrays (as you go) DONE
 2. n_dims becomes pre-processor
+3. Use OPenMP in group action
 
 Nlist broken?
 1. Investigate - might just be inconsistent when we had jumps but is ok
 
-Groups
-1. Better checks on validity!
-
-NPT
-1. Need to work with Bravais lattice directly (encode in json), otherwise we violate
+1. unscale_wrap_coords, unscal_coords, tile_coords,unscale_coords
+2. only load asymmetric unit
+3. tiling should not be done via groups
 
 
-PBC
-1. Make flag or something so that we can actually have both rect/cubic PBC and our translation groups
+volume - https://en.wikipedia.org/wiki/Levi-Civita_symbol#Generalization_to_n_dimensions
+https://math.stackexchange.com/questions/1605690/how-to-extend-the-parallelepiped-volume-formula-to-higher-dimensions
+
 
 Compiling
 -------------------------

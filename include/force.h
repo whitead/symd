@@ -13,9 +13,6 @@
 typedef double (*gather_forces_t)(run_params_t *parameters,
                                   double *positions,
                                   double *forces);
-//                      double *box_size, unsigned int n_dims, unsigned int n_particles)
-// double gather_forces(void *parameters, double *positions, double *forces, double *masses,
-//                      double *box_size, unsigned int n_dims, unsigned int n_particles);
 
 typedef void (*free_forces_t)(force_t *parameters);
 

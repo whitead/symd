@@ -13,7 +13,7 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 
 	unsigned int n_dims = params->n_dims, n_particles = params->n_particles;
 	unsigned int n_ghost_particles = params->n_ghost_particles;
-	double *box_size = params->box_size;
+	double *box_size = params->box->box_size;
 	unsigned int i, j, k;
 	double penergy = 0;
 	double r;
@@ -35,8 +35,8 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 			r = 0;
 			for (k = 0; k < n_dims; k++)
 			{
-				// force_vector[k] = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-				force_vector[k] = positions[j * n_dims + k] - positions[i * n_dims + k];
+				force_vector[k] = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+				//force_vector[k] = positions[j * n_dims + k] - positions[i * n_dims + k];
 				r += force_vector[k] * force_vector[k];
 			}
 			r = sqrt(r);

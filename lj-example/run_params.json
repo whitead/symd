@@ -1,5 +1,5 @@
 {
-    "steps": 100000,
+    "steps": 1,
     "time_step": 0.005,
     "temperature": 0.7,
     "velocity_seed": 456415615,

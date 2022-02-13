@@ -11,7 +11,7 @@ static const char *
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
     \"box_update_period\": 0, \"force_type\": null,\
-     \"force_log_period\" : 0, \"box_size\": [0, 0, 0]} ";
+     \"force_log_period\" : 0, \"images\": 1} ";
 
 void *load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message);
 
@@ -47,15 +47,15 @@ void load_json(char *filename, char **data)
   FILE *f;
 
   if (!filename)
-  { //stdin
+  { // stdin
     fprintf(stdout, "Assuming you'll pass parameters via stdin. Waiting...\n");
     f = stdin;
-    //create buffer
+    // create buffer
     int buffer_size = PARAM_FILE_BUFFER;
     char *buffer = (char *)malloc(buffer_size);
-    //read in up to buffer size
+    // read in up to buffer size
     int len = fread(buffer, sizeof(char), PARAM_FILE_BUFFER, f);
-    //while we fill the buffer, keep reading
+    // while we fill the buffer, keep reading
     while (len % buffer_size == 0)
     {
       buffer_size += PARAM_FILE_BUFFER;
@@ -69,13 +69,13 @@ void load_json(char *filename, char **data)
       exit(1);
     }
 
-    //trim to size
+    // trim to size
     buffer = (char *)realloc(buffer, len);
     *data = buffer;
   }
   else
-  { //file
-    //get file length
+  { // file
+    // get file length
     f = fopen(filename, "rb");
     if (!f)
     {
@@ -84,9 +84,9 @@ void load_json(char *filename, char **data)
     }
     fseek(f, 0, SEEK_END);
     long len = ftell(f);
-    //reset file
+    // reset file
     fseek(f, 0, SEEK_SET);
-    //load data
+    // load data
     *data = (char *)malloc(len + 1);
     const size_t read_size = fread(*data, 1, len, f);
     fclose(f);
@@ -97,7 +97,7 @@ cJSON *retrieve_item(cJSON *root, cJSON *default_root, const char *item_name)
 {
   cJSON *item = cJSON_GetObjectItem(root, item_name);
   if (!item)
-  { //check if it's in the default parameter list
+  { // check if it's in the default parameter list
     item = cJSON_GetObjectItem(default_root, item_name);
     if (item)
     {
@@ -132,6 +132,8 @@ run_params_t *read_parameters(char *file_name)
 {
 
   char *data;
+  SCALAR *sdata;
+  group_t *group;
   load_json(file_name, &data);
   cJSON *root = cJSON_Parse(data);
   cJSON *default_root = cJSON_Parse(default_json);
@@ -146,7 +148,7 @@ run_params_t *read_parameters(char *file_name)
   run_params_t *params = (run_params_t *)malloc(sizeof(run_params_t));
   params->rng = NULL;
 
-  //get single value parameters
+  // get single value parameters
   params->steps = (unsigned int)retrieve_item(root, default_root, "steps")->valueint;
   params->com_remove_period = (unsigned int)retrieve_item(root, default_root, "com_remove_period")->valueint;
   params->time_step = retrieve_item(root, default_root, "time_step")->valuedouble;
@@ -174,41 +176,41 @@ run_params_t *read_parameters(char *file_name)
   gsl_rng_set(rng, seed);
   params->rng = rng;
 
-  params->box_size = (double *)calloc(params->n_dims, sizeof(double));
-  //box size
+  // box size
+  sdata = (SCALAR *)calloc(params->n_dims * params->n_dims, sizeof(SCALAR));
   unsigned int i;
-  unsigned int cubic = 1;
-  item = retrieve_item(root, default_root, "box_size");
-  i = 0;
-  for (item = item->child; item != NULL; item = item->next)
+  item = cJSON_GetObjectItem(root, "box");
+  if (item)
   {
+    i = 0;
+
+    for (item = item->child; item != NULL; item = item->next)
+    {
+      if (i == params->n_dims)
+      {
+        // maybe it's default with no box?
+        if (sdata[0] == 0)
+          break;
+        fprintf(stderr, "Error: Number of box dimensions not equal to simulation dimension\n");
+        exit(1);
+      }
+      sdata[i] = item->valuedouble;
+      i++;
+    }
+    if (i != params->n_dims && i != params->n_dims * params->n_dims)
+      fprintf(stderr, "Not enough box dims set\n");
+    // convert if was sizes, not basis vectors
     if (i == params->n_dims)
     {
-      // maybe it's default with no box?
-      if (params->box_size[0] == 0)
-        break;
-      fprintf(stderr, "Error: Number of box dimensions not equal to simulation dimension\n");
-      exit(1);
+      // evil wrapping
+      for (i = params->n_dims - 1; i < params->n_dims; i--)
+        sdata[i * params->n_dims + i] = sdata[i];
+      for (i = 1; i < params->n_dims; i++)
+        sdata[i] = 0;
     }
-    params->box_size[i] = item->valuedouble;
-    if (i > 0 && (params->box_size[i] - params->box_size[i - 1]) > 0.000001)
-      cubic &= 0;
-    i++;
-  }
-  if (i != params->n_dims)
-    fprintf(stderr, "Not enough box dims set\n");
-  if (cubic)
-    printf("Based on box dimensions, guessing you want to be cubic\n");
-
-  params->box_update_period = (unsigned int)retrieve_item(root, default_root, "box_update_period")->valueint;
-  if (params->box_update_period)
-  {
-    params->pressure = (double)retrieve_item(root, default_root, "pressure")->valuedouble;
-    // guess if cubic
-    params->cubic = cubic;
   }
 
-  //thermostats
+  // thermostats
   params->thermostat_parameters = NULL;
   if (params->temperature)
   {
@@ -237,9 +239,10 @@ run_params_t *read_parameters(char *file_name)
 
   item = cJSON_GetObjectItem(root, "masses_file");
 
-  //load input files
+  // load input files
   char *positions_file = retrieve_item(root, default_root, "start_positions")->valuestring;
   params->initial_positions = load_matrix(positions_file, params->n_particles, params->n_dims, 0);
+  params->scaled_positions = (double *)malloc(sizeof(double) * params->n_particles * params->n_dims);
 
   item = cJSON_GetObjectItem(root, "masses_file");
   if (item)
@@ -256,19 +259,43 @@ run_params_t *read_parameters(char *file_name)
   }
 
   // group - partition to ghost too
-  params->group = NULL;
+  // also will finish making box here, which was deferred
+  group = NULL;
   params->n_ghost_particles = 0;
   item = cJSON_GetObjectItem(root, "group");
   if (item)
   {
-    params->group = load_group(item->valuestring, params->n_dims);
+    group = load_group(item->valuestring, params->n_dims);
+    params->box = make_box(sdata, group, params->n_dims, retrieve_item(root, default_root, "images")->valueint);
+    sdata = NULL;
+    params->n_ghost_particles = params->n_particles * (params->box->group->size - 1) + params->n_particles * params->box->group->size * params->box->n_tilings;
 #ifdef DEBUG
-    printf("Splitting %d particles into %d real particles and %d ghost for group with %d elements\n",
-           params->n_particles, params->n_particles / params->group->size, params->n_particles / params->group->size * (params->group->size - 1),
-           params->group->size);
+    printf("Duplicating %d particles into %d real particles and %d ghost for group with %d elements and %d tilings\n",
+           params->n_particles, params->n_particles, params->n_ghost_particles, params->box->group->size, params->box->n_tilings);
 #endif
-    params->n_particles = params->n_particles / params->group->size;
-    params->n_ghost_particles = params->n_particles * (params->group->size - 1);
+
+    // make new longer list
+    sdata = (SCALAR *)malloc(sizeof(SCALAR) * params->n_dims * (params->n_ghost_particles + params->n_particles));
+
+    // before we're done, use it to unscale
+    for (i = 0; i < params->n_particles; i++)
+      unscale_coords(&sdata[i * params->n_dims],
+                     &params->initial_positions[i * params->n_dims], params->box);
+    // ok now done
+    free(params->initial_positions);
+    params->initial_positions = sdata;
+    sdata = NULL;
+  }
+  else
+  {
+    params->box = make_box(sdata, NULL, params->n_dims, retrieve_item(root, default_root, "images")->valueint);
+    sdata = NULL;
+  }
+
+  params->box_update_period = (unsigned int)retrieve_item(root, default_root, "box_update_period")->valueint;
+  if (params->box_update_period)
+  {
+    params->pressure = (double)retrieve_item(root, default_root, "pressure")->valuedouble;
   }
 
   item = cJSON_GetObjectItem(root, "start_velocities");
@@ -298,7 +325,7 @@ run_params_t *read_parameters(char *file_name)
       printf("Warning: Assuming skin = %g\n", skin);
     }
     nlist = build_nlist_params(params->n_dims, params->n_particles, params->n_ghost_particles,
-                               params->box_size, skin, rcut);
+                               params->box->box_size, skin, rcut);
   }
 
   // forces
@@ -332,7 +359,7 @@ run_params_t *read_parameters(char *file_name)
   item = retrieve_item(root, default_root, "final_positions");
   params->final_positions_file = fopen(item->valuestring, "w");
 
-  //prepare output files
+  // prepare output files
   item = cJSON_GetObjectItem(root, "positions_log_file");
   if (item)
     params->positions_file = fopen(item->valuestring, "w");
@@ -382,7 +409,7 @@ group_t *load_group(char *filename, unsigned int n_dims)
 
   group_t *group = (group_t *)malloc(sizeof(group_t));
   group->name = item->valuestring;
-  unsigned int i, j, size = 0, tiling_start = 0;
+  unsigned int i, j, size = 0;
   g_t *tmp, *members = NULL;
   double *g_mat, *i_mat;
   // iterate over group members
@@ -403,17 +430,18 @@ group_t *load_group(char *filename, unsigned int n_dims)
     i_mat = (double *)malloc(sizeof(double) * g_dims * g_dims);
     load_json_matrix(cJSON_GetObjectItem(json_members, "g"), g_mat, g_dims * g_dims, "g matrix");
     load_json_matrix(cJSON_GetObjectItem(json_members, "i"), i_mat, g_dims * g_dims, "i matrix");
-    item = cJSON_GetObjectItem(json_members, "t");
-    g_t g = {.g = g_mat, .i = i_mat, .tiling = item->valueint};
+    g_t g = {.g = g_mat, .i = i_mat};
 
-    if (!g.tiling)
-      tiling_start++;
     // add new member
     memcpy(&members[size - 1], &g, sizeof(g_t));
   }
   group->members = members;
   group->size = size;
-  group->tiling_start = tiling_start;
+
+  g_mat = (double *)malloc(sizeof(double) * n_dims * n_dims * n_dims * n_dims);
+  load_json_matrix(cJSON_GetObjectItem(root, "projector"), g_mat, n_dims * n_dims * n_dims * n_dims, "projector");
+
+  group->projector = g_mat;
 
   free(data);
 
@@ -580,10 +608,10 @@ double remove_com(double *data, double *masses, unsigned int n_dims, unsigned in
   double mass_sum = 0;
   double com_mag = 0;
 
-  //zero
+  // zero
   for (i = 0; i < n_dims; i++)
     com[i] = 0;
-  //calculate COM in 2 parts, sum ( mass) and sum(momentum)
+  // calculate COM in 2 parts, sum ( mass) and sum(momentum)
   for (i = 0; i < n_particles; i++)
   {
     mass_sum += masses[i];
@@ -593,14 +621,14 @@ double remove_com(double *data, double *masses, unsigned int n_dims, unsigned in
     }
   }
 
-  //turn into COM
+  // turn into COM
   for (i = 0; i < n_dims; i++)
   {
     com[i] /= mass_sum;
     com_mag += com[i] * com[i];
   }
 
-  //remove COM motion
+  // remove COM motion
   for (i = 0; i < n_particles; i++)
   {
     for (k = 0; k < n_dims; k++)
@@ -623,10 +651,7 @@ void free_run_params(run_params_t *params)
   free(params->initial_positions);
   free(params->initial_velocities);
   free(params->masses);
-  free(params->box_size);
-  if (params->group)
-    free_group(params->group);
-
+  free_box(params->box);
   if (params->positions_file)
     fclose(params->positions_file);
   if (params->velocities_file)

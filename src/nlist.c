@@ -76,8 +76,8 @@ void update_nlist(double *positions,
     dist = 0;
     for (k = 0; k < n_dims; k++)
     {
-      temp = (positions[i * n_dims + k] - nlist->last_positions[i * n_dims + k]);
-      // temp = min_image_dist(temp, box_size[k]);
+      //temp = (positions[i * n_dims + k] - nlist->last_positions[i * n_dims + k]);
+      temp = min_image_dist(temp, box_size[k]);
       dist += temp * temp;
     }
     if (dist > max1)
@@ -352,8 +352,6 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   for (i = 0; i < n_particles; i++)
     for (k = 0; k < n_dims; k++)
       nlist->last_positions[i * n_dims + k] = positions[i * n_dims + k];
-
-  free(m_box_size);
 }
 
 /* An insert that grows the array if necessary
@@ -382,6 +380,7 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
 {
   unsigned n_dims = params->n_dims;
   unsigned n_particles = params->n_particles;
+  double *box_size = params->box->box_size;
   unsigned int i, j, k, n, ni, nn, n2n, ngn;
   double diff, r;
 
@@ -398,9 +397,9 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
       //distance between particles
       for (k = 0; k < n_dims; k++)
       {
-        // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+        diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
         // TODO: remove or not?
-        diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+        //diff = positions[j * n_dims + k] - positions[i * n_dims + k];
         r += diff * diff;
       }
       if (r < rcut * rcut)
@@ -457,9 +456,9 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
         //distance between particles
         for (k = 0; k < n_dims; k++)
         {
-          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+          diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
           // TODO: remove or not?
-          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+          //diff = positions[j * n_dims + k] - positions[i * n_dims + k];
           r += diff * diff;
         }
         printf("%d - %d. r: %f, rcut: %f\n", i, j, sqrt(r), rcut);
