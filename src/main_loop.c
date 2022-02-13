@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 void main_loop(run_params_t *params)
 {
 
-  unsigned int i, j;
+  unsigned int i, j, k;
   int do_exit = 0;
   double *positions = params->initial_positions;
   double *velocities = params->initial_velocities;
@@ -63,16 +63,27 @@ void main_loop(run_params_t *params)
     if (do_exit || i % params->position_log_period == 0)
     {
       sprintf(xyz_file_comment, "Frame: %d", i);
-      log_xyz(params->positions_file, positions, xyz_file_comment, elements, params->n_dims,
-              params->n_particles, params->n_particles + params->n_ghost_particles, 0);
-      for (j = 1; j < params->box->group->size; j++)
-        log_xyz(params->positions_file, &positions[params->n_particles * params->n_dims * j], NULL, elements,
-                params->n_dims, params->n_particles,
-                params->n_particles + params->n_ghost_particles, 1);
+      for (j = 0; j < params->box->group->size; j++)
+      {
+        // asymmetric
+        if (j == 0)
+          log_xyz(params->positions_file, positions, xyz_file_comment, elements, params->n_dims,
+                  params->n_particles, params->n_particles + params->n_ghost_particles, 0);
+        else // non-tiled
+          log_xyz(params->positions_file, &positions[params->n_dims * params->n_particles * j], NULL, elements, params->n_dims,
+                  params->n_particles, params->n_particles + params->n_ghost_particles, 1);
+        for (k = 0; k < params->box->n_tilings; k++)
+          log_xyz(params->positions_file,
+                  &positions[params->n_dims * (params->n_particles * ((k + 1) * params->box->group->size + j))],
+                  NULL, elements,
+                  params->n_dims, params->n_particles,
+                  params->n_particles + params->n_ghost_particles, 1);
+      }
     }
+
     if (do_exit)
     {
-      fprintf(stderr, "Exiting due to high temperature\n");
+      fprintf(stderr, "Exiting due to high temperature or energy\n");
       exit(1);
     }
 

@@ -21,6 +21,7 @@ void *fold_particles(run_params_t *params, SCALAR *positions)
     group_t *group = params->box->group;
     unsigned int n_dims = params->n_dims;
     const unsigned int p = params->n_particles;
+    SCALAR temp[n_dims];
     unsigned int i, j, k, l;
     // update scaled and wrap
     for (i = 0; i < p; i++)
@@ -40,11 +41,14 @@ void *fold_particles(run_params_t *params, SCALAR *positions)
             for (k = 0; k < params->box->n_tilings; k++)
             {
                 for (l = 0; l < n_dims; l++)
-                    positions[n_dims * (p * ((k + 1) * group->size + j) + i) + l] =
-                        positions[j * p * n_dims + i * n_dims] + params->box->tilings[k * n_dims + l];
+                    temp[l] = positions[j * p * n_dims + i * n_dims + l] + params->box->tilings[k * n_dims + l];
                 unscale_coords(&positions[n_dims * (p * ((k + 1) * group->size + j) + i)],
-                               &positions[n_dims * (p * ((k + 1) * group->size + j) + i)], params->box);
+                               temp, params->box);
             }
+            // unscale default non-tiling
+            unscale_coords(temp,
+                           &positions[j * p * n_dims + i * n_dims], params->box);
+            memcpy(&positions[j * p * n_dims + i * n_dims], temp, params->n_dims * sizeof(SCALAR));
         }
     }
 }

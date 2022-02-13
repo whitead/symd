@@ -1,0 +1,1267 @@
+==17819== Memcheck, a memory error detector
+==17819== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==17819== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==17819== Command: ../build/symd run_params.json
+==17819== Parent PID: 18747
+==17819== 
+==17819== error calling PR_SET_PTRACER, vgdb might block
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC2A8: __printf_fp_l (printf_fp.c:392)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC2C9: __printf_fp_l (printf_fp.c:392)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D1B40: __mpn_extract_double (dbl2mpn.c:56)
+==17819==    by 0x58DC2F8: __printf_fp_l (printf_fp.c:392)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC151: __printf_fp_l (printf_fp.c:442)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC168: __printf_fp_l (printf_fp.c:459)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DDB7E: __printf_fp_l (printf_fp.c:467)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0398: __mpn_lshift (lshift.S:59)
+==17819==    by 0x58DDB82: __printf_fp_l (printf_fp.c:467)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D039B: __mpn_lshift (lshift.S:60)
+==17819==    by 0x58DDB82: __printf_fp_l (printf_fp.c:467)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DDBAD: __printf_fp_l (printf_fp.c:472)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DDBC5: __printf_fp_l (printf_fp.c:473)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC1A6: __printf_fp_l (printf_fp.c:475)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC25F: __printf_fp_l (printf_fp.c:484)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x4C386F2: memmove (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x58DC220: __printf_fp_l (printf_fp.c:531)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x4C3881B: memmove (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x58DC220: __printf_fp_l (printf_fp.c:531)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x4C38831: memmove (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x58DC220: __printf_fp_l (printf_fp.c:531)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x4C387E3: memmove (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x58DC220: __printf_fp_l (printf_fp.c:531)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC22C: __printf_fp_l (printf_fp.c:547)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC232: __printf_fp_l (printf_fp.c:547)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58CFCFA: __mpn_cmp (cmp.c:37)
+==17819==    by 0x58DC62F: __printf_fp_l (printf_fp.c:547)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58CFCFE: __mpn_cmp (cmp.c:38)
+==17819==    by 0x58DC62F: __printf_fp_l (printf_fp.c:547)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58CFD05: __mpn_cmp (cmp.c:39)
+==17819==    by 0x58DC62F: __printf_fp_l (printf_fp.c:547)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC632: __printf_fp_l (printf_fp.c:547)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x4C386F2: memmove (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x58DC650: __printf_fp_l (printf_fp.c:550)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x4C387E0: memmove (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x58DC650: __printf_fp_l (printf_fp.c:550)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x4C387E3: memmove (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x58DC650: __printf_fp_l (printf_fp.c:550)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x4C387EE: memmove (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x58DC650: __printf_fp_l (printf_fp.c:550)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DC659: __printf_fp_l (printf_fp.c:551)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DC6A8: __printf_fp_l (printf_fp.c:569)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DC6BB: __printf_fp_l (printf_fp.c:569)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC6BF: __printf_fp_l (printf_fp.c:569)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DE664: __printf_fp_l (printf_fp.c:573)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DE684: __printf_fp_l (printf_fp.c:601)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC749: __printf_fp_l (printf_fp.c:604)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D04A8: __mpn_rshift (rshift.S:62)
+==17819==    by 0x58DC75C: __printf_fp_l (printf_fp.c:620)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D04CD: __mpn_rshift (rshift.S:73)
+==17819==    by 0x58DC75C: __printf_fp_l (printf_fp.c:620)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D0455: __mpn_rshift (rshift.S:31)
+==17819==    by 0x58DC780: __printf_fp_l (printf_fp.c:623)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D047C: __mpn_rshift (rshift.S:45)
+==17819==    by 0x58DC780: __printf_fp_l (printf_fp.c:623)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D04A6: __mpn_rshift (rshift.S:61)
+==17819==    by 0x58DC780: __printf_fp_l (printf_fp.c:623)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D04A8: __mpn_rshift (rshift.S:62)
+==17819==    by 0x58DC780: __printf_fp_l (printf_fp.c:623)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D04B9: __mpn_rshift (rshift.S:67)
+==17819==    by 0x58DC780: __printf_fp_l (printf_fp.c:623)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D04CD: __mpn_rshift (rshift.S:73)
+==17819==    by 0x58DC780: __printf_fp_l (printf_fp.c:623)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DC795: __printf_fp_l (printf_fp.c:625)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DC79B: __printf_fp_l (printf_fp.c:625)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DB9B1: hack_digit (printf_fp.c:180)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0080: __mpn_divrem (divrem.c:62)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0083: __mpn_divrem (divrem.c:63)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D0094: __mpn_divrem (divrem.c:65)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D009E: __mpn_divrem (divrem.c:72)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D00B0: __mpn_divrem (divrem.c:73)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D00BF: __mpn_divrem (divrem.c:73)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D00C7: __mpn_divrem (divrem.c:72)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D00F3: __mpn_divrem (divrem.c:79)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DB9D4: hack_digit (printf_fp.c:186)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DB9DC: hack_digit (printf_fp.c:187)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DB9F3: hack_digit (printf_fp.c:190)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DB9F9: hack_digit (printf_fp.c:190)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09D4: __mpn_mul_1 (mul_1.S:36)
+==17819==    by 0x58DBA41: hack_digit (printf_fp.c:201)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09F8: __mpn_mul_1 (mul_1.S:52)
+==17819==    by 0x58DBA41: hack_digit (printf_fp.c:201)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DBA45: hack_digit (printf_fp.c:202)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DBA57: hack_digit (printf_fp.c:203)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0080: __mpn_divrem (divrem.c:62)
+==17819==    by 0x58DCA5B: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCA5B: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0083: __mpn_divrem (divrem.c:63)
+==17819==    by 0x58DCA5B: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCA5B: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D0094: __mpn_divrem (divrem.c:65)
+==17819==    by 0x58DCA5B: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCA5B: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D00B0: __mpn_divrem (divrem.c:73)
+==17819==    by 0x58DCA5B: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCA5B: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D00BF: __mpn_divrem (divrem.c:73)
+==17819==    by 0x58DCA5B: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCA5B: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D00F3: __mpn_divrem (divrem.c:79)
+==17819==    by 0x58DCA5B: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCA5B: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DCA6B: hack_digit (printf_fp.c:186)
+==17819==    by 0x58DCA6B: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DCA73: hack_digit (printf_fp.c:187)
+==17819==    by 0x58DCA73: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DCA97: hack_digit (printf_fp.c:190)
+==17819==    by 0x58DCA97: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCA9D: hack_digit (printf_fp.c:190)
+==17819==    by 0x58DCA9D: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09D4: __mpn_mul_1 (mul_1.S:36)
+==17819==    by 0x58DCB7E: hack_digit (printf_fp.c:201)
+==17819==    by 0x58DCB7E: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09F8: __mpn_mul_1 (mul_1.S:52)
+==17819==    by 0x58DCB7E: hack_digit (printf_fp.c:201)
+==17819==    by 0x58DCB7E: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCB8A: hack_digit (printf_fp.c:202)
+==17819==    by 0x58DCB8A: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DCBA9: hack_digit (printf_fp.c:203)
+==17819==    by 0x58DCBA9: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DCBF7: __printf_fp_l (printf_fp.c:959)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCBFB: __printf_fp_l (printf_fp.c:959)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCC0D: __printf_fp_l (printf_fp.c:974)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0080: __mpn_divrem (divrem.c:62)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0083: __mpn_divrem (divrem.c:63)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D0094: __mpn_divrem (divrem.c:65)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D00F3: __mpn_divrem (divrem.c:79)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DB9D4: hack_digit (printf_fp.c:186)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DB9DC: hack_digit (printf_fp.c:187)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DB9F3: hack_digit (printf_fp.c:190)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DB9F9: hack_digit (printf_fp.c:190)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09D4: __mpn_mul_1 (mul_1.S:36)
+==17819==    by 0x58DBA41: hack_digit (printf_fp.c:201)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09F8: __mpn_mul_1 (mul_1.S:52)
+==17819==    by 0x58DBA41: hack_digit (printf_fp.c:201)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DBA45: hack_digit (printf_fp.c:202)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCCAB: __printf_fp_l (printf_fp.c:1093)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCDA1: __printf_fp_l (printf_fp.c:1162)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCE94: __printf_fp_l (printf_fp.c:1169)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD98A: __printf_fp_l (printf_fp.c:1225)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD96B: __printf_fp_l (printf_fp.c:1227)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D00B0: __mpn_divrem (divrem.c:73)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D00BF: __mpn_divrem (divrem.c:73)
+==17819==    by 0x58DB9C7: hack_digit (printf_fp.c:184)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DBA57: hack_digit (printf_fp.c:203)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCC2E: __printf_fp_l (printf_fp.c:977)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD3BC: round_away (rounding-mode.h:52)
+==17819==    by 0x58DD3BC: __printf_fp_l (printf_fp.c:994)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD3CA: round_away (rounding-mode.h:58)
+==17819==    by 0x58DD3CA: __printf_fp_l (printf_fp.c:994)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Syscall param write(buf) points to uninitialised byte(s)
+==17819==    at 0x598D224: write (write.c:27)
+==17819==    by 0x590828C: _IO_file_write@@GLIBC_2.2.5 (fileops.c:1203)
+==17819==    by 0x590A020: new_do_write (fileops.c:457)
+==17819==    by 0x590A020: _IO_do_write@@GLIBC_2.2.5 (fileops.c:433)
+==17819==    by 0x590A53A: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:793)
+==17819==    by 0x58DDC84: __printf_fp_l (printf_fp.c:1251)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10D049: lj_gather_forces (lj_force.c:113)
+==17819==    by 0x10DE17: main_loop (main_loop.c:105)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819==  Address 0x5c6e372 is 818 bytes inside a block of size 4,096 alloc'd
+==17819==    at 0x4C31B0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x58FB26B: _IO_file_doallocate (filedoalloc.c:101)
+==17819==    by 0x590B448: _IO_doallocbuf (genops.c:365)
+==17819==    by 0x590A567: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:759)
+==17819==    by 0x5908ABC: _IO_file_xsputn@@GLIBC_2.2.5 (fileops.c:1266)
+==17819==    by 0x58D8633: vfprintf (vfprintf.c:1328)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10D86E: main (main_loop.c:20)
+==17819== 
+==17819== 
+==17819== More than 100 errors detected.  Subsequent errors
+==17819== will still be recorded, but in less detail than before.
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD3C6: round_away (rounding-mode.h:52)
+==17819==    by 0x58DD3C6: __printf_fp_l (printf_fp.c:994)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD3ED: __printf_fp_l (printf_fp.c:1004)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD412: __printf_fp_l (printf_fp.c:1004)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD44B: __printf_fp_l (printf_fp.c:1024)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DE1B4: __printf_fp_l (printf_fp.c:943)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DE1B8: __printf_fp_l (printf_fp.c:943)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD409: __printf_fp_l (printf_fp.c:1004)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCEEA: __printf_fp_l (printf_fp.c:645)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DCEF8: __printf_fp_l (printf_fp.c:821)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0398: __mpn_lshift (lshift.S:59)
+==17819==    by 0x58DCEFC: __printf_fp_l (printf_fp.c:821)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D039B: __mpn_lshift (lshift.S:60)
+==17819==    by 0x58DCEFC: __printf_fp_l (printf_fp.c:821)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DCF16: __printf_fp_l (printf_fp.c:822)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DBA79: hack_digit (printf_fp.c:174)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09D4: __mpn_mul_1 (mul_1.S:36)
+==17819==    by 0x58DBA80: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09F8: __mpn_mul_1 (mul_1.S:52)
+==17819==    by 0x58DBA80: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DCBC9: hack_digit (printf_fp.c:174)
+==17819==    by 0x58DCBC9: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09D4: __mpn_mul_1 (mul_1.S:36)
+==17819==    by 0x58DCBD7: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DCBD7: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09F8: __mpn_mul_1 (mul_1.S:52)
+==17819==    by 0x58DCBD7: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DCBD7: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DBA79: hack_digit (printf_fp.c:174)
+==17819==    by 0x58DCC1F: __printf_fp_l (printf_fp.c:975)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DD4D7: __printf_fp_l (printf_fp.c:661)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0398: __mpn_lshift (lshift.S:59)
+==17819==    by 0x58DD4DB: __printf_fp_l (printf_fp.c:661)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D039B: __mpn_lshift (lshift.S:60)
+==17819==    by 0x58DD4DB: __printf_fp_l (printf_fp.c:661)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DD50C: __printf_fp_l (printf_fp.c:662)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD5E5: __printf_fp_l (printf_fp.c:673)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD5D8: __printf_fp_l (printf_fp.c:785)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD75E: __printf_fp_l (printf_fp.c:787)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09D4: __mpn_mul_1 (mul_1.S:36)
+==17819==    by 0x58DD77F: __printf_fp_l (printf_fp.c:791)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0A5F: __mpn_mul_1 (mul_1.S:85)
+==17819==    by 0x58DD77F: __printf_fp_l (printf_fp.c:791)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0AD2: __mpn_mul_1 (mul_1.S:117)
+==17819==    by 0x58DD77F: __printf_fp_l (printf_fp.c:791)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DD796: __printf_fp_l (printf_fp.c:795)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DD7AB: __printf_fp_l (printf_fp.c:796)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D04A8: __mpn_rshift (rshift.S:62)
+==17819==    by 0x58DE4B3: __printf_fp_l (printf_fp.c:804)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D04CD: __mpn_rshift (rshift.S:73)
+==17819==    by 0x58DE4B3: __printf_fp_l (printf_fp.c:804)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCAF0: __printf_fp_l (printf_fp.c:965)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D09EA: __mpn_mul_1 (mul_1.S:45)
+==17819==    by 0x58DBA80: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D09EF: __mpn_mul_1 (mul_1.S:47)
+==17819==    by 0x58DBA80: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D09F1: __mpn_mul_1 (mul_1.S:48)
+==17819==    by 0x58DBA80: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D09F6: __mpn_mul_1 (mul_1.S:51)
+==17819==    by 0x58DBA80: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DC97B: __printf_fp_l (printf_fp.c:938)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DE1A7: __printf_fp_l (printf_fp.c:943)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DCA02: __printf_fp_l (printf_fp.c:959)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D09EA: __mpn_mul_1 (mul_1.S:45)
+==17819==    by 0x58DCBD7: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DCBD7: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D09EF: __mpn_mul_1 (mul_1.S:47)
+==17819==    by 0x58DCBD7: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DCBD7: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D09F1: __mpn_mul_1 (mul_1.S:48)
+==17819==    by 0x58DCBD7: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DCBD7: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58D09F6: __mpn_mul_1 (mul_1.S:51)
+==17819==    by 0x58DCBD7: hack_digit (printf_fp.c:175)
+==17819==    by 0x58DCBD7: __printf_fp_l (printf_fp.c:962)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DDD27: __printf_fp_l (printf_fp.c:987)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DDD2D: __printf_fp_l (printf_fp.c:987)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58DDFFB: __printf_fp_l (printf_fp.c:979)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D09D4: __mpn_mul_1 (mul_1.S:36)
+==17819==    by 0x58D0794: __mpn_mul (mul.c:81)
+==17819==    by 0x58DC282: __printf_fp_l (printf_fp.c:537)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0A5F: __mpn_mul_1 (mul_1.S:85)
+==17819==    by 0x58D0794: __mpn_mul (mul.c:81)
+==17819==    by 0x58DC282: __printf_fp_l (printf_fp.c:537)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D0AD2: __mpn_mul_1 (mul_1.S:117)
+==17819==    by 0x58D0794: __mpn_mul (mul.c:81)
+==17819==    by 0x58DC282: __printf_fp_l (printf_fp.c:537)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Use of uninitialised value of size 8
+==17819==    at 0x58D07A5: __mpn_mul (mul.c:83)
+==17819==    by 0x58DC282: __printf_fp_l (printf_fp.c:537)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x590A3FD: _IO_file_overflow@@GLIBC_2.2.5 (fileops.c:789)
+==17819==    by 0x58DDC84: __printf_fp_l (printf_fp.c:1251)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== Conditional jump or move depends on uninitialised value(s)
+==17819==    at 0x58DDC88: __printf_fp_l (printf_fp.c:1251)
+==17819==    by 0x58D9B06: vfprintf (vfprintf.c:1642)
+==17819==    by 0x58E2015: printf (printf.c:33)
+==17819==    by 0x10E112: main_loop (main_loop.c:134)
+==17819==    by 0x10D88A: main (main_loop.c:25)
+==17819== 
+==17819== 
+==17819== HEAP SUMMARY:
+==17819==     in use at exit: 10,207 bytes in 166 blocks
+==17819==   total heap usage: 306 allocs, 140 frees, 57,025 bytes allocated
+==17819== 
+==17819== 192 bytes in 1 blocks are definitely lost in loss record 15 of 26
+==17819==    at 0x4C31B0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x1114DB: read_parameters (util.c:245)
+==17819==    by 0x10D87A: main (main_loop.c:22)
+==17819== 
+==17819== 9,463 (64 direct, 9,399 indirect) bytes in 1 blocks are definitely lost in loss record 26 of 26
+==17819==    at 0x4C31B0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==17819==    by 0x10A28B: cJSON_New_Item (cJSON.c:75)
+==17819==    by 0x10AE2B: cJSON_ParseWithOpts (cJSON.c:255)
+==17819==    by 0x10AF00: cJSON_Parse (cJSON.c:268)
+==17819==    by 0x111DBC: load_group (util.c:393)
+==17819==    by 0x11160F: read_parameters (util.c:268)
+==17819==    by 0x10D87A: main (main_loop.c:22)
+==17819== 
+==17819== LEAK SUMMARY:
+==17819==    definitely lost: 256 bytes in 2 blocks
+==17819==    indirectly lost: 9,399 bytes in 163 blocks
+==17819==      possibly lost: 0 bytes in 0 blocks
+==17819==    still reachable: 552 bytes in 1 blocks
+==17819==         suppressed: 0 bytes in 0 blocks
+==17819== Reachable blocks (those to which a pointer was found) are not shown.
+==17819== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==17819== 
+==17819== For counts of detected and suppressed errors, rerun with: -v
+==17819== Use --track-origins=yes to see where uninitialised values come from
+==17819== ERROR SUMMARY: 21603 errors from 155 contexts (suppressed: 0 from 0)

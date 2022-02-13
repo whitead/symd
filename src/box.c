@@ -48,11 +48,8 @@ void unscale_coords(SCALAR *dest, SCALAR *src, box_t *box)
   unsigned int i, j;
   memset(dest, 0, n_dims * sizeof(SCALAR));
   for (i = 0; i < n_dims; i++)
-  {
     for (j = 0; j < n_dims; j++)
       dest[i] += src[j] * box->b_vectors[i * n_dims + j];
-    dest[i] = fmod(dest[i], 1.0);
-  }
 }
 
 void tiling(int *result, unsigned int cur_dim, unsigned int n, unsigned n_dims)
@@ -113,34 +110,34 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int n_dims, un
   // get max box size in each dimension
   for (i = 0; i < n_dims; i++)
     for (j = 0; j < n_dims; j++)
-      box->box_size[i] = fmax(box->box_size[i], box->b_vectors[j * n_dims + i]);
+      box->box_size[i] = fmax(box->box_size[i], box->b_vectors[i * n_dims + j]);
 
 #ifdef DEBUG
   printf("Box is size ");
   for (i = 0; i < n_dims; i++)
     printf("%f ", box->box_size[i]);
-  printf("\nUnormed vectors:\n");
+  printf("\nUnormed vectors (column wise):\n");
   for (i = 0; i < n_dims; i++)
   {
-    printf("%d: ", i);
     for (j = 0; j < n_dims; j++)
       printf("%f ", box->unorm_b_vectors[i * n_dims + j]);
+    printf("\n");
   }
-  printf("\nProjected vectors:\n");
+  printf("Projected vectors:\n");
   for (i = 0; i < n_dims; i++)
   {
-    printf("%d: ", i);
     for (j = 0; j < n_dims; j++)
       printf("%f ", box->b_vectors[i * n_dims + j]);
+    printf("\n");
   }
-  printf("\nInverse Projected vectors:\n");
+  printf("Inverse Projected vectors:\n");
   for (i = 0; i < n_dims; i++)
   {
-    printf("%d: ", i);
     for (j = 0; j < n_dims; j++)
       printf("%f ", box->ib_vectors[i * n_dims + j]);
+    printf("\n");
   }
-  printf("\n");
+
 #endif
 
   // build out tilings

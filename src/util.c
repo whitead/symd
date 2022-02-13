@@ -242,7 +242,7 @@ run_params_t *read_parameters(char *file_name)
   // load input files
   char *positions_file = retrieve_item(root, default_root, "start_positions")->valuestring;
   params->initial_positions = load_matrix(positions_file, params->n_particles, params->n_dims, 0);
-  params->scaled_positions = (double *)malloc(sizeof(double) * params->n_particles);
+  params->scaled_positions = (double *)malloc(sizeof(double) * params->n_particles * params->n_dims);
 
   item = cJSON_GetObjectItem(root, "masses_file");
   if (item)
@@ -268,13 +268,20 @@ run_params_t *read_parameters(char *file_name)
     group = load_group(item->valuestring, params->n_dims);
     params->box = make_box(sdata, group, params->n_dims, retrieve_item(root, default_root, "images")->valueint);
     sdata = NULL;
-    params->n_ghost_particles = params->n_particles * params->box->group->size * params->box->n_tilings - params->n_particles;
+    params->n_ghost_particles = params->n_particles * (params->box->group->size - 1) + params->n_particles * params->box->group->size * params->box->n_tilings;
 #ifdef DEBUG
     printf("Duplicating %d particles into %d real particles and %d ghost for group with %d elements and %d tilings\n",
            params->n_particles, params->n_particles, params->n_ghost_particles, params->box->group->size, params->box->n_tilings);
 #endif
-    sdata = (SCALAR *)malloc(sizeof(SCALAR) * (params->n_ghost_particles + params->n_particles));
-    memcpy(sdata, params->initial_positions, sizeof(SCALAR) * params->n_particles);
+
+    // make new longer list
+    sdata = (SCALAR *)malloc(sizeof(SCALAR) * params->n_dims * (params->n_ghost_particles + params->n_particles));
+
+    // before we're done, use it to unscale
+    for (i = 0; i < params->n_particles; i++)
+      unscale_coords(&sdata[i * params->n_dims],
+                     &params->initial_positions[i * params->n_dims], params->box);
+    // ok now done
     free(params->initial_positions);
     params->initial_positions = sdata;
     sdata = NULL;
@@ -284,10 +291,6 @@ run_params_t *read_parameters(char *file_name)
     params->box = make_box(sdata, NULL, params->n_dims, retrieve_item(root, default_root, "images")->valueint);
     sdata = NULL;
   }
-
-  for (i = 0; i < params->n_particles; i++)
-    unscale_coords(&params->initial_positions[i * params->n_dims],
-                   &params->initial_positions[i * params->n_dims], params->box);
 
   params->box_update_period = (unsigned int)retrieve_item(root, default_root, "box_update_period")->valueint;
   if (params->box_update_period)

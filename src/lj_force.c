@@ -98,8 +98,8 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         // put in 0 position
         for (k = 0; k < n_dims; k++)
         {
-          diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-          // diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
           r += diff * diff;
           force_vector[k] = diff;
         }

@@ -1,5 +1,5 @@
 {
-    "steps": 5,
+    "steps": 80000,
     "time_step": 0.005,
     "temperature": 1,
     "velocity_seed": 456415615,
@@ -9,16 +9,17 @@
     "lj_sigma": 1.0,
     "n_dims": 2,
     "box": [
-        10,
-        10
+        100,
+        100
     ],
-    "n_particles": 2,
-    "start_positions": "p1.xyz",
+    "images": 2,
+    "n_particles": 16,
+    "start_positions": "p6.xyz",
     "print_period": 100,
     "positions_log_file": "positions.xyz",
-    "position_log_period": 1,
+    "position_log_period": 10,
     "force_type": "lj",
-    "group": "p1.json",
+    "group": "p6.json",
     "thermostat": null,
     "com_remove_period": 10,
     "pressure": 25,
