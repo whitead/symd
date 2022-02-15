@@ -72,7 +72,10 @@ void main_loop(run_params_t *params)
         else // non-tiled
           log_xyz(params->positions_file, &positions[N_DIMS * params->n_particles * j], NULL, N_DIMS,
                   params->n_particles, params->n_particles + params->n_ghost_particles, 1);
-        for (k = 0; k < params->box->n_tilings; k++)
+      }
+      for (k = 0; k < params->box->n_tilings; k++)
+      {
+        for (j = 0; j < params->box->group->size; j++)
           log_xyz(params->positions_file,
                   &positions[N_DIMS * (params->n_particles * ((k + 1) * params->box->group->size + j))],
                   NULL,
