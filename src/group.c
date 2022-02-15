@@ -13,6 +13,7 @@ void *action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALA
             output[i] += data[j] * g[i * (n_dims + 1) + j];
         // w coord
         output[i] += s * g[i * (n_dims + 1) + j];
+        // output[i] = fmod(output[i], 1.0); ????
     }
 }
 
@@ -37,7 +38,6 @@ void *fold_particles(run_params_t *params, SCALAR *positions)
 
             action(group->members[j].g, &positions[j * p * N_DIMS + i * N_DIMS],
                    &params->scaled_positions[i * N_DIMS], N_DIMS, 1.0);
-
             // tile and unscale
             for (k = 0; k < params->box->n_tilings; k++)
             {
