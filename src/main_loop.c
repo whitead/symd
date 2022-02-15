@@ -138,13 +138,15 @@ void main_loop(run_params_t *params)
              i, i * params->time_step, insta_temperature, penergy, kenergy,
              penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box->box_size, N_DIMS));
     }
-    if (insta_temperature != insta_temperature || insta_temperature > 1000)
+    if (insta_temperature != insta_temperature || insta_temperature > 10000000)
     {
       do_exit = 1;
     }
   }
-  log_array(params->final_positions_file, positions, N_DIMS,
-            params->n_particles + params->n_ghost_particles, false);
+  for (i = 0; i < params->n_particles; i++)
+    scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
+  log_array(params->final_positions_file, params->scaled_positions, N_DIMS,
+            params->n_particles, false);
 
   free(forces);
 }

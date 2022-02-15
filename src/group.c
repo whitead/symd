@@ -26,15 +26,9 @@ void *fold_particles(run_params_t *params, SCALAR *positions)
 // update scaled and wrap
 #pragma omp parallel for default(shared) private(i)
     for (i = 0; i < p; i++)
-    {
         scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
-        printf("%d ", i);
-        for (k = 0; k < N_DIMS; k++)
-            printf("%f ", params->scaled_positions[i * N_DIMS + k]);
-        printf("\n");
-    }
 
-    // unfold and update
+        // unfold and update
 #pragma omp parallel for default(shared) private(i, j, k, l, temp)
     for (i = 0; i < p; i++)
     {
@@ -44,10 +38,6 @@ void *fold_particles(run_params_t *params, SCALAR *positions)
 
             action(group->members[j].g, &positions[j * p * N_DIMS + i * N_DIMS],
                    &params->scaled_positions[i * N_DIMS], N_DIMS, 1.0);
-            printf("Group element %d, particle %d ", j, i);
-            for (k = 0; k < N_DIMS; k++)
-                printf("%f ", positions[j * p * N_DIMS + i * N_DIMS + k]);
-            printf("\n");
             // tile and unscale
             for (k = 0; k < params->box->n_tilings; k++)
             {
@@ -55,19 +45,11 @@ void *fold_particles(run_params_t *params, SCALAR *positions)
                     temp[l] = positions[j * p * N_DIMS + i * N_DIMS + l] + params->box->tilings[k * N_DIMS + l];
                 unscale_coords(&positions[N_DIMS * (p * ((k + 1) * group->size + j) + i)],
                                temp, params->box);
-                printf("Unscaled tiling %d Group element %d, particle %d ", k, j, i);
-                for (l = 0; l < N_DIMS; l++)
-                    printf("%f ", positions[N_DIMS * (p * ((k + 1) * group->size + j) + i) + l]);
-                printf("\n");
             }
             // unscale default non-tiling
             unscale_coords(temp,
                            &positions[j * p * N_DIMS + i * N_DIMS], params->box);
             memcpy(&positions[j * p * N_DIMS + i * N_DIMS], temp, N_DIMS * sizeof(SCALAR));
-            printf("Unscaled Group element %d, particle %d ", j, i);
-            for (k = 0; k < N_DIMS; k++)
-                printf("%f ", positions[j * p * N_DIMS + i * N_DIMS + k]);
-            printf("\n");
         }
     }
 }

@@ -6,9 +6,8 @@ endif()
 
 string(APPEND CMAKE_C_FLAGS_DEBUG " -DDEBUG")
 
-if (GCC)
-  string(APPEND CMAKE_C_FLAGS_RELEASE "-Ofast -fno-tree-pta -g -march=native -funroll-loops -fmodulo-sched -fmodulo-sched-allow-regmoves")
-endif()
+# need to get rid of this for clang
+string(APPEND CMAKE_C_FLAGS_RELEASE "-O2 -fno-tree-pta -g -march=native -funroll-loops -fmodulo-sched -fmodulo-sched-allow-regmoves")
 
 execute_process (
   COMMAND git describe --abbrev=4 --dirty --always --tags
@@ -46,5 +45,5 @@ add_executable(symd ${SOURCE_FILES})
 find_package(GSL REQUIRED)    # See below (2)
 target_link_libraries(symd GSL::gsl GSL::gslcblas)
 target_link_libraries(symd m)
-find_package(OpenMP REQUIRED)
-target_link_libraries(symd OpenMP::OpenMP_CXX)
+#find_package(OpenMP REQUIRED)
+#target_link_libraries(symd OpenMP::OpenMP_CXX)

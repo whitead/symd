@@ -308,10 +308,16 @@ run_params_t *read_parameters(char *file_name)
   item = cJSON_GetObjectItem(root, "start_velocities");
   if (!item)
   {
-    params->initial_velocities =
-        generate_velocities(params->temperature, params->rng,
-                            params->masses, N_DIMS,
-                            params->n_particles);
+    item = cJSON_GetObjectItem(root, "start_temperature");
+    if (item)
+      params->initial_velocities =
+          generate_velocities(item->valuedouble, params->rng,
+                              params->masses, N_DIMS,
+                              params->n_particles);
+    else
+      generate_velocities(params->temperature, params->rng,
+                          params->masses, N_DIMS,
+                          params->n_particles);
   }
   else
   {
