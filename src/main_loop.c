@@ -67,15 +67,15 @@ void main_loop(run_params_t *params)
       {
         // asymmetric
         if (j == 0)
-          log_xyz(params->positions_file, positions, xyz_file_comment, elements, N_DIMS,
+          log_xyz(params->positions_file, positions, xyz_file_comment, N_DIMS,
                   params->n_particles, params->n_particles + params->n_ghost_particles, 0);
         else // non-tiled
-          log_xyz(params->positions_file, &positions[N_DIMS * params->n_particles * j], NULL, elements, N_DIMS,
+          log_xyz(params->positions_file, &positions[N_DIMS * params->n_particles * j], NULL, N_DIMS,
                   params->n_particles, params->n_particles + params->n_ghost_particles, 1);
         for (k = 0; k < params->box->n_tilings; k++)
           log_xyz(params->positions_file,
                   &positions[N_DIMS * (params->n_particles * ((k + 1) * params->box->group->size + j))],
-                  NULL, elements,
+                  NULL,
                   N_DIMS, params->n_particles,
                   params->n_particles + params->n_ghost_particles, 1);
       }

@@ -13,6 +13,14 @@ static const char *
     \"box_update_period\": 0, \"force_type\": null,\
      \"force_log_period\" : 0, \"images\": 1} ";
 
+const char *elements[] = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti",
+                          "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc",
+                          "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd",
+                          "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po", "At",
+                          "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg",
+                          "Bh", "Hs", "Mt", "Ds", "Rg"};
+const unsigned int n_elements = 100;
+
 void *load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message);
 
 double *generate_velocities(double temperature, gsl_rng *rng, double *masses, unsigned int n_dims, unsigned int n_particles)
@@ -491,7 +499,7 @@ double calculate_kenergy(double *velocities, double *masses, unsigned int n_dims
 }
 
 void log_xyz(FILE *file, double *array, char *frame_string,
-             const char *elements[], unsigned n_dims, unsigned n_particles,
+             unsigned n_dims, unsigned n_particles,
              unsigned int total, int location)
 {
 
@@ -504,7 +512,7 @@ void log_xyz(FILE *file, double *array, char *frame_string,
 
   for (i = 0; i < n_particles; i++)
   {
-    fprintf(file, "%s ", elements[i]);
+    fprintf(file, "%s ", elements[i % n_elements]);
     for (j = 0; j < n_dims; j++)
     {
       fprintf(file, "%12g ", array[i * n_dims + j]);
