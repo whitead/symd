@@ -138,7 +138,7 @@ void main_loop(run_params_t *params)
              i, i * params->time_step, insta_temperature, penergy, kenergy,
              penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box->box_size, N_DIMS));
     }
-    if (insta_temperature != insta_temperature || insta_temperature > 10000000)
+    if (insta_temperature != insta_temperature || insta_temperature > 1e25)
     {
       do_exit = 1;
     }

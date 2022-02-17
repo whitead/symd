@@ -315,7 +315,7 @@ run_params_t *read_parameters(char *file_name)
                               params->masses, N_DIMS,
                               params->n_particles);
     else
-      generate_velocities(params->temperature, params->rng,
+      params->initial_velocities =generate_velocities(params->temperature, params->rng,
                           params->masses, N_DIMS,
                           params->n_particles);
   }

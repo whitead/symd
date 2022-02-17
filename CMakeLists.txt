@@ -5,14 +5,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 string(APPEND CMAKE_C_FLAGS_DEBUG " -DDEBUG")
-
-# empty ID = Apple Clang for some reason
-if (CMAKE_CXX_COMPILER_ID MATCHES "")
-set(APPEND CMAKE_C_FLAGS_RELEASE "-O2 -g")
-else()
-set(CMAKE_C_FLAGS_RELEASE "-O2 -fno-tree-pta -g -march=native -funroll-loops -fmodulo-sched -fmodulo-sched-allow-regmoves")
-endif()
-
 execute_process (
   COMMAND git describe --abbrev=4 --dirty --always --tags
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -23,13 +15,22 @@ execute_process (
 add_definitions(-DVERSION="${GIT_COMMIT_HASH}")
 add_definitions(-DN_DIMS=2)
 
+# set the project name
+project(symd)
+
+# empty ID = Apple Clang for some reason
+if (CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
+set(APPEND CMAKE_C_FLAGS_RELEASE "-O2 -g")
+else()
+set(CMAKE_C_FLAGS_RELEASE "-O3 -fno-tree-pta -g -march=native -funroll-loops -fmodulo-sched -fmodulo-sched-allow-regmoves")
+endif()
+
+
 
 message("CMAKE_C_FLAGS_DEBUG is ${CMAKE_C_FLAGS_DEBUG}")
 message("CMAKE_C_FLAGS_RELEASE is ${CMAKE_C_FLAGS_RELEASE}")
 message("Compiler is ${CMAKE_CXX_COMPILER_ID}")
 
-# set the project name
-project(symd)
 
 # add sources
 include_directories(include)
