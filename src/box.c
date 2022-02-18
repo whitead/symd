@@ -6,6 +6,21 @@
 #include <string.h>
 #include <gsl/gsl_rng.h>
 
+static int sign(char x)
+{
+  return (x > 0) - (x < 0);
+}
+
+static int levi_civta(unsigned char index[N_DIMS])
+{
+  int p = 1;
+  unsigned int i, j;
+  for (i = 0; i < N_DIMS; i++)
+    for (j = i + 1; j < N_DIMS; j++)
+      p *= sign((char)(index[j]) - (char)(index[i]));
+  return p;
+}
+
 double round(double number)
 {
   return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
@@ -174,94 +189,118 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int n_dims, un
   return box;
 }
 
-double volume(double *box, unsigned int n_dims)
+// recursively find it. i refers to which vector
+static SCALAR rvolume(SCALAR *b_vectors, SCALAR v, unsigned int i, unsigned char index[N_DIMS])
 {
-  double v = 1.0;
-  for (unsigned int i = 0; i < n_dims; i++)
-    v *= box[i];
-  return v;
+  if (i == N_DIMS)
+    return levi_civta(index) * v;
+  SCALAR vi = 0;
+  unsigned int j;
+  for (j = 0; j < N_DIMS; j++)
+  {
+    index[i] = j;
+    vi += rvolume(b_vectors, b_vectors[j * N_DIMS + i] * v, i + 1, index);
+  }
+  return vi;
 }
 
-// int try_rescale(run_params_t *params, double *positions, double *penergy, double *forces)
-// {
-//   unsigned int i, j, n_dims = N_DIMS;
-//   double newV, oldV = volume(params->box->box_size, N_DIMS);
-//   double new_box[n_dims];
-//   memcpy(new_box, params->box->box_size, sizeof(double) * n_dims);
+SCALAR volume(box_t *box)
+{
+  // https://math.stackexchange.com/a/1606559 -- Not sure if I believe it?
+  unsigned char index[N_DIMS];
+  return rvolume(box->b_vectors, 1, 0, index);
+}
 
-//   // make random step along some sides
-//   if (params->box->kind == PBC_CUBIC || params->box->kind == GROUP_CUBIC)
-//   {
-//     double dx = 1.0 + gsl_rng_uniform(params->rng) * 0.02 - 0.01;
-//     for (i = 0; i < n_dims; i++)
-//       new_box[i] *= dx;
-//   }
-//   else if (params->box->kind == PBC)
-//   {
-//     // scale by .1% at most because it sounds reasonable
-//     int success = 0;
-//     while (!success)
-//     {
-//       for (i = 0; i < n_dims; i++)
-//       {
-//         if (gsl_rng_uniform(params->rng) < 1.0 / n_dims)
-//         {
-//           // between 99% and 101%
-//           new_box[i] *= 1.0 + gsl_rng_uniform(params->rng) * 0.02 - 0.01;
-//           success = 1;
-//         }
-//       }
-//     }
-//   }
+int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR *forces)
+{
+  unsigned int i, j;
+  SCALAR newV, oldV = volume(params->box);
+  SCALAR unorm_b_vectors[N_DIMS * N_DIMS];
+  box_t *new_box = NULL;
+  memcpy(unorm_b_vectors, params->box->b_vectors, sizeof(SCALAR) * N_DIMS * N_DIMS);
 
-// #ifdef DEBUG
-//   printf("old box: ");
-//   for (i = 0; i < n_dims; i++)
-//   {
-//     printf("%g ", params->box->box_size[i]);
-//   }
-//   printf("\n");
-//   printf("Proposed new box: ");
-//   for (i = 0; i < n_dims; i++)
-//   {
-//     printf("%g ", new_box[i]);
-//   }
-//   printf("\n");
-// #endif
+  // make random step along some sides
+  // scale by .1% at most because it sounds reasonable
+  char success = 0;
+  while (!success)
+  {
+    for (i = 0; i < N_DIMS * N_DIMS; i++)
+    {
+      if (gsl_rng_uniform(params->rng) < 1.0 / n_dims)
+      {
+        // between 99% and 101%
+        unorm_b_vectors[i] *= 1.0 + gsl_rng_uniform(params->rng) * 0.02 - 0.01;
+        success = 1;
+      }
+    }
+  }
 
-//   newV = volume(new_box, n_dims);
+#ifdef DEBUG
+  printf("old box: ");
+  for (i = 0; i < N_DIMS * N_DIMS; i++)
+  {
+    printf("%g ", params->box->b_vectors[i]);
+  }
+  printf("\n");
+  printf("Proposed new box: ");
+  for (i = 0; i < N_DIMS * N_DIMS; i++)
+  {
+    printf("%g ", unorm_b_vectors[i]);
+  }
+  printf("\n");
+#endif
 
-//   // rescale coordinates
-//   for (i = 0; i < params->n_ghost_particles + params->n_particles; i++)
-//     for (j = 0; j < n_dims; j++)
-//       positions[i * n_dims + j] *= new_box[j] / params->box->box_size[j];
+  new_box = make_box(unorm_b_vectors, params->box->group, N_DIMS, (params->box->n_tilings - 1) / 2);
+  newV = volume(new_box, n_dims);
 
-//   double new_energy = params->force_parameters->gather(params, positions, forces);
+  // rescale coordinates
+  // go to scaled
+  for (i = 0; i < params->n_particles; i++)
+    scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
+  // unscale with new box
+  for (i = 0; i < params->n_particles; i++)
+    unscale_coords(&positions[i * N_DIMS], &params->scaled_positions[i * N_DIMS], new_box);
 
-//   // accept/reject
-//   double mhc = (new_energy - *penergy) + params->pressure * (newV - oldV) -
-//                (params->n_particles + 1) * params->temperature * log(newV / oldV);
+  // now fold them
+  fold_particles(params, positions);
 
-//   if (gsl_rng_uniform(params->rng) < exp(-mhc / params->temperature))
-//   {
-// #ifdef DEBUG
-//     printf("Accepted with MHC %g\n", mhc);
-// #endif
-//     // accepted
-//     // TODO: rebuild cells in nlist - shouldn't matter if cubic
-//     *penergy = new_energy;
-//     memcpy(params->box->box_size, new_box, sizeof(double) * n_dims);
-//     return 1;
-//   }
-//   else
-//   {
-// #ifdef DEBUG
-//     printf("Rejected with MHC %g\n", mhc);
-// #endif
-//     // undo rescale coordinates
-//     for (i = 0; i < params->n_ghost_particles + params->n_particles; i++)
-//       for (j = 0; j < n_dims; j++)
-//         positions[i * n_dims + j] /= new_box[j] / params->box->box_size[j];
-//     return 0;
-//   }
-// }
+  // get energy
+  SCALAR new_energy = params->force_parameters->gather(params, positions, forces);
+
+  // accept/reject
+  SCALAR mhc = (new_energy - *penergy) + params->pressure * (newV - oldV) -
+               (params->n_particles + 1) * params->temperature * log(newV / oldV);
+
+  if (gsl_rng_uniform(params->rng) < exp(-mhc / params->temperature))
+  {
+#ifdef DEBUG
+    printf("Accepted with MHC %g\n", mhc);
+#endif
+    // accepted
+    // TODO: rebuild cells in nlist
+    *penergy = new_energy;
+    params->box->group = NULL;
+    free_box(params->box);
+    params->box = new_box;
+    return 1;
+  }
+  else
+  {
+#ifdef DEBUG
+    printf("Rejected with MHC %g\n", mhc);
+#endif
+    // undo rescale coordinates
+    // go to scaled
+    for (i = 0; i < params->n_particles; i++)
+      scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], new_box);
+    // unscale with old box
+    for (i = 0; i < params->n_particles; i++)
+      unscale_coords(&positions[i * N_DIMS], &params->scaled_positions[i * N_DIMS], params->box);
+
+    // now fold them
+    fold_particles(params, positions);
+    new_box->group = NULL;
+    free_box(new_box);
+    return 0;
+  }
+}

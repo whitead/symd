@@ -136,7 +136,7 @@ void main_loop(run_params_t *params)
     {
       printf("%12d %12g %12g %12g %12g %12g %12g %12g\n",
              i, i * params->time_step, insta_temperature, penergy, kenergy,
-             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box->box_size, N_DIMS));
+             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box));
     }
     if (insta_temperature != insta_temperature || insta_temperature > 1e25)
     {
