@@ -5,6 +5,29 @@
 #include <math.h>
 #include <string.h>
 #include <gsl/gsl_rng.h>
+#include <gsl/gsl_matrix_double.h>
+#include <gsl/gsl_linalg.h>
+
+static gsl_matrix *
+invert_matrix(SCALAR *data)
+{
+
+    gsl_matrix_const_view matrix = gsl_matrix_view_array( data, N_DIMS, N_DIMS );
+    gsl_permutation *p = gsl_permutation_alloc(N_DIMS);
+    int s;
+
+    // Compute the LU decomposition of this matrix
+    gsl_linalg_LU_decomp(matrix, p, &s);
+
+    // Compute the  inverse of the LU decomposition
+    gsl_matrix *inv = gsl_matrix_alloc(N_DIMS, N_DIMS);
+    gsl_linalg_LU_invert(matrix, p, inv);
+
+    gsl_permutation_free(p);
+
+    return inv;
+}
+
 
 static int sign(char x)
 {
