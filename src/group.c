@@ -54,6 +54,28 @@ void fold_particles(run_params_t *params, SCALAR *positions)
     }
 }
 
+void fold_velocities(run_params_t *params, SCALAR *velocities)
+{
+    group_t *group = params->box->group;
+    const unsigned int p = params->n_particles;
+    SCALAR temp[N_DIMS];
+    unsigned int i, j, k, l;
+
+    //zero other velocities
+    memset(&velocities[p], 0, params->n_ghost_particles * sizeof(SCALAR) * N_DIMS);
+
+// unfold and update
+#pragma omp parallel for default(shared) private(i, j, k, l, temp)
+    for (i = 0; i < p; i++)
+    {
+        for (j = 1; j < group->size; j++)
+        {
+            action(group->members[j].g, &velocities[j * p * N_DIMS + i * N_DIMS],
+                    &velocities[i * N_DIMS], N_DIMS, 0.0);
+        }
+    }
+}
+
 void free_group(group_t *g)
 {
     for (unsigned int i = 0; i < g->size; i++)

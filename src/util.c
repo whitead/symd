@@ -13,6 +13,7 @@ static const char *
     \"box_update_period\": 0, \"force_type\": null,\
      \"force_log_period\" : 0, \"images\": 1} ";
 
+#ifdef DEBUG
 const char *elements[] = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti",
                           "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc",
                           "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd",
@@ -20,13 +21,17 @@ const char *elements[] = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", 
                           "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg",
                           "Bh", "Hs", "Mt", "Ds", "Rg"};
 const unsigned int n_elements = 100;
+#else
+const char *elements[] = {"H"};
+const unsigned int n_elements = 1;
+#endif
 
 void load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message);
 
 double *generate_velocities(double temperature, gsl_rng *rng, double *masses, unsigned int n_dims, unsigned int n_particles)
 {
 
-  double *velocities = (double *)malloc(sizeof(double) * n_dims * (n_particles + 1));
+  double *velocities = (double *)malloc(sizeof(double) * n_dims * n_particles);
 
   unsigned int i, j;
 
@@ -265,6 +270,26 @@ run_params_t *read_parameters(char *file_name)
       params->masses[i] = 1.0;
   }
 
+  item = cJSON_GetObjectItem(root, "start_velocities");
+  if (!item)
+  {
+    item = cJSON_GetObjectItem(root, "start_temperature");
+    if (item)
+      params->initial_velocities =
+          generate_velocities(item->valuedouble, params->rng,
+                              params->masses, N_DIMS,
+                              params->n_particles);
+    else
+      params->initial_velocities = generate_velocities(params->temperature, params->rng,
+                                                       params->masses, N_DIMS,
+                                                       params->n_particles);
+  }
+  else
+  {
+    params->initial_velocities =
+        load_matrix(item->valuestring, params->n_particles, N_DIMS, 0);
+  }
+
   // group - partition to ghost too
   // also will finish making box here, which was deferred
   group = NULL;
@@ -292,6 +317,25 @@ run_params_t *read_parameters(char *file_name)
     free(params->initial_positions);
     params->initial_positions = sdata;
     sdata = NULL;
+
+    // now need velocities and msses
+    // make new longer list
+    sdata = (SCALAR *)malloc(sizeof(SCALAR) * N_DIMS * (params->n_ghost_particles + params->n_particles));
+    memcpy(sdata, params->initial_velocities, params->n_particles * sizeof(SCALAR) * N_DIMS);
+    // before we're done, use it to unscale
+    // ok now done
+    free(params->initial_velocities);
+    params->initial_velocities = sdata;
+    sdata = NULL;
+
+    sdata = (SCALAR *)malloc(sizeof(SCALAR) * (params->n_ghost_particles + params->n_particles));
+    for(i = 0; i < params->n_ghost_particles; i += params->n_particles)
+      memcpy(&sdata[i], params->masses, params->n_particles * sizeof(SCALAR));
+    // before we're done, use it to unscale
+    // ok now done
+    free(params->masses);
+    params->masses = sdata;
+    sdata = NULL;
   }
   else
   {
@@ -303,26 +347,6 @@ run_params_t *read_parameters(char *file_name)
   if (params->box_update_period)
   {
     params->pressure = (double)retrieve_item(root, default_root, "pressure")->valuedouble;
-  }
-
-  item = cJSON_GetObjectItem(root, "start_velocities");
-  if (!item)
-  {
-    item = cJSON_GetObjectItem(root, "start_temperature");
-    if (item)
-      params->initial_velocities =
-          generate_velocities(item->valuedouble, params->rng,
-                              params->masses, N_DIMS,
-                              params->n_particles);
-    else
-      params->initial_velocities = generate_velocities(params->temperature, params->rng,
-                                                       params->masses, N_DIMS,
-                                                       params->n_particles);
-  }
-  else
-  {
-    params->initial_velocities =
-        load_matrix(item->valuestring, params->n_particles, N_DIMS, 0);
   }
 
   // make nlist

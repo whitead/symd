@@ -100,8 +100,10 @@ void main_loop(run_params_t *params)
     if (params->box->group)
       fold_particles(params, positions);
 
-    if (i % params->com_remove_period == 0)
-      remove_com(velocities, params->masses, N_DIMS, params->n_particles);
+    if (i % params->com_remove_period == 0) {
+      fold_velocities(params, velocities);
+      remove_com(velocities, params->masses, N_DIMS, params->n_particles * params->box->group->size);
+    }
 
     // gather forces
     if (params->force_parameters)

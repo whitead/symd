@@ -13,7 +13,7 @@ execute_process (
 )
 
 add_definitions(-DVERSION="${GIT_COMMIT_HASH}")
-add_definitions(-DN_DIMS=2)
+add_definitions(-DN_DIMS=3)
 
 # set the project name
 project(symd)
