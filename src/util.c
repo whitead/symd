@@ -273,7 +273,7 @@ run_params_t *read_parameters(char *file_name)
   if (item)
   {
     group = load_group(item->valuestring, N_DIMS);
-    params->box = make_box(sdata, group, N_DIMS, retrieve_item(root, default_root, "images")->valueint);
+    params->box = make_box(sdata, group, retrieve_item(root, default_root, "images")->valueint);
     sdata = NULL;
     params->n_ghost_particles = params->n_particles * (params->box->group->size - 1) + params->n_particles * params->box->group->size * params->box->n_tilings;
 #ifdef DEBUG
@@ -295,7 +295,7 @@ run_params_t *read_parameters(char *file_name)
   }
   else
   {
-    params->box = make_box(sdata, NULL, N_DIMS, retrieve_item(root, default_root, "images")->valueint);
+    params->box = make_box(sdata, NULL, retrieve_item(root, default_root, "images")->valueint);
     sdata = NULL;
   }
 
@@ -315,9 +315,9 @@ run_params_t *read_parameters(char *file_name)
                               params->masses, N_DIMS,
                               params->n_particles);
     else
-      params->initial_velocities =generate_velocities(params->temperature, params->rng,
-                          params->masses, N_DIMS,
-                          params->n_particles);
+      params->initial_velocities = generate_velocities(params->temperature, params->rng,
+                                                       params->masses, N_DIMS,
+                                                       params->n_particles);
   }
   else
   {

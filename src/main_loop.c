@@ -107,15 +107,8 @@ void main_loop(run_params_t *params)
     if (params->force_parameters)
       penergy = params->force_parameters->gather(params, positions, forces);
 
-    // try update box
-    // if (params->box_update_period && i % params->box_update_period == 0)
-    // {
-    //   if (!try_rescale(params, positions, &penergy, forces))
-    //   {
-    //     // reset forces
-    //     penergy = params->force_parameters->gather(params, positions, forces);
-    //   }
-    // }
+    if (params->box_update_period && i % params->box_update_period == 0)
+      try_rescale(params, positions, &penergy, forces);
 
     // output forces
     if (i % params->force_log_period == 0)

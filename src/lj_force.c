@@ -14,7 +14,7 @@ static inline double lj(double r, double epsilon, double sigma, double *energy)
 {
   double ri6 = pow(sigma / r, 6);
   double ri12 = ri6 * ri6;
-  *energy += 4 * epsilon * (ri6 - ri12);
+  *energy += 4 * epsilon * (ri12 - ri6);
   return 4 * epsilon * (6 * ri6 * sigma / r - 12 * ri12 * sigma / r);
 }
 

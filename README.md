@@ -3,18 +3,15 @@ Symmetric Molecular Dynamics Engine
 
 TODO:
 
-Find TODO
+Find TODOs
 
 Nlist broken?
 1. Revise to use enclosing cubes and check implementation
 2. Investigate - might just be inconsistent when we had jumps but is ok
 
-
-NPT
-
 3D
 1. Write out matrix inverse
-2. Compiler Flags
+2. Compiler Flags - O0 is requierd right now ??
 
 Science
 1. Wyckoff Monte Carlo
