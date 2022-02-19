@@ -18,6 +18,6 @@ struct group_t
     SCALAR *projector;
 };
 
-void *fold_particles(run_params_t *group, SCALAR *positions);
+void *fold_particles(run_params_t *params, SCALAR *positions);
 void free_group(group_t *g);
 #endif // GROUP_H_

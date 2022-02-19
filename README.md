@@ -3,19 +3,15 @@ Symmetric Molecular Dynamics Engine
 
 TODO:
 
-Find TODO
+Find TODOs
 
 Nlist broken?
 1. Revise to use enclosing cubes and check implementation
 2. Investigate - might just be inconsistent when we had jumps but is ok
 
-
-NPT
-1. volume - https://en.wikipedia.org/wiki/Levi-Civita_symbol#Generalization_to_n_dimensions, https://math.stackexchange.com/questions/1605690/how-to-extend-the-parallelepiped-volume-formula-to-higher-dimensions
-
 3D
 1. Write out matrix inverse
-2. Compiler Flag
+2. Compiler Flags - O0 is requierd right now ??
 
 Science
 1. Wyckoff Monte Carlo
@@ -59,6 +55,6 @@ Movies
 
 
 ```
-~/ffmpeg-git-20210724-amd64-static/ffmpeg -framerate 60 -i Trajectories/cm.%05d.bmp  -crf 18 -c:v h264 -movflags +faststart -vf "format=yuv420p,setpts=PTS,drawtext=text='@_172135352171_':fontsize=48:x=(w-text_w)/2:y=(h - text_h):fontcolor=#333333:fontfile=$HOME/miniconda3/
+~/ffmpeg-git-20210724-amd64-static/ffmpeg -framerate 60 -tune animation -preset slow -i Trajectories/cm.%05d.bmp  -crf 18 -c:v h264 -movflags +faststart -vf "format=yuv420p,setpts=PTS,drawtext=text='@_172135352171_':fontsize=48:x=(w-text_w)/2:y=(h - text_h):fontcolor=#333333:fontfile=$HOME/miniconda3/
 envs/ternviz/fonts/open-fonts/IBMPlexMono-Light.ttf" traj_cm.mp4
 ```

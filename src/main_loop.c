@@ -107,15 +107,8 @@ void main_loop(run_params_t *params)
     if (params->force_parameters)
       penergy = params->force_parameters->gather(params, positions, forces);
 
-    // try update box
-    // if (params->box_update_period && i % params->box_update_period == 0)
-    // {
-    //   if (!try_rescale(params, positions, &penergy, forces))
-    //   {
-    //     // reset forces
-    //     penergy = params->force_parameters->gather(params, positions, forces);
-    //   }
-    // }
+    if (params->box_update_period && i % params->box_update_period == 0)
+      try_rescale(params, positions, &penergy, forces);
 
     // output forces
     if (i % params->force_log_period == 0)
@@ -136,7 +129,7 @@ void main_loop(run_params_t *params)
     {
       printf("%12d %12g %12g %12g %12g %12g %12g %12g\n",
              i, i * params->time_step, insta_temperature, penergy, kenergy,
-             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box->box_size, N_DIMS));
+             penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box));
     }
     if (insta_temperature != insta_temperature || insta_temperature > 1e25)
     {
