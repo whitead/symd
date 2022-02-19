@@ -5,6 +5,28 @@
 #include <math.h>
 #include <string.h>
 #include <gsl/gsl_rng.h>
+#include <gsl/gsl_matrix_double.h>
+#include <gsl/gsl_linalg.h>
+
+static void
+invert_matrix(SCALAR *data, SCALAR* inv_data)
+{
+
+    gsl_matrix_view matrix = gsl_matrix_view_array( data, N_DIMS, N_DIMS );
+    gsl_permutation *p = gsl_permutation_alloc(N_DIMS);
+    int s;
+
+    // Compute the LU decomposition of this matrix
+    gsl_linalg_LU_decomp(&matrix.matrix, p, &s);
+
+    // Compute the  inverse of the LU decomposition
+    gsl_matrix_view inv = gsl_matrix_view_array( inv_data, N_DIMS, N_DIMS );
+    gsl_linalg_LU_invert(&matrix.matrix, p, &inv.matrix);
+
+    gsl_permutation_free(p);
+    
+}
+
 
 static int sign(char x)
 {
@@ -99,19 +121,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
     memcpy(box->b_vectors, unorm_b_vectors, sizeof(SCALAR) * N_DIMS * N_DIMS);
 
   // compute their inverse
-  if (N_DIMS == 2)
-  {
-    double s = 1 / (box->b_vectors[0] * box->b_vectors[3] - box->b_vectors[1] * box->b_vectors[2]);
-    box->ib_vectors[0] = box->b_vectors[3] * s;
-    box->ib_vectors[1] = -box->b_vectors[1] * s;
-    box->ib_vectors[2] = -box->b_vectors[2] * s;
-    box->ib_vectors[3] = box->b_vectors[0] * s;
-  }
-  else
-  {
-    fprintf(stderr, "Finish implementing matrix invese\n");
-    exit(1);
-  }
+  invert_matrix(box->b_vectors, box->ib_vectors);
 
   // get max box size in each dimension
   for (i = 0; i < N_DIMS; i++)
