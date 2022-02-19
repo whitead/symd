@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 
-void *action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALAR s)
+void action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALAR s)
 {
     unsigned int i, j;
     memset(output, 0, sizeof(SCALAR) * n_dims);
@@ -17,7 +17,7 @@ void *action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALA
     }
 }
 
-void *fold_particles(run_params_t *params, SCALAR *positions)
+void fold_particles(run_params_t *params, SCALAR *positions)
 {
     group_t *group = params->box->group;
     const unsigned int p = params->n_particles;

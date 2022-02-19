@@ -76,7 +76,7 @@ void update_nlist(double *positions,
     dist = 0;
     for (k = 0; k < n_dims; k++)
     {
-      // temp = (positions[i * n_dims + k] - nlist->last_positions[i * n_dims + k]);
+      temp = (positions[i * n_dims + k] - nlist->last_positions[i * n_dims + k]);
       temp = min_image_dist(temp, box_size[k]);
       dist += temp * temp;
     }

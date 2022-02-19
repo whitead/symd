@@ -21,7 +21,7 @@ const char *elements[] = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", 
                           "Bh", "Hs", "Mt", "Ds", "Rg"};
 const unsigned int n_elements = 100;
 
-void *load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message);
+void load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message);
 
 double *generate_velocities(double temperature, gsl_rng *rng, double *masses, unsigned int n_dims, unsigned int n_particles)
 {
@@ -422,7 +422,7 @@ group_t *load_group(char *filename, unsigned int n_dims)
 
   group_t *group = (group_t *)malloc(sizeof(group_t));
   group->name = item->valuestring;
-  unsigned int i, j, size = 0;
+  unsigned int size = 0;
   g_t *tmp, *members = NULL;
   double *g_mat, *i_mat;
   // iterate over group members
@@ -461,7 +461,7 @@ group_t *load_group(char *filename, unsigned int n_dims)
   return group;
 }
 
-void *load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message)
+void load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message)
 {
   if (!item)
   {

@@ -78,4 +78,5 @@ force_t *build_soft()
 	soft->gather = &soft_gather_forces;
 	soft->free = &s_free_forces;
 	soft->parameters = NULL;
+	return soft;
 }

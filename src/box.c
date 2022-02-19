@@ -9,24 +9,22 @@
 #include <gsl/gsl_linalg.h>
 
 static void
-invert_matrix(SCALAR *data, SCALAR* inv_data)
+invert_matrix(SCALAR *data, SCALAR *inv_data)
 {
 
-    gsl_matrix_view matrix = gsl_matrix_view_array( data, N_DIMS, N_DIMS );
-    gsl_permutation *p = gsl_permutation_alloc(N_DIMS);
-    int s;
+  gsl_matrix_view matrix = gsl_matrix_view_array(data, N_DIMS, N_DIMS);
+  gsl_permutation *p = gsl_permutation_alloc(N_DIMS);
+  int s;
 
-    // Compute the LU decomposition of this matrix
-    gsl_linalg_LU_decomp(&matrix.matrix, p, &s);
+  // Compute the LU decomposition of this matrix
+  gsl_linalg_LU_decomp(&matrix.matrix, p, &s);
 
-    // Compute the  inverse of the LU decomposition
-    gsl_matrix_view inv = gsl_matrix_view_array( inv_data, N_DIMS, N_DIMS );
-    gsl_linalg_LU_invert(&matrix.matrix, p, &inv.matrix);
+  // Compute the  inverse of the LU decomposition
+  gsl_matrix_view inv = gsl_matrix_view_array(inv_data, N_DIMS, N_DIMS);
+  gsl_linalg_LU_invert(&matrix.matrix, p, &inv.matrix);
 
-    gsl_permutation_free(p);
-    
+  gsl_permutation_free(p);
 }
-
 
 static int sign(char x)
 {
@@ -81,7 +79,7 @@ void unscale_coords(SCALAR *dest, SCALAR *src, box_t *box)
 
 void tiling(int *result, unsigned int cur_dim, unsigned int n)
 {
-  unsigned int i, j;
+  unsigned int i;
   for (i = 0; i < n * 2 + 1; i++)
     result[cur_dim * N_DIMS + i] = (int)(i)-n;
 }
@@ -284,7 +282,7 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
   {
 #ifdef DEBUG
     printf("Accepted with MHC %g (delta E = %g, delta V = %g)\n", mhc, new_energy - *penergy, newV - oldV);
-#endif // DEBUG
+#endif
     // accepted
     // TODO: rebuild cells in nlist
     *penergy = new_energy;
@@ -297,7 +295,7 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
   {
 #ifdef DEBUG
     printf("Rejected with MHC %g (delta E = %g, delta V = %g)\n", mhc, new_energy - *penergy, newV - oldV);
-#endif // DEBUG
+#endif
     // undo rescale coordinates
     // go to scaled
     for (i = 0; i < params->n_particles; i++)
