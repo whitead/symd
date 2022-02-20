@@ -15,18 +15,18 @@ unsigned int insert_grow(unsigned int index, unsigned int value, unsigned int **
 /*
  * build the neighbor list
  */
-void build_list(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, nlist_parameters_t *nlist);
+void build_list(double *positions, double *cell_size, unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, nlist_parameters_t *nlist);
 
 /*
  * Precompute cells used for constructing neighbor lists.
  * Note: this is not ready to be called multiple times. If there
  * ever is barostatting, this needs work.
  */
-void build_cells(double *box_size, unsigned int n_dims,
+void build_cells(double *cell_size, unsigned int n_dims,
                  unsigned int n_particles, unsigned int n_ghost_particles,
                  nlist_parameters_t *nlist);
 
-nlist_parameters_t *build_nlist_params(unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, double *box_size, double skin, double rcut)
+nlist_parameters_t *build_nlist_params(unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, double *cell_size, double skin, double rcut)
 {
 
   nlist_parameters_t init = {.rcut = rcut * rcut, .skin = skin * skin, .skin_rcut = (rcut + skin) * (rcut + skin)};
@@ -34,7 +34,7 @@ nlist_parameters_t *build_nlist_params(unsigned int n_dims, unsigned int n_parti
   memcpy(nlist, &init, sizeof(nlist_parameters_t));
   nlist->nlist = NULL;
   nlist->last_positions = (double *)malloc(sizeof(double) * n_particles * n_dims);
-  build_cells(box_size, n_dims, n_particles, n_ghost_particles, nlist);
+  build_cells(cell_size, n_dims, n_particles, n_ghost_particles, nlist);
   return nlist;
 }
 
@@ -54,7 +54,7 @@ void free_nlist(nlist_parameters_t *nlist)
 }
 
 void update_nlist(double *positions,
-                  double *box_size,
+                  double *cell_size,
                   unsigned int n_dims,
                   unsigned int n_particles,
                   unsigned int n_ghost_particles,
@@ -63,7 +63,7 @@ void update_nlist(double *positions,
 
   if (nlist->nlist == NULL)
   {
-    build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
+    build_list(positions, cell_size, n_dims, n_particles, n_ghost_particles, nlist);
   }
 
   double dist, temp;
@@ -77,7 +77,7 @@ void update_nlist(double *positions,
     for (k = 0; k < n_dims; k++)
     {
       temp = (positions[i * n_dims + k] - nlist->last_positions[i * n_dims + k]);
-      temp = min_image_dist(temp, box_size[k]);
+      temp = min_image_dist(temp, cell_size[k]);
       dist += temp * temp;
     }
     if (dist > max1)
@@ -94,12 +94,8 @@ void update_nlist(double *positions,
 #ifdef DEBUG
     printf("updating nlist due to %f + %f > %f\n", max1, max2, nlist->skin);
 #endif
-    // build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
+    build_list(positions, cell_size, n_dims, n_particles, n_ghost_particles, nlist);
   }
-  //**********************
-  // TODO: This line below should be removed
-  //**********************
-  build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
   return;
 }
 
@@ -121,7 +117,7 @@ unsigned int gen_index_r(int *array, int *dims, unsigned int index, unsigned int
   return index;
 }
 
-void build_cells(double *box_size,
+void build_cells(double *cell_size,
                  unsigned int n_dims,
                  unsigned int n_particles,
                  unsigned int n_ghost_particles,
@@ -133,9 +129,8 @@ void build_cells(double *box_size,
   nlist->cell_number = (int *)malloc(sizeof(int) * n_dims);
   double m_box_size[n_dims];
 
-  // make our box bigger, since our tiled ghost particles
-  // will not wrap nicely.
-  memcpy(m_box_size, box_size, n_dims * sizeof(double));
+  // make our box bigger, for our tiled ghost particles
+  memcpy(m_box_size, cell_size, n_dims * sizeof(double));
   for (i = 0; i < n_dims; i++)
     m_box_size[i] *= BOX_M;
 
@@ -187,7 +182,6 @@ void build_cells(double *box_size,
       (unsigned int *)malloc(sizeof(unsigned int) *
                              (nlist->map_offset * 2 + nlist->cell_number_total));
 
-  // wrapped mapping
   for (i = 0; i < nlist->map_offset; i++)
   {
     nlist->mapping[i] =
@@ -219,7 +213,7 @@ void build_cells(double *box_size,
 /*
  * Build neighbor list using cells in N-dimensions
  */
-void build_list(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, nlist_parameters_t *nlist)
+void build_list(double *positions, double *cell_size, unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, nlist_parameters_t *nlist)
 {
 
   unsigned int total_n = 0;
@@ -244,8 +238,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   double m_box_size[n_dims];
 
   // make our box bigger, since our tiled ghost particles
-  // will not wrap nicely.
-  memcpy(m_box_size, box_size, n_dims * sizeof(double));
+  memcpy(m_box_size, cell_size, n_dims * sizeof(double));
   for (i = 0; i < n_dims; i++)
     m_box_size[i] *= BOX_M;
 
@@ -261,7 +254,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
     for (k = 0; k < n_dims; k++)
     {
       // get 1D index of cell
-      icell = (int)(wrap(positions[i * n_dims + k], m_box_size[k]) / m_box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
+      icell = (int)(positions[i * n_dims + k], m_box_size[k]) / m_box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
     }
     // have cell_list point to cell for particle i
     nlist->cell_list[i] = nlist->head[icell];
@@ -291,7 +284,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
     icell = 0;
     // find index of particle using polynomial indexing
     for (k = 0; k < n_dims; k++)
-      icell = (int)(wrap(positions[i * n_dims + k], m_box_size[k]) / m_box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
+      icell = (int)(positions[i * n_dims + k], m_box_size[k]) / m_box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
     // loop over neighbor cells
     for (ncell = 0; ncell < nlist->ncell_number; ncell++)
     {
@@ -380,7 +373,7 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
 {
   unsigned n_dims = N_DIMS;
   unsigned n_particles = params->n_particles;
-  double *box_size = params->box->box_size;
+  double *cell_size = params->box->cell_size;
   unsigned int i, j, k, n, ni, nn, n2n, ngn;
   double diff, r;
 
@@ -397,9 +390,7 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
       // distance between particles
       for (k = 0; k < n_dims; k++)
       {
-        diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-        // TODO: remove or not?
-        // diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+        diff = positions[j * n_dims + k] - positions[i * n_dims + k];
         r += diff * diff;
       }
       if (r < rcut * rcut)
@@ -456,9 +447,8 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
         // distance between particles
         for (k = 0; k < n_dims; k++)
         {
-          diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-          // TODO: remove or not?
-          // diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], cell_size[k]);
+          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
           r += diff * diff;
         }
         printf("%d - %d. r: %f, rcut: %f\n", i, j, sqrt(r), rcut);

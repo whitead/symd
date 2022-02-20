@@ -23,7 +23,7 @@ void free_box(box_t *box);
 
 struct box_t
 {
-    double *box_size;
+    double *cell_size;
     // for these -> columns are basis vectors!
     double *b_vectors;
     double *unorm_b_vectors;

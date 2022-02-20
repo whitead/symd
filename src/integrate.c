@@ -11,7 +11,6 @@ void integrate_pos(double time_step, double *positions, double *velocities, unsi
     {
       k = i * N_DIMS + j;
       positions[k] += time_step * velocities[k] / 2;
-      // positions[k] = wrap(positions[k], box_size[j]);
     }
   }
 }

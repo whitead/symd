@@ -367,7 +367,7 @@ run_params_t *read_parameters(char *file_name)
       printf("Warning: Assuming skin = %g\n", skin);
     }
     nlist = build_nlist_params(N_DIMS, params->n_particles, params->n_ghost_particles,
-                               params->box->box_size, skin, rcut);
+                               params->box->cell_size, skin, rcut);
   }
 
   // forces

@@ -92,7 +92,7 @@ void free_box(box_t *box)
     free_group(box->group);
   if (box->unorm_b_vectors)
     free(box->unorm_b_vectors);
-  free(box->box_size);
+  free(box->cell_size);
   free(box->b_vectors);
   free(box->ib_vectors);
   free(box->tilings);
@@ -103,7 +103,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
 {
 
   box_t *box = (box_t *)malloc(sizeof(box_t));
-  box->box_size = (SCALAR *)calloc(N_DIMS, sizeof(SCALAR));
+  box->cell_size = (SCALAR *)calloc(N_DIMS, sizeof(SCALAR));
   box->b_vectors = (SCALAR *)calloc(N_DIMS * N_DIMS, sizeof(SCALAR));
   box->ib_vectors = (SCALAR *)malloc(N_DIMS * N_DIMS * sizeof(SCALAR));
   box->unorm_b_vectors = unorm_b_vectors;
@@ -147,11 +147,11 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
   // get max box size in each dimension
   for (i = 0; i < N_DIMS; i++)
     for (j = 0; j < N_DIMS; j++)
-      box->box_size[i] = fmax(box->box_size[i], box->b_vectors[i * N_DIMS + j]);
+      box->cell_size[i] = fmax(box->cell_size[i], box->b_vectors[i * N_DIMS + j]);
 #ifdef DEBUG
   printf("Box is size ");
   for (i = 0; i < N_DIMS; i++)
-    printf("%f ", box->box_size[i]);
+    printf("%f ", box->cell_size[i]);
   printf("Inverse Projected vectors:\n");
   for (i = 0; i < N_DIMS; i++)
   {

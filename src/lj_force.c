@@ -22,7 +22,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 {
   unsigned int n_dims = N_DIMS;
   unsigned int n_particles = params->n_particles;
-  double *box_size = params->box->box_size;
+  double *cell_size = params->box->cell_size;
   force_t *force_p = params->force_parameters;
   lj_parameters_t *parameters = (lj_parameters_t *)force_p->parameters;
   const double epsilon = parameters->epsilon;
@@ -31,7 +31,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 
   // update neighbor list
   // TODO: Turn back on
-  // update_nlist(positions, box_size, n_dims, n_particles, params->n_ghost_particles, nlist);
+  // update_nlist(positions, cell_size, n_dims, n_particles, params->n_ghost_particles, nlist);
 
   unsigned int i, j, k, n;
   int offset;
@@ -101,7 +101,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         // put in 0 position
         for (k = 0; k < n_dims; k++)
         {
-          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], cell_size[k]);
           diff = positions[j * n_dims + k] - positions[i * n_dims + k];
           r += diff * diff;
           force_vector[k] = diff;
