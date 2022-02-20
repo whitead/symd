@@ -5,6 +5,28 @@
 #include <math.h>
 #include <string.h>
 #include <gsl/gsl_rng.h>
+#include <gsl/gsl_matrix_double.h>
+#include <gsl/gsl_linalg.h>
+
+static void
+invert_matrix(SCALAR *data, SCALAR *inv_data)
+{
+
+  gsl_matrix *matrix = gsl_matrix_alloc(N_DIMS, N_DIMS);
+  memcpy(matrix->data, data, sizeof(SCALAR) * N_DIMS * N_DIMS);
+  gsl_permutation *p = gsl_permutation_alloc(N_DIMS);
+  int s;
+
+  // Compute the LU decomposition of this matrix
+  gsl_linalg_LU_decomp(matrix, p, &s);
+
+  // Compute the  inverse of the LU decomposition
+  gsl_matrix_view inv = gsl_matrix_view_array(inv_data, N_DIMS, N_DIMS);
+  gsl_linalg_LU_invert(matrix, p, &inv.matrix);
+
+  gsl_permutation_free(p);
+  gsl_matrix_free(matrix);
+}
 
 static int sign(char x)
 {
@@ -59,7 +81,7 @@ void unscale_coords(SCALAR *dest, SCALAR *src, box_t *box)
 
 void tiling(int *result, unsigned int cur_dim, unsigned int n)
 {
-  unsigned int i, j;
+  unsigned int i;
   for (i = 0; i < n * 2 + 1; i++)
     result[cur_dim * N_DIMS + i] = (int)(i)-n;
 }
@@ -92,26 +114,16 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
 
   // project to get valid basis vector
   if (group)
-    for (i = 0; i < N_DIMS * N_DIMS; i++)
-      for (j = 0; j < N_DIMS * N_DIMS; j++)
+    for (i = 0; i < N_DIMS * N_DIMS; i++) {
+      for (j = 0; j < N_DIMS * N_DIMS; j++) {
         box->b_vectors[i] += unorm_b_vectors[j] * group->projector[i * N_DIMS * N_DIMS + j];
+      }
+    }
   else
     memcpy(box->b_vectors, unorm_b_vectors, sizeof(SCALAR) * N_DIMS * N_DIMS);
 
   // compute their inverse
-  if (N_DIMS == 2)
-  {
-    double s = 1 / (box->b_vectors[0] * box->b_vectors[3] - box->b_vectors[1] * box->b_vectors[2]);
-    box->ib_vectors[0] = box->b_vectors[3] * s;
-    box->ib_vectors[1] = -box->b_vectors[1] * s;
-    box->ib_vectors[2] = -box->b_vectors[2] * s;
-    box->ib_vectors[3] = box->b_vectors[0] * s;
-  }
-  else
-  {
-    fprintf(stderr, "Finish implementing matrix invese\n");
-    exit(1);
-  }
+  invert_matrix(box->b_vectors, box->ib_vectors);
 
   // get max box size in each dimension
   for (i = 0; i < N_DIMS; i++)
@@ -228,7 +240,7 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
       if (unorm_b_vectors[i] && gsl_rng_uniform(params->rng) < 1.0 / N_DIMS)
       {
         // between 99% and 101%
-        unorm_b_vectors[i] *= 1.0 + gsl_rng_uniform(params->rng) * 0.02 - 0.01;
+        unorm_b_vectors[i] *= 1.0 + gsl_rng_uniform(params->rng) * 0.002 - 0.001;
         success = 1;
       }
     }
@@ -274,7 +286,7 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
   {
 #ifdef DEBUG
     printf("Accepted with MHC %g (delta E = %g, delta V = %g)\n", mhc, new_energy - *penergy, newV - oldV);
-#endif // DEBUG
+#endif
     // accepted
     // TODO: rebuild cells in nlist
     *penergy = new_energy;
@@ -287,7 +299,7 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
   {
 #ifdef DEBUG
     printf("Rejected with MHC %g (delta E = %g, delta V = %g)\n", mhc, new_energy - *penergy, newV - oldV);
-#endif // DEBUG
+#endif
     // undo rescale coordinates
     // go to scaled
     for (i = 0; i < params->n_particles; i++)

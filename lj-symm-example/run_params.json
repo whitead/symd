@@ -1,27 +1,28 @@
 {
-    "steps": 1000000,
+    "steps": 250000,
     "time_step": 0.005,
-    "temperature": 0.3,
+    "temperature": 0.2,
     "start_temperature": 0.5,
     "velocity_seed": 456415615,
     "thermostat_seed": 1565,
-    "bussi_taut": 0.01,
+    "bussi_taut": 2,
     "rcut": 3,
     "lj_sigma": 1.0,
     "box": [
-        75,
-        75
+        50,
+        50,
+        50
     ],
     "images": 2,
     "n_particles": 25,
-    "start_positions": "p4gm.xyz",
-    "print_period": 50,
+    "start_positions": "176.xyz",
+    "print_period": 100,
     "positions_log_file": "positions.xyz",
     "position_log_period": 50,
     "force_type": "lj",
-    "group": "p4gm.json",
-    "thermostat": "bussi",
+    "group": "176.json",
+    "thermostat": "anderson",
     "com_remove_period": 1000,
     "pressure": 2,
-    "box_update_period": 10
+    "box_update_period": 25
 }

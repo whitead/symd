@@ -10,12 +10,12 @@ typedef struct
   nlist_parameters_t *nlist;
 } lj_parameters_t;
 
-static inline double lj(double r, double epsilon, double sigma, double *energy)
+static inline void lj(double r, double epsilon, double sigma, double result[2])
 {
   double ri6 = pow(sigma / r, 6);
   double ri12 = ri6 * ri6;
-  *energy += 4 * epsilon * (ri12 - ri6);
-  return 4 * epsilon * (6 * ri6 * sigma / r - 12 * ri12 * sigma / r);
+  result[1] = 4 * epsilon * (ri12 - ri6);
+  result[0] = 4 * epsilon * (6 * ri6 * sigma / r - 12 * ri12 * sigma / r);
 }
 
 double lj_gather_forces(run_params_t *params, double *positions, double *forces)
@@ -36,11 +36,13 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   unsigned int i, j, k, n;
   int offset;
   double penergy = 0;
-  double r, force, diff;
+  double r, force, diff, e, lj_result[2];
   double force_vector[n_dims];
   double rcut = sqrt(nlist->rcut);
-  double e_shift, e;
-  double lj_shift = lj(rcut, epsilon, sigma, &e_shift);
+  double e_shift, lj_shift;
+  lj(rcut, epsilon, sigma, lj_result);
+  lj_shift = lj_result[0];
+  e_shift = lj_result[1];
 
 #ifdef DEBUG
   // check_nlist(params, nlist, positions, rcut);
@@ -108,9 +110,11 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
           continue;
         r = sqrt(r);
         // LJ force and potential
-        force = lj(r, epsilon, sigma, &e) - lj_shift;
+        lj(r, epsilon, sigma, lj_result);
+        force = lj_result[0] - lj_shift;
+        e = lj_result[1] - e_shift;
 #ifdef DEBUG
-        printf("F(%d <-> %d, %g) = %g\n", i, j, r, force);
+        printf("F(%d <-> %d, %g) = %g, %g\n", i, j, r, force, e);
 #endif // DEBUG
 
 #pragma omp critical(update_forces)
@@ -121,7 +125,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
             forces[j * n_dims + k] -= force / r * force_vector[k];
         }
 
-        penergy += e - e_shift;
+        penergy += e;
       }
       // TODO: Turn back on when nlsit is working
       // offset += nlist->nlist_count[i];
