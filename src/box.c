@@ -122,18 +122,8 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
   else
     memcpy(box->b_vectors, unorm_b_vectors, sizeof(SCALAR) * N_DIMS * N_DIMS);
 
-  // compute their inverse
-  invert_matrix(box->b_vectors, box->ib_vectors);
-
-  // get max box size in each dimension
-  for (i = 0; i < N_DIMS; i++)
-    for (j = 0; j < N_DIMS; j++)
-      box->box_size[i] = fmax(box->box_size[i], box->b_vectors[i * N_DIMS + j]);
 
 #ifdef DEBUG
-  printf("Box is size ");
-  for (i = 0; i < N_DIMS; i++)
-    printf("%f ", box->box_size[i]);
   printf("\nUnormed vectors (column wise):\n");
   for (i = 0; i < N_DIMS; i++)
   {
@@ -148,6 +138,19 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
       printf("%f ", box->b_vectors[i * N_DIMS + j]);
     printf("\n");
   }
+  #endif
+
+  // compute their inverse
+  invert_matrix(box->b_vectors, box->ib_vectors);
+
+  // get max box size in each dimension
+  for (i = 0; i < N_DIMS; i++)
+    for (j = 0; j < N_DIMS; j++)
+      box->box_size[i] = fmax(box->box_size[i], box->b_vectors[i * N_DIMS + j]);
+#ifdef DEBUG
+  printf("Box is size ");
+  for (i = 0; i < N_DIMS; i++)
+    printf("%f ", box->box_size[i]);
   printf("Inverse Projected vectors:\n");
   for (i = 0; i < N_DIMS; i++)
   {
