@@ -11,7 +11,7 @@ static const char *
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
     \"box_update_period\": 0, \"force_type\": null,\
-     \"force_log_period\" : 0, \"images\": 1, \"langevin_gamma\": 0.1} ";
+     \"force_log_period\" : 0, \"n_images\": 1, \"langevin_gamma\": 0.1} ";
 
 #ifdef DEBUG
 const char *elements[] = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti",
@@ -188,10 +188,10 @@ run_params_t *read_parameters(char *file_name)
   gsl_rng_set(rng, seed);
   params->rng = rng;
 
-  // box size
+  // cell vectors
   sdata = (SCALAR *)calloc(N_DIMS * N_DIMS, sizeof(SCALAR));
   unsigned int i;
-  item = cJSON_GetObjectItem(root, "box");
+  item = cJSON_GetObjectItem(root, "cell");
   if (item)
   {
     i = 0;
@@ -200,17 +200,17 @@ run_params_t *read_parameters(char *file_name)
     {
       if (i == N_DIMS)
       {
-        // maybe it's default with no box?
+        // maybe it's default with no cell ?
         if (sdata[0] == 0)
           break;
-        fprintf(stderr, "Error: Number of box dimensions not equal to simulation dimension\n");
+        fprintf(stderr, "Error: Number of cell dimensions not equal to simulation dimension\n");
         exit(1);
       }
       sdata[i] = item->valuedouble;
       i++;
     }
     if (i != N_DIMS && i != N_DIMS * N_DIMS)
-      fprintf(stderr, "Not enough box dims set\n");
+      fprintf(stderr, "Not enough cel dims set\n");
     // convert if was sizes, not basis vectors
     if (i == N_DIMS)
     {
@@ -303,7 +303,26 @@ run_params_t *read_parameters(char *file_name)
   if (item)
   {
     group = load_group(item->valuestring, N_DIMS);
-    params->box = make_box(sdata, group, retrieve_item(root, default_root, "images")->valueint);
+    // read in images - first check for array
+    item = cJSON_GetObjectItem(root, "images");
+    unsigned int images[N_DIMS];
+    if (item)
+    {
+      if (item->type != cJSON_Array)
+      {
+        fprintf(stderr, "Error: images must be an array\n");
+        exit(1);
+      }
+      for (unsigned int i = 0; i < N_DIMS; i++)
+        images[i] = item->child->valueint;
+    }
+    else
+    {
+      // default to n_images
+      for (unsigned int i = 0; i < N_DIMS; i++)
+        images[i] = retrieve_item(root, default_root, "n_images")->valueint;
+    }
+    params->box = make_box(sdata, group, images);
     sdata = NULL;
     params->n_ghost_particles = params->n_particles * (params->box->group->size - 1) + params->n_particles * params->box->group->size * params->box->n_tilings;
 #ifdef DEBUG
@@ -367,7 +386,7 @@ run_params_t *read_parameters(char *file_name)
       printf("Warning: Assuming skin = %g\n", skin);
     }
     nlist = build_nlist_params(N_DIMS, params->n_particles, params->n_ghost_particles,
-                               params->box->cell_size, skin, rcut);
+                               params->box->box_size, skin, rcut);
   }
 
   // forces

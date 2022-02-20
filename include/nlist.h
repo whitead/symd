@@ -35,12 +35,12 @@ typedef struct
 /* Handles knowing when to and actually building/rebuilding neighbor list
  *
  */
-void update_nlist(double *positions, double *cell_size, unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, nlist_parameters_t *nlist);
+void update_nlist(double *positions, double *box_size, unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, nlist_parameters_t *nlist);
 
 /* Constructs the structure. skin and rcut should NOT be their sqaures
  *
  */
-nlist_parameters_t *build_nlist_params(unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, double *cell_size, double skin, double rcut);
+nlist_parameters_t *build_nlist_params(unsigned int n_dims, unsigned int n_particles, unsigned int n_ghost_particles, double *box_size, double skin, double rcut);
 
 void free_nlist(nlist_parameters_t *nlist);
 

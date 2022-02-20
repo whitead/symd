@@ -22,7 +22,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 {
   unsigned int n_dims = N_DIMS;
   unsigned int n_particles = params->n_particles;
-  double *cell_size = params->box->cell_size;
+  double *box_size = params->box->box_size;
   force_t *force_p = params->force_parameters;
   lj_parameters_t *parameters = (lj_parameters_t *)force_p->parameters;
   const double epsilon = parameters->epsilon;
@@ -31,7 +31,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 
   // update neighbor list
   // TODO: Turn back on
-  // update_nlist(positions, cell_size, n_dims, n_particles, params->n_ghost_particles, nlist);
+  // update_nlist(positions, box_size, n_dims, n_particles, params->n_ghost_particles, nlist);
 
   unsigned int i, j, k, n;
   int offset;
@@ -45,7 +45,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   e_shift = lj_result[1];
 
 #ifdef DEBUG
-  // check_nlist(params, nlist, positions, rcut);
+  check_nlist(params, nlist, positions, rcut);
 #endif
 
 // zero forces
@@ -86,22 +86,19 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         for (j = 0; j < i; j++)
         {
           // TODO: turn back on
-          //  offset += nlist->nlist_count[j];
+          offset += nlist->nlist_count[j];
         }
       }
 #endif
-      // iterate through neighbor list
-      //  for (n = offset; n - offset < nlist->nlist_count[i]; n++)
-      //  {
-      //    j = nlist->nlist[n];
-      for (j = i + 1; j < n_particles + params->n_ghost_particles; j++)
+      //iterate through neighbor list
+      for (n = offset; n - offset < nlist->nlist_count[i]; n++)
       {
+        j = nlist->nlist[n];
         r = 0;
         // get distance vector
         // put in 0 position
         for (k = 0; k < n_dims; k++)
         {
-          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], cell_size[k]);
           diff = positions[j * n_dims + k] - positions[i * n_dims + k];
           r += diff * diff;
           force_vector[k] = diff;
@@ -129,7 +126,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         penergy += e;
       }
       // TODO: Turn back on when nlsit is working
-      // offset += nlist->nlist_count[i];
+      offset += nlist->nlist_count[i];
     }
   }
 
