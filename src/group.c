@@ -13,7 +13,7 @@ void action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALAR
             output[i] += data[j] * g[i * (n_dims + 1) + j];
         // w coord
         output[i] += s * g[i * (n_dims + 1) + j];
-        // output[i] = fmod(output[i], 1.0); ????
+        //output[i] = fmod(output[i], 1.0);// ????
     }
 }
 

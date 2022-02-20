@@ -100,7 +100,7 @@ void main_loop(run_params_t *params)
     if (params->box->group)
       fold_particles(params, positions);
 
-    if (i % params->com_remove_period == 0) {
+    if (params->com_remove_period > 0 && i % params->com_remove_period == 0) {
       fold_velocities(params, velocities);
       remove_com(velocities, params->masses, N_DIMS, params->n_particles * params->box->group->size);
     }
@@ -109,7 +109,7 @@ void main_loop(run_params_t *params)
     if (params->force_parameters)
       penergy = params->force_parameters->gather(params, positions, forces);
 
-    if (params->box_update_period && i % params->box_update_period == 0)
+    if (params->box_update_period > 0 && i % params->box_update_period == 0)
       try_rescale(params, positions, &penergy, forces);
 
     // output forces

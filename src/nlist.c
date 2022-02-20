@@ -200,12 +200,12 @@ void build_cells(double *box_size,
   for (i = 0; i < nlist->cell_number_total; i++)
     nlist->mapping[i + nlist->map_offset] = i;
 
-#ifdef DEBUG
+#ifdef DEBUG2
   printf("mapping:\n");
   for (i = 0; i < nlist->map_offset * 2 + nlist->cell_number_total; i++)
     printf("%d ", nlist->mapping[i]);
   printf("\n");
-#endif // DEBUG
+#endif // DEBUG2
 
   // remove ghost cells from cell count
   for (i = 0; i < n_dims; i++)

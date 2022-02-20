@@ -329,7 +329,7 @@ run_params_t *read_parameters(char *file_name)
     sdata = NULL;
 
     sdata = (SCALAR *)malloc(sizeof(SCALAR) * (params->n_ghost_particles + params->n_particles));
-    for(i = 0; i < params->n_ghost_particles; i += params->n_particles)
+    for(i = 0; i < params->n_particles + params->n_ghost_particles; i += params->n_particles)
       memcpy(&sdata[i], params->masses, params->n_particles * sizeof(SCALAR));
     // before we're done, use it to unscale
     // ok now done
@@ -519,9 +519,7 @@ double calculate_kenergy(double *velocities, double *masses, unsigned int n_dims
   {
     etemp = 0;
     for (j = 0; j < n_dims; j++)
-    {
       etemp += velocities[i * n_dims + j] * velocities[i * n_dims + j];
-    }
     kenergy += 0.5 * etemp * masses[i];
   }
 
@@ -654,7 +652,7 @@ double remove_com(double *data, double *masses, unsigned int n_dims, unsigned in
     mass_sum += masses[i];
     for (k = 0; k < n_dims; k++)
     {
-      com[k] += data[i * n_dims + k] / masses[i];
+      com[k] += data[i * n_dims + k]/ masses[i];
     }
   }
 
