@@ -24,4 +24,6 @@ thermostat_t *build_anderson(double collision_freq, gsl_rng *rng);
 
 thermostat_t *build_bussi(double taut, gsl_rng *rng);
 
-#endif //THERMOSTAT_H_
+thermostat_t *build_baoab(double gamma, gsl_rng *rng);
+
+#endif // THERMOSTAT_H_

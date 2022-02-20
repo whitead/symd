@@ -11,7 +11,7 @@ static const char *
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
     \"box_update_period\": 0, \"force_type\": null,\
-     \"force_log_period\" : 0, \"images\": 1} ";
+     \"force_log_period\" : 0, \"images\": 1, \"langevin_gamma\": 0.1} ";
 
 #ifdef DEBUG
 const char *elements[] = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti",
@@ -241,6 +241,11 @@ run_params_t *read_parameters(char *file_name)
         double taut = retrieve_item(root, default_root, "bussi_taut")->valuedouble;
         params->thermostat_parameters = build_bussi(taut, params->rng);
       }
+      else if (!strcmp(thermostat, "baoab"))
+      {
+        double taut = retrieve_item(root, default_root, "langevin_gamma")->valuedouble;
+        params->thermostat_parameters = build_baoab(taut, params->rng);
+      }
       else
       {
         fprintf(stderr, "Could not understand thermostat type %s\n", thermostat);
@@ -329,7 +334,7 @@ run_params_t *read_parameters(char *file_name)
     sdata = NULL;
 
     sdata = (SCALAR *)malloc(sizeof(SCALAR) * (params->n_ghost_particles + params->n_particles));
-    for(i = 0; i < params->n_particles + params->n_ghost_particles; i += params->n_particles)
+    for (i = 0; i < params->n_particles + params->n_ghost_particles; i += params->n_particles)
       memcpy(&sdata[i], params->masses, params->n_particles * sizeof(SCALAR));
     // before we're done, use it to unscale
     // ok now done
@@ -652,7 +657,7 @@ double remove_com(double *data, double *masses, unsigned int n_dims, unsigned in
     mass_sum += masses[i];
     for (k = 0; k < n_dims; k++)
     {
-      com[k] += data[i * n_dims + k]/ masses[i];
+      com[k] += data[i * n_dims + k] / masses[i];
     }
   }
 

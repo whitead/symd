@@ -1,0 +1,25 @@
+color change rgb 10 cyan 0.9607843137254902 0.9568627450980393 0.9137254901960784
+color Display Background cyan
+axes location Off
+display shadows off
+display ambientocclusion on
+display resize 1200 800
+set numframes [molinfo top get numframes]
+for {set i 0} {$i < $numframes} {incr i 1} {
+	# and take the picture
+	render TachyonLOptiXInternal [format "%s/symd.%04d.bmp" "D:\Trajectories" $i]
+	#rotate
+	#rotate y by [expr 360.0 / $numframes]
+    animate goto $i
+    # force the update
+	display update
+}
+reset view
+for {set i $numframes} {$i < [expr $numframes + 360]} {incr i 1} {
+	# and take the picture
+	render TachyonLOptiXInternal [format "%s/symd.%04d.bmp" "D:\Trajectories" $i]
+	#rotate
+	rotate y by 1.0
+    # force the update
+	display update
+}

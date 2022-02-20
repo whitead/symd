@@ -1,6 +1,6 @@
 {
-    "steps": 250000,
-    "time_step": 0.005,
+    "steps": 150000,
+    "time_step": 0.01,
     "temperature": 0.2,
     "start_temperature": 0.5,
     "velocity_seed": 456415615,
@@ -9,20 +9,20 @@
     "rcut": 3,
     "lj_sigma": 1.0,
     "box": [
-        50,
-        50,
-        50
+        25,
+        25,
+        25
     ],
     "images": 2,
-    "n_particles": 25,
-    "start_positions": "176.xyz",
+    "n_particles": 2,
+    "start_positions": "134.xyz",
     "print_period": 100,
     "positions_log_file": "positions.xyz",
     "position_log_period": 50,
     "force_type": "lj",
-    "group": "176.json",
-    "thermostat": "anderson",
-    "com_remove_period": 1000,
+    "group": "134.json",
+    "thermostat": "baoab",
+    "com_remove_period": 0,
     "pressure": 2,
-    "box_update_period": 25
+    "box_update_period": 5
 }

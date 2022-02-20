@@ -85,7 +85,8 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         offset = 0;
         for (j = 0; j < i; j++)
         {
-          offset += nlist->nlist_count[j];
+          // TODO: turn back on
+          //  offset += nlist->nlist_count[j];
         }
       }
 #endif

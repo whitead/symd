@@ -114,14 +114,15 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
 
   // project to get valid basis vector
   if (group)
-    for (i = 0; i < N_DIMS * N_DIMS; i++) {
-      for (j = 0; j < N_DIMS * N_DIMS; j++) {
+    for (i = 0; i < N_DIMS * N_DIMS; i++)
+    {
+      for (j = 0; j < N_DIMS * N_DIMS; j++)
+      {
         box->b_vectors[i] += unorm_b_vectors[j] * group->projector[i * N_DIMS * N_DIMS + j];
       }
     }
   else
     memcpy(box->b_vectors, unorm_b_vectors, sizeof(SCALAR) * N_DIMS * N_DIMS);
-
 
 #ifdef DEBUG
   printf("\nUnormed vectors (column wise):\n");
@@ -138,7 +139,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
       printf("%f ", box->b_vectors[i * N_DIMS + j]);
     printf("\n");
   }
-  #endif
+#endif
 
   // compute their inverse
   invert_matrix(box->b_vectors, box->ib_vectors);

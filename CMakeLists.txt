@@ -22,7 +22,7 @@ project(symd)
 if (CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
 set(APPEND CMAKE_C_FLAGS_RELEASE "-O2 -g")
 else()
-set(CMAKE_C_FLAGS_RELEASE "-O3 -fno-tree-pta -g -march=native -funroll-loops -fmodulo-sched -fmodulo-sched-allow-regmoves")
+set(CMAKE_C_FLAGS_RELEASE "-Og -fno-tree-pta -g -march=native -funroll-loops -fmodulo-sched -fmodulo-sched-allow-regmoves")
 #set(CMAKE_C_FLAGS_RELEASE "-O3 -g -Wall")
 endif()
 
@@ -42,11 +42,12 @@ set(SOURCE_FILES src/cJSON.c
                 src/main_loop.c
                 src/box.c
                 src/nlist.c
-                src/vverlet_integrate.c
+                src/integrate.c
                 src/util.c
                 src/anderson_thermostat.c
                 src/bussi_thermostat.c
                 src/group.c
+                src/baoab_thermostat.c
                 )
 
 # add the executable
