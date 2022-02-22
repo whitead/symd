@@ -295,6 +295,27 @@ run_params_t *read_parameters(char *file_name)
         load_matrix(item->valuestring, params->n_particles, N_DIMS, 0);
   }
 
+  // read in images - first check for array
+  item = cJSON_GetObjectItem(root, "images");
+  unsigned int images[N_DIMS];
+  if (item)
+  {
+    if (item->type != cJSON_Array)
+    {
+      fprintf(stderr, "Error: images must be an array\n");
+      exit(1);
+    }
+    item = item->child;
+    for (unsigned int i = 0; i < N_DIMS && item != NULL; i++, item = item->next)
+      images[i] = item->valueint;
+  }
+  else
+  {
+    // default to n_images
+    for (unsigned int i = 0; i < N_DIMS; i++)
+      images[i] = retrieve_item(root, default_root, "n_images")->valueint;
+  }
+
   // group - partition to ghost too
   // also will finish making box here, which was deferred
   group = NULL;
@@ -303,25 +324,6 @@ run_params_t *read_parameters(char *file_name)
   if (item)
   {
     group = load_group(item->valuestring, N_DIMS);
-    // read in images - first check for array
-    item = cJSON_GetObjectItem(root, "images");
-    unsigned int images[N_DIMS];
-    if (item)
-    {
-      if (item->type != cJSON_Array)
-      {
-        fprintf(stderr, "Error: images must be an array\n");
-        exit(1);
-      }
-      for (unsigned int i = 0; i < N_DIMS; i++)
-        images[i] = item->child->valueint;
-    }
-    else
-    {
-      // default to n_images
-      for (unsigned int i = 0; i < N_DIMS; i++)
-        images[i] = retrieve_item(root, default_root, "n_images")->valueint;
-    }
     params->box = make_box(sdata, group, images);
     sdata = NULL;
     params->n_ghost_particles = params->n_particles * (params->box->group->size - 1) + params->n_particles * params->box->group->size * params->box->n_tilings;
@@ -363,7 +365,7 @@ run_params_t *read_parameters(char *file_name)
   }
   else
   {
-    params->box = make_box(sdata, NULL, retrieve_item(root, default_root, "images")->valueint);
+    params->box = make_box(sdata, NULL, images);
     sdata = NULL;
   }
 
@@ -371,22 +373,6 @@ run_params_t *read_parameters(char *file_name)
   if (params->box_update_period)
   {
     params->pressure = (double)retrieve_item(root, default_root, "pressure")->valuedouble;
-  }
-
-  // make nlist
-  nlist_parameters_t *nlist = NULL;
-  item = cJSON_GetObjectItem(root, "rcut");
-  if (item)
-  {
-    double rcut = item->valuedouble;
-    double skin = retrieve_item(root, default_root, "skin")->valuedouble;
-    if (skin == 0)
-    {
-      skin = 0.2 * rcut;
-      printf("Warning: Assuming skin = %g\n", skin);
-    }
-    nlist = build_nlist_params(N_DIMS, params->n_particles, params->n_ghost_particles,
-                               params->box->box_size, skin, rcut);
   }
 
   // forces
@@ -400,15 +386,43 @@ run_params_t *read_parameters(char *file_name)
     double k = retrieve_item(root, default_root, "harmonic_constant")->valuedouble;
     params->force_parameters = build_harmonic(k);
   }
+  else if (!strcmp(force_type, "nlj"))
+  {
+    double epsilon = retrieve_item(root, default_root, "lj_epsilon")->valuedouble;
+    double sigma = retrieve_item(root, default_root, "lj_sigma")->valuedouble;
+    // make nlist
+    nlist_parameters_t *nlist = NULL;
+    double rcut = sigma * 3;
+    double skin = 0.2 * rcut;
+    item = cJSON_GetObjectItem(root, "rcut");
+    if (item)
+    {
+      rcut = item->valuedouble;
+      skin = retrieve_item(root, default_root, "skin")->valuedouble;
+      if (skin == 0)
+      {
+        skin = 0.2 * rcut;
+        printf("Warning: Assuming skin = %g\n", skin);
+      }
+    }
+
+    nlist = build_nlist_params(N_DIMS, params->n_particles, params->n_ghost_particles,
+                               params->box->box_size, skin, rcut);
+    params->force_parameters = build_nlj(epsilon, sigma, nlist);
+  }
   else if (!strcmp(force_type, "lj"))
   {
     double epsilon = retrieve_item(root, default_root, "lj_epsilon")->valuedouble;
     double sigma = retrieve_item(root, default_root, "lj_sigma")->valuedouble;
-    params->force_parameters = build_lj(epsilon, sigma, nlist);
+    params->force_parameters = build_lj(epsilon, sigma);
   }
   else if (!strcmp(force_type, "soft"))
   {
     params->force_parameters = build_soft();
+  }
+  else if (!strcmp(force_type, "gravity"))
+  {
+    params->force_parameters = build_gravity();
   }
   else
   {

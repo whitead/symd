@@ -108,7 +108,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
   box->ib_vectors = (SCALAR *)malloc(N_DIMS * N_DIMS * sizeof(SCALAR));
   box->unorm_b_vectors = unorm_b_vectors;
   box->group = group;
-  box->images = images;
+  memcpy(box->images, images, N_DIMS * sizeof(unsigned int));
 
   unsigned int i, j, k, l;
 
@@ -161,15 +161,19 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
   // we get that by using base 5 and an integer
   // like 50 would be 200 in base 5, which would be 0,-2,-2 for 3D
   unsigned int n[N_DIMS];
-  unsigned int ntot = 1;
-  for(i = 0; i < N_DIMS; i++) {
-    n[i] = images[i] * 2 + 1; 
+  // for different number images - it's like building up a number
+  // with different base in each position.
+  unsigned int ntot = 1, ncurr;
+  for (i = 0; i < N_DIMS; i++)
+  {
+    n[i] = images[i] * 2 + 1;
     ntot *= n[i];
   }
   // used to omit origin
   unsigned int past_zero = 0;
   int v;
   box->tilings = malloc(sizeof(int) * (ntot - 1) * N_DIMS);
+  ncurr = ntot;
   for (i = 0; i < ntot; i++)
   {
     l = i;
@@ -178,16 +182,20 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
       past_zero = 1;
       continue;
     }
-    for (j = 0; j < N_DIMS; j++)
+    // what the current j position
+    // represents for integer (like 100s position)
+    ncurr = ntot;
+    for (j = N_DIMS - 1; j < N_DIMS; j--)
     {
-      v = l / pow(n[j], N_DIMS - j - 1);
-      l -= v * pow(n[j], N_DIMS - j - 1);
+      ncurr /= n[j];
+      v = l / ncurr;
+      l -= v * ncurr;
       box->tilings[(i - past_zero) * N_DIMS + j] = v - images[j];
     }
   }
   box->n_tilings = ntot - 1;
 #ifdef DEBUG
-  printf("tilings:\n");
+  printf("tilings %d:\n", box->n_tilings);
   for (i = 0; i < box->n_tilings; i++)
   {
     printf("%d: ", i);

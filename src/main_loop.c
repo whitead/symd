@@ -114,14 +114,14 @@ void main_loop(run_params_t *params)
     integrate_pos(params->time_step, positions, velocities, params->n_particles);
 
     // apply group if necessary
-    if (params->box->group)
+    if (params->box->group) 
       fold_particles(params, positions);
 
     // apply NPT step (before forces)
     if (params->box_update_period > 0 && i % params->box_update_period == 0)
       try_rescale(params, positions, &penergy, forces);
 
-    // integrate B1
+    // integrate B2
     // gather forces
     if (params->force_parameters)
       penergy = params->force_parameters->gather(params, positions, forces);
@@ -141,7 +141,7 @@ void main_loop(run_params_t *params)
              i, i * params->time_step, insta_temperature, penergy, kenergy,
              penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box));
     }
-    if (insta_temperature != insta_temperature || insta_temperature > 1e25)
+    if (params->n_particles > 1 && (insta_temperature != insta_temperature || insta_temperature > 1e25))
     {
       do_exit = 1;
     }

@@ -25,7 +25,11 @@ struct force_t
 
 force_t *build_harmonic(double k);
 
-force_t *build_lj(const double epsilon, const double sigma, nlist_parameters_t *nlist);
+force_t *build_nlj(const double epsilon, const double sigma, nlist_parameters_t *nlist);
+
+force_t *build_lj(const double epsilon, const double sigma);
 
 force_t *build_soft();
+
+force_t *build_gravity();
 #endif

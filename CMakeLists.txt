@@ -13,7 +13,6 @@ execute_process (
 )
 
 add_definitions(-DVERSION="${GIT_COMMIT_HASH}")
-add_definitions(-DN_DIMS=3)
 
 # set the project name
 project(symd)
@@ -39,6 +38,7 @@ set(SOURCE_FILES src/cJSON.c
                 src/harmonic_force.c
                 src/lj_force.c
                 src/soft_force.c
+                src/gravity_force.c
                 src/main_loop.c
                 src/box.c
                 src/nlist.c
@@ -52,9 +52,18 @@ set(SOURCE_FILES src/cJSON.c
 
 # add the executable
 add_executable(symd ${SOURCE_FILES})
+target_compile_definitions(symd PUBLIC -DN_DIMS=3)
+
+add_executable(symd2 ${SOURCE_FILES})
+target_compile_definitions(symd2 PUBLIC -DN_DIMS=2)
 
 find_package(GSL REQUIRED)    # See below (2)
+find_package(OpenMP REQUIRED)
+
 target_link_libraries(symd GSL::gsl GSL::gslcblas)
 target_link_libraries(symd m)
-#find_package(OpenMP REQUIRED)
-#target_link_libraries(symd OpenMP::OpenMP_CXX)
+target_link_libraries(symd OpenMP::OpenMP_CXX)
+
+target_link_libraries(symd2 GSL::gsl GSL::gslcblas)
+target_link_libraries(symd2 m)
+target_link_libraries(symd2 OpenMP::OpenMP_CXX)
