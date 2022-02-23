@@ -18,7 +18,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
 
 void tile(run_params_t *params, double *positions);
 
-box_t *make_box(double *unorm_b_vectors, group_t *group, unsigned int n_tilings);
+box_t *make_box(double *unorm_b_vectors, group_t *group, unsigned int images[N_DIMS]);
 void free_box(box_t *box);
 
 struct box_t
@@ -30,7 +30,7 @@ struct box_t
     double *ib_vectors;
     int *tilings;
     unsigned int n_tilings;
-    unsigned int n_images;
+    unsigned int images[N_DIMS];
     group_t *group;
 };
 

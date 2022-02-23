@@ -6,7 +6,7 @@ double baoab_thermostat(thermostat_t *params, double temperature, double time_st
 {
 
     unsigned int i, j;
-    double c1 = exp(-params->param);
+    double c1 = exp(-params->param * time_step);
     double c2 = sqrt(1 - c1 * c1);
     for (i = 0; i < n_particles; i++)
     {

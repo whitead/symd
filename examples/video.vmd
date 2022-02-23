@@ -9,7 +9,7 @@ for {set i 0} {$i < $numframes} {incr i 1} {
 	# and take the picture
 	render TachyonLOptiXInternal [format "%s/symd.%04d.bmp" "D:\Trajectories" $i]
 	#rotate
-	#rotate y by [expr 360.0 / $numframes]
+	rotate y by [expr 360.0 / $numframes]
     animate goto $i
     # force the update
 	display update

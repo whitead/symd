@@ -99,7 +99,7 @@ void free_box(box_t *box)
   free(box);
 }
 
-box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
+box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_DIMS])
 {
 
   box_t *box = (box_t *)malloc(sizeof(box_t));
@@ -108,7 +108,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
   box->ib_vectors = (SCALAR *)malloc(N_DIMS * N_DIMS * sizeof(SCALAR));
   box->unorm_b_vectors = unorm_b_vectors;
   box->group = group;
-  box->n_images = images;
+  memcpy(box->images, images, N_DIMS * sizeof(unsigned int));
 
   unsigned int i, j, k, l;
 
@@ -144,14 +144,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
   // compute their inverse
   invert_matrix(box->b_vectors, box->ib_vectors);
 
-  // get max box size in each dimension
-  for (i = 0; i < N_DIMS; i++)
-    for (j = 0; j < N_DIMS; j++)
-      box->box_size[i] = fmax(box->box_size[i], box->b_vectors[i * N_DIMS + j]);
 #ifdef DEBUG
-  printf("Box is size ");
-  for (i = 0; i < N_DIMS; i++)
-    printf("%f ", box->box_size[i]);
   printf("Inverse Projected vectors:\n");
   for (i = 0; i < N_DIMS; i++)
   {
@@ -159,7 +152,6 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
       printf("%f ", box->ib_vectors[i * N_DIMS + j]);
     printf("\n");
   }
-
 #endif
 
   // build out tilings
@@ -168,12 +160,20 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
   // so if we want to having tilings at -2, -1, 0, 1, 2
   // we get that by using base 5 and an integer
   // like 50 would be 200 in base 5, which would be 0,-2,-2 for 3D
-  unsigned int n = images * 2 + 1;
-  unsigned int ntot = pow(n, N_DIMS);
+  unsigned int n[N_DIMS];
+  // for different number images - it's like building up a number
+  // with different base in each position.
+  unsigned int ntot = 1, ncurr;
+  for (i = 0; i < N_DIMS; i++)
+  {
+    n[i] = images[i] * 2 + 1;
+    ntot *= n[i];
+  }
   // used to omit origin
   unsigned int past_zero = 0;
   int v;
   box->tilings = malloc(sizeof(int) * (ntot - 1) * N_DIMS);
+  ncurr = ntot;
   for (i = 0; i < ntot; i++)
   {
     l = i;
@@ -182,16 +182,20 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
       past_zero = 1;
       continue;
     }
-    for (j = 0; j < N_DIMS; j++)
+    // what the current j position
+    // represents for integer (like 100s position)
+    ncurr = ntot;
+    for (j = N_DIMS - 1; j < N_DIMS; j--)
     {
-      v = l / pow(n, N_DIMS - j - 1);
-      l -= v * pow(n, N_DIMS - j - 1);
-      box->tilings[(i - past_zero) * N_DIMS + j] = v - images;
+      ncurr /= n[j];
+      v = l / ncurr;
+      l -= v * ncurr;
+      box->tilings[(i - past_zero) * N_DIMS + j] = v - images[j];
     }
   }
   box->n_tilings = ntot - 1;
 #ifdef DEBUG
-  printf("tilings:\n");
+  printf("tilings %d:\n", box->n_tilings);
   for (i = 0; i < box->n_tilings; i++)
   {
     printf("%d: ", i);
@@ -201,6 +205,16 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images)
   }
 #endif
 
+  // get max box size in each dimension
+  for (i = 0; i < N_DIMS; i++)
+    for (j = 0; j < N_DIMS; j++)
+      box->box_size[i] = fmax(box->box_size[i], n[i] * box->b_vectors[i * N_DIMS + j]);
+
+#ifdef DEBUG
+  printf("Box is size ");
+  for (i = 0; i < N_DIMS; i++)
+    printf("%f ", box->box_size[i]);
+#endif
   return box;
 }
 
@@ -265,7 +279,7 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
   printf("\n");
 #endif
 
-  new_box = make_box(unorm_b_vectors, params->box->group, params->box->n_images);
+  new_box = make_box(unorm_b_vectors, params->box->group, params->box->images);
   newV = volume(new_box);
 
   // rescale coordinates

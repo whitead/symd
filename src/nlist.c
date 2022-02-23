@@ -94,12 +94,8 @@ void update_nlist(double *positions,
 #ifdef DEBUG
     printf("updating nlist due to %f + %f > %f\n", max1, max2, nlist->skin);
 #endif
-    // build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
+    build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
   }
-  //**********************
-  // TODO: This line below should be removed
-  //**********************
-  build_list(positions, box_size, n_dims, n_particles, n_ghost_particles, nlist);
   return;
 }
 
@@ -133,8 +129,7 @@ void build_cells(double *box_size,
   nlist->cell_number = (int *)malloc(sizeof(int) * n_dims);
   double m_box_size[n_dims];
 
-  // make our box bigger, since our tiled ghost particles
-  // will not wrap nicely.
+  // make our box bigger, for our tiled ghost particles
   memcpy(m_box_size, box_size, n_dims * sizeof(double));
   for (i = 0; i < n_dims; i++)
     m_box_size[i] *= BOX_M;
@@ -187,11 +182,15 @@ void build_cells(double *box_size,
       (unsigned int *)malloc(sizeof(unsigned int) *
                              (nlist->map_offset * 2 + nlist->cell_number_total));
 
-  // wrapped mapping
+  // TODO: simplify this?
+  // We are wrapping cells here, but it's
+  // easier than flagging wrapped cells
   for (i = 0; i < nlist->map_offset; i++)
   {
+    // map to the left
     nlist->mapping[i] =
         nlist->cell_number_total - i % nlist->cell_number_total - 1;
+    // map to the right
     nlist->mapping[i + nlist->map_offset + nlist->cell_number_total] =
         i % nlist->cell_number_total;
   }
@@ -244,7 +243,6 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
   double m_box_size[n_dims];
 
   // make our box bigger, since our tiled ghost particles
-  // will not wrap nicely.
   memcpy(m_box_size, box_size, n_dims * sizeof(double));
   for (i = 0; i < n_dims; i++)
     m_box_size[i] *= BOX_M;
@@ -261,7 +259,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
     for (k = 0; k < n_dims; k++)
     {
       // get 1D index of cell
-      icell = (int)(wrap(positions[i * n_dims + k], m_box_size[k]) / m_box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
+      icell = (int)(positions[i * n_dims + k] / m_box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
     }
     // have cell_list point to cell for particle i
     nlist->cell_list[i] = nlist->head[icell];
@@ -282,7 +280,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
 #endif // DEBUG
 
   // TODO: maybe only need n_particles???
-  for (i = 0; i < n_particles + n_ghost_particles; i++)
+  for (i = 0; i < n_particles; i++)
   {
     // reset count
     nlist->nlist_count[i] = 0;
@@ -291,7 +289,7 @@ void build_list(double *positions, double *box_size, unsigned int n_dims, unsign
     icell = 0;
     // find index of particle using polynomial indexing
     for (k = 0; k < n_dims; k++)
-      icell = (int)(wrap(positions[i * n_dims + k], m_box_size[k]) / m_box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
+      icell = (int)(positions[i * n_dims + k] / m_box_size[k]) * nlist->cell_number[k] + icell * nlist->cell_number[k];
     // loop over neighbor cells
     for (ncell = 0; ncell < nlist->ncell_number; ncell++)
     {
@@ -397,9 +395,7 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
       // distance between particles
       for (k = 0; k < n_dims; k++)
       {
-        diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-        // TODO: remove or not?
-        // diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+        diff = positions[j * n_dims + k] - positions[i * n_dims + k];
         r += diff * diff;
       }
       if (r < rcut * rcut)
@@ -456,9 +452,8 @@ int check_nlist(run_params_t *params, nlist_parameters_t *nlist, double *positio
         // distance between particles
         for (k = 0; k < n_dims; k++)
         {
-          diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
-          // TODO: remove or not?
-          // diff = positions[j * n_dims + k] - positions[i * n_dims + k];
+          // diff = min_image_dist(positions[j * n_dims + k] - positions[i * n_dims + k], box_size[k]);
+          diff = positions[j * n_dims + k] - positions[i * n_dims + k];
           r += diff * diff;
         }
         printf("%d - %d. r: %f, rcut: %f\n", i, j, sqrt(r), rcut);
