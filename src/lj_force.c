@@ -126,10 +126,13 @@ double nlj_gather_forces(run_params_t *params, double *positions, double *forces
         {
           forces[i * n_dims + k] += force / r * force_vector[k];
           if (j < params->n_particles)
+          {
             forces[j * n_dims + k] -= force / r * force_vector[k];
+            penergy += e / 2;
+          }
         }
 
-        penergy += e;
+        penergy += e / 2;
       }
       // TODO: Turn back on when nlsit is working
       offset += nlist->nlist_count[i];
