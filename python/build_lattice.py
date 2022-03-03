@@ -20,20 +20,20 @@ def main():
         print_usage()
         exit()
 
-    box_size = [float(sys.argv[x]) for x in range(2, 2 + n_dims)]
+    cell_size = [float(sys.argv[x]) for x in range(2, 2 + n_dims)]
     number = int(sys.argv[2 + n_dims])
-    increment = increment_size(n_dims, box_size, number)
+    increment = increment_size(n_dims, cell_size, number)
     enumerate_grid(
         lambda x, y: print_grid(x, y, increment, number),
         n_dims - 1,
-        [int(ceil(x / increment)) for x in box_size],
+        [int(ceil(x / increment)) for x in cell_size],
         [],
     )
 
 
-def increment_size(n_dims, box_size, number):
+def increment_size(n_dims, cell_size, number):
     volume = 1
-    for x in box_size:
+    for x in cell_size:
         volume = volume * x
     return (volume) ** (1.0 / n_dims) / number
 

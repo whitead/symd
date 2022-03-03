@@ -13,37 +13,32 @@ void action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALAR
             output[i] += data[j] * g[i * (n_dims + 1) + j];
         // w coord
         output[i] += s * g[i * (n_dims + 1) + j];
-        //output[i] = fmod(output[i], 1.0);// ????
+        // output[i] = fmod(output[i], 1.0);// ????
     }
 }
 
-void fold_particles(run_params_t *params, SCALAR *positions)
+static void _fold_particles(run_params_t *params, group_t *group, SCALAR *positions, unsigned int i_offset, unsigned int j_offset)
 {
-    group_t *group = params->box->group;
     const unsigned int p = params->n_particles;
     SCALAR temp[N_DIMS];
     unsigned int i, j, k, l;
-// update scaled and wrap
-#pragma omp parallel for default(shared) private(i)
-    for (i = 0; i < p; i++)
-        scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
 
-        // unfold and update
+    // unfold and update
 #pragma omp parallel for default(shared) private(i, j, k, l, temp)
-    for (i = 0; i < p; i++)
+    for (i = i_offset; i < i_offset + group->n_gparticles; i++)
     {
-        for (j = 0; j < group->size; j++)
+        // TODO: indexing is off -> number of particles in root image is not correct
+        for (j = j_offset; j < j_offset + group->size; j++)
         {
             // unfold scaled, store temporarily in positions
-
-            action(group->members[j].g, &positions[j * p * N_DIMS + i * N_DIMS],
+            action(group->members[j - j_offset].g, &positions[j * p * N_DIMS + i * N_DIMS],
                    &params->scaled_positions[i * N_DIMS], N_DIMS, 1.0);
             // tile and unscale
             for (k = 0; k < params->box->n_tilings; k++)
             {
                 for (l = 0; l < N_DIMS; l++)
                     temp[l] = positions[j * p * N_DIMS + i * N_DIMS + l] + params->box->tilings[k * N_DIMS + l];
-                unscale_coords(&positions[N_DIMS * (p * ((k + 1) * group->size + j) + i)],
+                unscale_coords(&positions[N_DIMS * (p * ((k + 1) * group->total_size + j) + i)],
                                temp, params->box);
             }
             // unscale default non-tiling
@@ -54,6 +49,22 @@ void fold_particles(run_params_t *params, SCALAR *positions)
     }
 }
 
+void fold_particles(run_params_t *params, SCALAR *positions)
+{
+    unsigned int i, j;
+    // update scaled and wrap
+#pragma omp parallel for default(shared) private(i)
+    for (i = 0; i < params->n_particles; i++)
+        scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
+    i = 0, j = 0;
+    for (group_t *group = params->box->group; group != NULL; group = group->next)
+    {
+        _fold_particles(params, group, positions, i, j);
+        i += group->n_gparticles;
+        j += group->size;
+    }
+}
+
 void fold_velocities(run_params_t *params, SCALAR *velocities)
 {
     group_t *group = params->box->group;
@@ -61,7 +72,7 @@ void fold_velocities(run_params_t *params, SCALAR *velocities)
     SCALAR temp[N_DIMS];
     unsigned int i, j, k, l;
 
-    //zero other velocities
+    // zero other velocities
     memset(&velocities[p], 0, params->n_ghost_particles * sizeof(SCALAR) * N_DIMS);
 
 // unfold and update
@@ -71,19 +82,19 @@ void fold_velocities(run_params_t *params, SCALAR *velocities)
         for (j = 1; j < group->size; j++)
         {
             action(group->members[j].g, &velocities[j * p * N_DIMS + i * N_DIMS],
-                    &velocities[i * N_DIMS], N_DIMS, 0.0);
+                   &velocities[i * N_DIMS], N_DIMS, 0.0);
         }
     }
 }
 
 void free_group(group_t *g)
 {
+    if (g == NULL)
+        return;
     for (unsigned int i = 0; i < g->size; i++)
-    {
         free(g->members[i].g);
-        free(g->members[i].i);
-    }
     free(g->members);
     free(g->projector);
+    free_group(g->next);
     free(g);
 }

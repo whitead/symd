@@ -37,6 +37,7 @@ typedef struct
     double *masses;
     unsigned int n_particles;
     unsigned int n_ghost_particles;
+    unsigned int dof;
     FILE *positions_file;
     FILE *final_positions_file;
     FILE *velocities_file;

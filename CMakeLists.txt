@@ -62,8 +62,8 @@ find_package(OpenMP REQUIRED)
 
 target_link_libraries(symd GSL::gsl GSL::gslcblas)
 target_link_libraries(symd m)
-target_link_libraries(symd OpenMP::OpenMP_CXX)
+#target_link_libraries(symd OpenMP::OpenMP_CXX)
 
 target_link_libraries(symd2 GSL::gsl GSL::gslcblas)
 target_link_libraries(symd2 m)
-target_link_libraries(symd2 OpenMP::OpenMP_CXX)
+#target_link_libraries(symd2 OpenMP::OpenMP_CXX)

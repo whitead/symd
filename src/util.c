@@ -150,7 +150,7 @@ run_params_t *read_parameters(char *file_name)
   load_json(file_name, &data);
   cJSON *root = cJSON_Parse(data);
   cJSON *default_root = cJSON_Parse(default_json);
-  cJSON *item;
+  cJSON *item, *item2;
 
   if (!root)
   {
@@ -323,7 +323,46 @@ run_params_t *read_parameters(char *file_name)
   item = cJSON_GetObjectItem(root, "group");
   if (item)
   {
-    group = load_group(item->valuestring, N_DIMS);
+    group = load_group(item->valuestring);
+    group->n_gparticles = params->n_particles;
+    // wyckoffs are a list dictionaries - load into linked list
+    item = cJSON_GetObjectItem(root, "wyckoffs");
+    if (item)
+    {
+      group_t *next;
+      unsigned int group_size = group->size;
+      unsigned int w_particles = 0;
+      next = group;
+      for (item = item->child; item != NULL; item = item->next)
+      {
+        next->next = load_group(cJSON_GetObjectItem(item, "group")->valuestring);
+        next = next->next;
+        group_size += next->size;
+
+        item2 = cJSON_GetObjectItem(item, "n_particles");
+        if (!item2)
+        {
+          fprintf(stderr, "Error: n_particles must be set for each wyckoff\n");
+          exit(1);
+        }
+        next->n_gparticles = item2->valueint;
+        w_particles += next->n_gparticles;
+      }
+      if (w_particles > params->n_particles)
+      {
+        fprintf(stderr, "Error: n_particles in wyckoffs exceeds n_particles\n");
+        exit(1);
+      }
+      group->n_gparticles = params->n_particles - w_particles;
+      // for simplicity, set total size at each group
+      for (next = group; next != NULL; next = next->next)
+      {
+        next->total_size = group_size;
+#ifdef DEBUG
+        printf("Loaded group %s with %d particles and %d size\n", next->name, next->size, next->n_gparticles);
+#endif
+      }
+    }
     params->box = make_box(sdata, group, images);
     sdata = NULL;
     params->n_ghost_particles = params->n_particles * (params->box->group->size - 1) + params->n_particles * params->box->group->size * params->box->n_tilings;
@@ -460,10 +499,10 @@ run_params_t *read_parameters(char *file_name)
   return params;
 }
 
-group_t *load_group(char *filename, unsigned int n_dims)
+group_t *load_group(char *filename)
 {
   char *data;
-  unsigned g_dims = n_dims + 1;
+  unsigned g_dims = N_DIMS + 1;
   load_json(filename, &data);
   cJSON *root = cJSON_Parse(data);
   cJSON *item;
@@ -484,6 +523,15 @@ group_t *load_group(char *filename, unsigned int n_dims)
 
   group_t *group = (group_t *)malloc(sizeof(group_t));
   group->name = item->valuestring;
+
+  item = cJSON_GetObjectItem(root, "dof");
+  if (!item)
+  {
+    fprintf(stderr, "Malformed group JSON - must have dof\n");
+    exit(1);
+  }
+  group->dof = item->valueint;
+
   unsigned int size = 0;
   g_t *tmp, *members = NULL;
   double *g_mat, *i_mat;
@@ -502,21 +550,21 @@ group_t *load_group(char *filename, unsigned int n_dims)
     members = tmp;
 
     g_mat = (double *)malloc(sizeof(double) * g_dims * g_dims);
-    i_mat = (double *)malloc(sizeof(double) * g_dims * g_dims);
-    load_json_matrix(cJSON_GetObjectItem(json_members, "g"), g_mat, g_dims * g_dims, "g matrix");
-    load_json_matrix(cJSON_GetObjectItem(json_members, "i"), i_mat, g_dims * g_dims, "i matrix");
-    g_t g = {.g = g_mat, .i = i_mat};
+    load_json_matrix(json_members, g_mat, g_dims * g_dims, "g matrix");
+    g_t g = {.g = g_mat};
 
     // add new member
     memcpy(&members[size - 1], &g, sizeof(g_t));
   }
   group->members = members;
   group->size = size;
+  group->total_size = size;
 
-  g_mat = (double *)malloc(sizeof(double) * n_dims * n_dims * n_dims * n_dims);
-  load_json_matrix(cJSON_GetObjectItem(root, "projector"), g_mat, n_dims * n_dims * n_dims * n_dims, "projector");
+  g_mat = (double *)malloc(sizeof(double) * N_DIMS * N_DIMS * N_DIMS * N_DIMS);
+  load_json_matrix(cJSON_GetObjectItem(root, "projector"), g_mat, N_DIMS * N_DIMS * N_DIMS * N_DIMS, "projector");
 
   group->projector = g_mat;
+  group->next = NULL;
 
   free(data);
 
@@ -535,14 +583,14 @@ void load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *m
   {
     if (i == size)
     {
-      fprintf(stderr, "Too many values in %s\n", message);
+      fprintf(stderr, "Too many values in %s. Only found %d out of %d\n", message, i, size);
       exit(1);
     }
     mat[i++] = item->valuedouble;
   }
   if (i != size)
   {
-    fprintf(stderr, "Too few values in %s\n", message);
+    fprintf(stderr, "Too few values in %s. Only found %d out of %d\n", message, i, size);
     exit(1);
   }
 }
