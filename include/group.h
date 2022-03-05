@@ -8,7 +8,7 @@
 // more info, kept as a struct
 typedef struct
 {
-    SCALAR *g;
+    SCALAR g[(N_DIMS + 1) * (N_DIMS + 1)];
 } g_t;
 
 struct group_t
@@ -19,7 +19,7 @@ struct group_t
     unsigned int n_gparticles;
     unsigned int dof;
     g_t *members;
-    SCALAR *projector;
+    SCALAR projector[N_DIMS * N_DIMS * N_DIMS * N_DIMS];
     group_t *next;
 };
 

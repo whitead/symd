@@ -17,36 +17,39 @@ void action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALAR
     }
 }
 
-static void _fold_particles(run_params_t *params, group_t *group, SCALAR *positions, unsigned int i_offset, unsigned int j_offset)
+static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR *positions, unsigned int i_offset, unsigned int index_offset)
 {
     const unsigned int p = params->n_particles;
+    const unsigned int nc = params->n_cell_particles;
     SCALAR temp[N_DIMS];
-    unsigned int i, j, k, l;
+    unsigned int i, j, k, l, index = index_offset;
 
     // unfold and update
 #pragma omp parallel for default(shared) private(i, j, k, l, temp)
-    for (i = i_offset; i < i_offset + group->n_gparticles; i++)
+    for (j = 0; j < group->size; j++)
     {
-        // TODO: indexing is off -> number of particles in root image is not correct
-        for (j = j_offset; j < j_offset + group->size; j++)
+        for (i = 0; i < group->n_gparticles; i++)
         {
             // unfold scaled, store temporarily in positions
-            action(group->members[j - j_offset].g, &positions[j * p * N_DIMS + i * N_DIMS],
-                   &params->scaled_positions[i * N_DIMS], N_DIMS, 1.0);
+            printf("i = %d (offset %d), j = %d, index = %d\n", i, i_offset, j, index);
+            action(group->members[j].g, &positions[index * N_DIMS],
+                   &params->scaled_positions[(i + i_offset) * N_DIMS], N_DIMS, 1.0);
             // tile and unscale
             for (k = 0; k < params->box->n_tilings; k++)
             {
                 for (l = 0; l < N_DIMS; l++)
-                    temp[l] = positions[j * p * N_DIMS + i * N_DIMS + l] + params->box->tilings[k * N_DIMS + l];
-                unscale_coords(&positions[N_DIMS * (p * ((k + 1) * group->total_size + j) + i)],
+                    temp[l] = positions[index * N_DIMS + l] + params->box->tilings[k * N_DIMS + l];
+                unscale_coords(&positions[nc * N_DIMS * k + index * N_DIMS],
                                temp, params->box);
             }
-            // unscale default non-tiling
+            // unscale the non-tiled folded scaled coordinates
             unscale_coords(temp,
-                           &positions[j * p * N_DIMS + i * N_DIMS], params->box);
-            memcpy(&positions[j * p * N_DIMS + i * N_DIMS], temp, N_DIMS * sizeof(SCALAR));
+                           &positions[index * N_DIMS], params->box);
+            memcpy(&positions[index * N_DIMS], temp, N_DIMS * sizeof(SCALAR));
+            index++;
         }
     }
+    return index;
 }
 
 void fold_particles(run_params_t *params, SCALAR *positions)
@@ -56,12 +59,12 @@ void fold_particles(run_params_t *params, SCALAR *positions)
 #pragma omp parallel for default(shared) private(i)
     for (i = 0; i < params->n_particles; i++)
         scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
+    // i is real particle, j is folded particle
     i = 0, j = 0;
     for (group_t *group = params->box->group; group != NULL; group = group->next)
     {
-        _fold_particles(params, group, positions, i, j);
+        j += _fold_particles(params, group, positions, i, j);
         i += group->n_gparticles;
-        j += group->size;
     }
 }
 

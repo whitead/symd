@@ -319,12 +319,13 @@ run_params_t *read_parameters(char *file_name)
   // group - partition to ghost too
   // also will finish making box here, which was deferred
   group = NULL;
-  params->n_ghost_particles = 0;
   item = cJSON_GetObjectItem(root, "group");
+  params->dof = (params->n_particles - 1) * N_DIMS;
   if (item)
   {
     group = load_group(item->valuestring);
     group->n_gparticles = params->n_particles;
+    params->n_cell_particles = group->size * params->n_particles;
     // wyckoffs are a list dictionaries - load into linked list
     item = cJSON_GetObjectItem(root, "wyckoffs");
     if (item)
@@ -332,6 +333,7 @@ run_params_t *read_parameters(char *file_name)
       group_t *next;
       unsigned int group_size = group->size;
       unsigned int w_particles = 0;
+      params->n_cell_particles = 0; // reset since we are taking particles for wyckoffs
       next = group;
       for (item = item->child; item != NULL; item = item->next)
       {
@@ -354,21 +356,30 @@ run_params_t *read_parameters(char *file_name)
         exit(1);
       }
       group->n_gparticles = params->n_particles - w_particles;
+
       // for simplicity, set total size at each group
+      // Also, count number of ghost particles (those not in asymmetric unit)
       for (next = group; next != NULL; next = next->next)
       {
         next->total_size = group_size;
+        params->dof += next->n_gparticles * next->dof;
+        params->n_cell_particles += next->n_gparticles * next->size;
 #ifdef DEBUG
-        printf("Loaded group %s with %d particles and %d size\n", next->name, next->size, next->n_gparticles);
+        printf("Loaded group %s with %d particles and %d members\n", next->name, next->n_gparticles, next->size);
 #endif
       }
+      // remove translation dof
+      params->dof -= N_DIMS;
     }
     params->box = make_box(sdata, group, images);
     sdata = NULL;
-    params->n_ghost_particles = params->n_particles * (params->box->group->size - 1) + params->n_particles * params->box->group->size * params->box->n_tilings;
+    // expand ghost particles to include tilings
+    // we subtract at the end to avoid counting the asymmetric unit particles
+    params->n_ghost_particles = params->n_cell_particles * (params->box->n_tilings + 1) - params->n_particles;
 #ifdef DEBUG
-    printf("Duplicating %d particles into %d real particles and %d ghost for group with %d elements and %d tilings\n",
-           params->n_particles, params->n_particles, params->n_ghost_particles, params->box->group->size, params->box->n_tilings);
+    printf("Duplicating %d particles into %d real particles and %d ghost for group with %d elements and %d tilings. Each cell has %d particles.\n",
+           params->n_particles, params->n_particles, params->n_ghost_particles, params->box->group->size, params->box->n_tilings, params->n_cell_particles);
+    printf("Computed %d degrees of freedom\n", params->dof);
 #endif
 
     // make new longer list
@@ -393,8 +404,9 @@ run_params_t *read_parameters(char *file_name)
     params->initial_velocities = sdata;
     sdata = NULL;
 
-    sdata = (SCALAR *)malloc(sizeof(SCALAR) * (params->n_ghost_particles + params->n_particles));
-    for (i = 0; i < params->n_particles + params->n_ghost_particles; i += params->n_particles)
+    // TODO: This code is not correct.  It consider Wyckoff groups that are different size
+    sdata = (SCALAR *)calloc(params->n_cell_particles, sizeof(SCALAR));
+    for (i = 0; i + params->n_particles <= params->n_cell_particles; i += params->n_particles)
       memcpy(&sdata[i], params->masses, params->n_particles * sizeof(SCALAR));
     // before we're done, use it to unscale
     // ok now done
@@ -534,7 +546,6 @@ group_t *load_group(char *filename)
 
   unsigned int size = 0;
   g_t *tmp, *members = NULL;
-  double *g_mat, *i_mat;
   // iterate over group members
 
   for (json_members = json_members->child; json_members != NULL; json_members = json_members->next)
@@ -548,22 +559,14 @@ group_t *load_group(char *filename)
       free(members);
     }
     members = tmp;
-
-    g_mat = (double *)malloc(sizeof(double) * g_dims * g_dims);
-    load_json_matrix(json_members, g_mat, g_dims * g_dims, "g matrix");
-    g_t g = {.g = g_mat};
-
-    // add new member
-    memcpy(&members[size - 1], &g, sizeof(g_t));
+    // load member
+    load_json_matrix(json_members, members[size - 1].g, g_dims * g_dims, "g matrix");
   }
   group->members = members;
   group->size = size;
   group->total_size = size;
 
-  g_mat = (double *)malloc(sizeof(double) * N_DIMS * N_DIMS * N_DIMS * N_DIMS);
-  load_json_matrix(cJSON_GetObjectItem(root, "projector"), g_mat, N_DIMS * N_DIMS * N_DIMS * N_DIMS, "projector");
-
-  group->projector = g_mat;
+  load_json_matrix(cJSON_GetObjectItem(root, "projector"), group->projector, N_DIMS * N_DIMS * N_DIMS * N_DIMS, "projector");
   group->next = NULL;
 
   free(data);

@@ -36,6 +36,7 @@ typedef struct
     double *scaled_positions;
     double *masses;
     unsigned int n_particles;
+    unsigned int n_cell_particles;
     unsigned int n_ghost_particles;
     unsigned int dof;
     FILE *positions_file;

@@ -63,25 +63,8 @@ void main_loop(run_params_t *params)
     if (do_exit || i % params->position_log_period == 0)
     {
       sprintf(xyz_file_comment, "Frame: %d", i);
-      for (j = 0; j < params->box->group->size; j++)
-      {
-        // asymmetric
-        if (j == 0)
-          log_xyz(params->positions_file, positions, xyz_file_comment, N_DIMS,
-                  params->n_particles, params->n_particles + params->n_ghost_particles, 0);
-        else // non-tiled
-          log_xyz(params->positions_file, &positions[N_DIMS * params->n_particles * j], NULL, N_DIMS,
-                  params->n_particles, params->n_particles + params->n_ghost_particles, 1);
-      }
-      for (k = 0; k < params->box->n_tilings; k++)
-      {
-        for (j = 0; j < params->box->group->size; j++)
-          log_xyz(params->positions_file,
-                  &positions[N_DIMS * (params->n_particles * ((k + 1) * params->box->group->size + j))],
-                  NULL,
-                  N_DIMS, params->n_particles,
-                  params->n_particles + params->n_ghost_particles, 1);
-      }
+      log_xyz(params->positions_file, positions, xyz_file_comment, N_DIMS,
+              params->n_particles + params->n_ghost_particles, params->n_particles + params->n_ghost_particles, 0);
     }
 
     if (do_exit)
@@ -99,7 +82,7 @@ void main_loop(run_params_t *params)
     if (params->com_remove_period > 0 && i % params->com_remove_period == 0)
     {
       fold_velocities(params, velocities);
-      remove_com(velocities, params->masses, N_DIMS, params->n_particles * params->box->group->size);
+      remove_com(velocities, params->masses, N_DIMS, params->n_cell_particles);
     }
 
     // integrate A1
@@ -114,7 +97,7 @@ void main_loop(run_params_t *params)
     integrate_pos(params->time_step, positions, velocities, params->n_particles);
 
     // apply group if necessary
-    if (params->box->group) 
+    if (params->box->group)
       fold_particles(params, positions);
 
     // apply NPT step (before forces)
@@ -133,7 +116,7 @@ void main_loop(run_params_t *params)
 
     // calculate important quantities
     kenergy = calculate_kenergy(velocities, params->masses, N_DIMS, params->n_particles);
-    insta_temperature = kenergy * 2 / (params->n_particles * N_DIMS - N_DIMS);
+    insta_temperature = kenergy * 2 / params->dof;
 
     if (i % params->print_period == 0)
     {
