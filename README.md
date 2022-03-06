@@ -1,16 +1,8 @@
 Symmetric Molecular Dynamics Engine
 =========================
 
-TODO:
-
 Science
-1. Wyckoff Monte Carlo
-2. Water (https://github.com/lammps/lammps/blob/d6a6f64576281906e4194387d070ac0327c24100/src/MANYBODY/pair_sw.cpp)
-
-Code:
-NLIST  - Need to rethink this one
-1. Revise to use enclosing cubes and check implementation
-2. Investigate - might just be inconsistent when we had jumps but is ok
+* Water (https://github.com/lammps/lammps/blob/d6a6f64576281906e4194387d070ac0327c24100/src/MANYBODY/pair_sw.cpp)
 
 Compiling
 -------------------------
