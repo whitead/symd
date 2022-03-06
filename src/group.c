@@ -94,10 +94,7 @@ void free_group(group_t *g)
     // TODO: Figure out why this segfaults someday.
     if (g == NULL)
         return;
-    for (unsigned int i = 0; i < g->size; i++)
-        free(g->members[i].g);
     free(g->members);
-    free(g->projector);
     free_group(g->next);
     free(g);
 }

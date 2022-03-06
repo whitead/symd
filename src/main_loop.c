@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
   if (argc == 2)
     pfile = argv[1];
 
-  printf("You are running version %s of symd\n", VERSION);
+  printf("Info: You are running version %s of symd\n", VERSION);
 
   run_params_t *p = read_parameters(pfile);
 

@@ -325,6 +325,7 @@ run_params_t *read_parameters(char *file_name)
   {
     group = load_group(item->valuestring);
     group->n_gparticles = params->n_particles;
+    group->total_size = group->size;
     params->n_cell_particles = group->size * params->n_particles;
     // wyckoffs are a list dictionaries - load into linked list
     item = cJSON_GetObjectItem(root, "wyckoffs");
@@ -364,23 +365,23 @@ run_params_t *read_parameters(char *file_name)
         next->total_size = group_size;
         params->dof += next->n_gparticles * next->dof;
         params->n_cell_particles += next->n_gparticles * next->size;
-#ifdef DEBUG
-        printf("Loaded group %s with %d particles and %d members\n", next->name, next->n_gparticles, next->size);
-#endif
+        printf("Info: Loaded group %s with %d particles and %d members\n", next->name, next->n_gparticles, next->size);
       }
       // remove translation dof
       params->dof -= N_DIMS;
+    }
+    else
+    {
+      printf("Info: Loaded group %s with %d particles and %d members\n", group->name, group->n_gparticles, group->size);
     }
     params->box = make_box(sdata, group, images);
     sdata = NULL;
     // expand ghost particles to include tilings
     // we subtract at the end to avoid counting the asymmetric unit particles
     params->n_ghost_particles = params->n_cell_particles * (params->box->n_tilings + 1) - params->n_particles;
-#ifdef DEBUG
-    printf("Duplicating %d particles into %d real particles and %d ghost for group with %d elements and %d tilings. Each cell has %d particles.\n",
+    printf("Info: Duplicating %d particles into %d real particles and %d ghost for group with %d elements and %d tilings. Each cell has %d particles.\n",
            params->n_particles, params->n_particles, params->n_ghost_particles, params->box->group->size, params->box->n_tilings, params->n_cell_particles);
-    printf("Computed %d degrees of freedom\n", params->dof);
-#endif
+    printf("Info: Computed %d degrees of freedom\n", params->dof);
 
     // make new longer list
     sdata = (SCALAR *)malloc(sizeof(SCALAR) * N_DIMS * (params->n_ghost_particles + params->n_particles));
