@@ -13,7 +13,7 @@ void action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALAR
             output[i] += data[j] * g[i * (n_dims + 1) + j];
         // w coord
         output[i] += s * g[i * (n_dims + 1) + j];
-        // output[i] = fmod(output[i], 1.0);// ????
+        output[i] = fmod(output[i], 1.0); // ????
     }
 }
 
@@ -38,7 +38,7 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
             {
                 for (l = 0; l < N_DIMS; l++)
                     temp[l] = positions[index * N_DIMS + l] + params->box->tilings[k * N_DIMS + l];
-                unscale_coords(&positions[nc * N_DIMS * k + index * N_DIMS],
+                unscale_coords(&positions[nc * N_DIMS * (k + 1) + index * N_DIMS],
                                temp, params->box);
             }
             // unscale the non-tiled folded scaled coordinates
