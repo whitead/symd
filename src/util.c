@@ -405,14 +405,14 @@ run_params_t *read_parameters(char *file_name)
     sdata = NULL;
 
     // TODO: This code is not correct.  It consider Wyckoff groups that are different size
-    sdata = (SCALAR *)calloc(params->n_cell_particles, sizeof(SCALAR));
-    for (i = 0; i + params->n_particles <= params->n_cell_particles; i += params->n_particles)
-      memcpy(&sdata[i], params->masses, params->n_particles * sizeof(SCALAR));
-    // before we're done, use it to unscale
-    // ok now done
-    free(params->masses);
-    params->masses = sdata;
-    sdata = NULL;
+    // sdata = (SCALAR *)calloc(params->n_cell_particles, sizeof(SCALAR));
+    // for (i = 0; i + params->n_particles <= params->n_cell_particles; i += params->n_particles)
+    //   memcpy(&sdata[i], params->masses, params->n_particles * sizeof(SCALAR));
+    // // before we're done, use it to unscale
+    // // ok now done
+    // free(params->masses);
+    // params->masses = sdata;
+    // sdata = NULL;
   }
   else
   {
@@ -544,27 +544,23 @@ group_t *load_group(char *filename)
   }
   group->dof = item->valueint;
 
-  unsigned int size = 0;
-  g_t *tmp, *members = NULL;
-  // iterate over group members
-
-  for (json_members = json_members->child; json_members != NULL; json_members = json_members->next)
+  item = cJSON_GetObjectItem(root, "size");
+  if (!item)
   {
+    fprintf(stderr, "Malformed group JSON - must have size\n");
+    exit(1);
+  }
+  group->size = item->valueint;
 
-    // grow
-    tmp = (g_t *)malloc(sizeof(g_t) * ++size);
-    if (members)
-    {
-      memcpy(tmp, members, sizeof(g_t) * (size - 1));
-      free(members);
-    }
-    members = tmp;
+  g_t *members = (g_t *)malloc(group->size * sizeof(g_t));
+  unsigned int i = 0;
+  for (json_members = json_members->child; json_members != NULL && i < group->size; json_members = json_members->next)
+  {
     // load member
-    load_json_matrix(json_members, members[size - 1].g, g_dims * g_dims, "g matrix");
+    load_json_matrix(json_members, members[i++].g, g_dims * g_dims, "g matrix");
   }
   group->members = members;
-  group->size = size;
-  group->total_size = size;
+  group->total_size = group->size;
 
   load_json_matrix(cJSON_GetObjectItem(root, "projector"), group->projector, N_DIMS * N_DIMS * N_DIMS * N_DIMS, "projector");
   group->next = NULL;

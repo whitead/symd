@@ -31,7 +31,6 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
         for (i = 0; i < group->n_gparticles; i++)
         {
             // unfold scaled, store temporarily in positions
-            printf("i = %d (offset %d), j = %d, index = %d\n", i, i_offset, j, index);
             action(group->members[j].g, &positions[index * N_DIMS],
                    &params->scaled_positions[(i + i_offset) * N_DIMS], N_DIMS, 1.0);
             // tile and unscale
@@ -92,6 +91,7 @@ void fold_velocities(run_params_t *params, SCALAR *velocities)
 
 void free_group(group_t *g)
 {
+    // TODO: Figure out why this segfaults someday.
     if (g == NULL)
         return;
     for (unsigned int i = 0; i < g->size; i++)

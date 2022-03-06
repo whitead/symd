@@ -79,11 +79,11 @@ void main_loop(run_params_t *params)
     // integrate B1
     integrate_vel(params->time_step, velocities, forces, params->masses, params->n_particles);
 
-    if (params->com_remove_period > 0 && i % params->com_remove_period == 0)
-    {
-      fold_velocities(params, velocities);
-      remove_com(velocities, params->masses, N_DIMS, params->n_cell_particles);
-    }
+    // if (params->com_remove_period > 0 && i % params->com_remove_period == 0)
+    // {
+    //   fold_velocities(params, velocities);
+    //   remove_com(velocities, params->masses, N_DIMS, params->n_cell_particles);
+    // }
 
     // integrate A1
     integrate_pos(params->time_step, positions, velocities, params->n_particles);
