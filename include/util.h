@@ -21,7 +21,7 @@ double calculate_kenergy(double *velocities, double *masses, unsigned int n_dims
  * Write to file, which should be open, the given array in xyz format
  */
 void log_xyz(FILE *file, double *array, char *frame_string,
-              unsigned n_dims, unsigned n_particles,
+             unsigned n_dims, unsigned n_particles,
              unsigned int total, int location);
 
 /*
@@ -43,9 +43,9 @@ double *load_matrix(char *filename, unsigned int nrow, unsigned int ncol, unsign
 run_params_t *read_parameters(char *params_file);
 
 /*
-* Load group from JSON file
-*/
-group_t *load_group(char *filename, unsigned int n_dims);
+ * Load group from JSON file
+ */
+group_t *load_group(char *filename);
 
 unsigned int process_uint(char ***pstrings, char *key, bool *success);
 
@@ -58,9 +58,7 @@ char *process_string(char ***pstrings, char *key, bool *success);
  */
 double remove_com(double *velocities, double *masses, unsigned int n_dims, unsigned int n_particles);
 
-//free all the memory bits in the run_params_t struct
+// free all the memory bits in the run_params_t struct
 void free_run_params(run_params_t *params);
-
-
 
 #endif

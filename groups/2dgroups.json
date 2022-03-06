@@ -1,0 +1,663 @@
+{
+ "1": {
+  "lattice": "Oblique",
+  "genpos": [
+   "x,y"
+  ],
+  "asymm_unit": "0\u2264x\u22641;0\u2264y\u22641",
+  "specpos": []
+ },
+ "2": {
+  "lattice": "Oblique",
+  "genpos": [
+   "x,y",
+   "-x,-y"
+  ],
+  "asymm_unit": "0\u2264x\u22641/2;0\u2264y\u22641",
+  "specpos": [
+   {
+    "name": "d",
+    "size": 1,
+    "sites": [
+     "1/2,1/2"
+    ]
+   },
+   {
+    "name": "c",
+    "size": 1,
+    "sites": [
+     "1/2,0"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 1,
+    "sites": [
+     "0,1/2"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 1,
+    "sites": [
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "3": {
+  "lattice": "Rectangular",
+  "genpos": [
+   "x,y",
+   "-x,y"
+  ],
+  "asymm_unit": "0\u2264x\u22641/2;0\u2264y\u22641",
+  "specpos": [
+   {
+    "name": "b",
+    "size": 1,
+    "sites": [
+     "1/2,y"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 1,
+    "sites": [
+     "0,y"
+    ]
+   }
+  ]
+ },
+ "4": {
+  "lattice": "Rectangular",
+  "genpos": [
+   "x,y",
+   "-x,y+1/2"
+  ],
+  "asymm_unit": "0\u2264x\u22641/2;0\u2264y\u22641",
+  "specpos": []
+ },
+ "5": {
+  "lattice": "Rectangular",
+  "genpos": [
+   "x + 0,y + 0",
+   "x + 1/2,y + 1/2",
+   "-x + 0,y + 0",
+   "-x + 1/2,y + 1/2"
+  ],
+  "asymm_unit": "0\u2264x\u22641/2;0\u2264y\u22641/2",
+  "specpos": [
+   {
+    "name": "a",
+    "size": 2,
+    "sites": [
+     "0 + 1/2,y + 1/2",
+     "0 + 0,y + 0"
+    ]
+   }
+  ]
+ },
+ "6": {
+  "lattice": "Rectangular",
+  "genpos": [
+   "x,y",
+   "-x,-y",
+   "-x,y",
+   "x,-y"
+  ],
+  "asymm_unit": "0\u2264x\u22641/2;0\u2264y\u22641/2",
+  "specpos": [
+   {
+    "name": "h",
+    "size": 2,
+    "sites": [
+     "1/2,y",
+     "1/2,-y"
+    ]
+   },
+   {
+    "name": "g",
+    "size": 2,
+    "sites": [
+     "0,-y",
+     "0,y"
+    ]
+   },
+   {
+    "name": "f",
+    "size": 2,
+    "sites": [
+     "x,1/2",
+     "-x,1/2"
+    ]
+   },
+   {
+    "name": "e",
+    "size": 2,
+    "sites": [
+     "x,0",
+     "-x,0"
+    ]
+   },
+   {
+    "name": "d",
+    "size": 1,
+    "sites": [
+     "1/2,1/2"
+    ]
+   },
+   {
+    "name": "c",
+    "size": 1,
+    "sites": [
+     "1/2,0"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 1,
+    "sites": [
+     "0,1/2"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 1,
+    "sites": [
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "7": {
+  "lattice": "Rectangular",
+  "genpos": [
+   "x,y",
+   "-x,-y",
+   "-x+1/2,y",
+   "x+1/2,-y"
+  ],
+  "asymm_unit": "0\u2264x\u22641/4;0\u2264y\u22641",
+  "specpos": [
+   {
+    "name": "c",
+    "size": 2,
+    "sites": [
+     "3/4,-y",
+     "1/4,y"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 2,
+    "sites": [
+     "1/2,1/2",
+     "0,1/2"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 2,
+    "sites": [
+     "1/2,0",
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "8": {
+  "lattice": "Rectangular",
+  "genpos": [
+   "x,y",
+   "-x,-y",
+   "-x+1/2,y+1/2",
+   "x+1/2,-y+1/2"
+  ],
+  "asymm_unit": "0\u2264x\u22641/2;0\u2264y\u22641/2",
+  "specpos": [
+   {
+    "name": "b",
+    "size": 2,
+    "sites": [
+     "0,1/2",
+     "1/2,0"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 2,
+    "sites": [
+     "1/2,1/2",
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "9": {
+  "lattice": "Rectangular",
+  "genpos": [
+   "x + 0,y + 0",
+   "x + 1/2,y + 1/2",
+   "-x + 0,-y + 0",
+   "-x + 1/2,-y + 1/2",
+   "-x + 0,y + 0",
+   "-x + 1/2,y + 1/2",
+   "x + 0,-y + 0",
+   "x + 1/2,-y + 1/2"
+  ],
+  "asymm_unit": "0\u2264x\u22641/4;0\u2264y\u22641/2",
+  "specpos": [
+   {
+    "name": "e",
+    "size": 4,
+    "sites": [
+     "0 + 1/2,y + 1/2",
+     "0 + 0,y + 0",
+     "0 + 0,-y + 0",
+     "0 + 1/2,-y + 1/2"
+    ]
+   },
+   {
+    "name": "d",
+    "size": 4,
+    "sites": [
+     "-x + 1/2,0 + 1/2",
+     "-x + 0,0 + 0",
+     "x + 0,0 + 0",
+     "x + 1/2,0 + 1/2"
+    ]
+   },
+   {
+    "name": "c",
+    "size": 4,
+    "sites": [
+     "3/4 + 1/2,1/4 + 1/2",
+     "1/4 + 0,1/4 + 0",
+     "1/4 + 1/2,1/4 + 1/2",
+     "3/4 + 0,1/4 + 0"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 2,
+    "sites": [
+     "0 + 0,1/2 + 0",
+     "0 + 1/2,1/2 + 1/2"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 2,
+    "sites": [
+     "0 + 1/2,0 + 1/2",
+     "0 + 0,0 + 0"
+    ]
+   }
+  ]
+ },
+ "10": {
+  "lattice": "Square",
+  "genpos": [
+   "x,y",
+   "-x,-y",
+   "-y,x",
+   "y,-x"
+  ],
+  "asymm_unit": "0\u2264x\u22641/2;0\u2264y\u22641/2",
+  "specpos": [
+   {
+    "name": "c",
+    "size": 2,
+    "sites": [
+     "0,1/2",
+     "1/2,0"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 1,
+    "sites": [
+     "1/2,1/2"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 1,
+    "sites": [
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "11": {
+  "lattice": "Square",
+  "genpos": [
+   "x,y",
+   "-x,-y",
+   "-y,x",
+   "y,-x",
+   "-x,y",
+   "x,-y",
+   "y,x",
+   "-y,-x"
+  ],
+  "asymm_unit": "0\u2264x\u22641/2;0\u2264y\u22641/2;x\u2264y",
+  "specpos": [
+   {
+    "name": "f",
+    "size": 4,
+    "sites": [
+     "x,x",
+     "x,-x",
+     "-x,-x",
+     "-x,x"
+    ]
+   },
+   {
+    "name": "e",
+    "size": 4,
+    "sites": [
+     "1/2,x",
+     "1/2,-x",
+     "x,1/2",
+     "-x,1/2"
+    ]
+   },
+   {
+    "name": "d",
+    "size": 4,
+    "sites": [
+     "0,-x",
+     "x,0",
+     "-x,0",
+     "0,x"
+    ]
+   },
+   {
+    "name": "c",
+    "size": 2,
+    "sites": [
+     "0,1/2",
+     "1/2,0"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 1,
+    "sites": [
+     "1/2,1/2"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 1,
+    "sites": [
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "12": {
+  "lattice": "Square",
+  "genpos": [
+   "x,y",
+   "-x,-y",
+   "-y,x",
+   "y,-x",
+   "-x+1/2,y+1/2",
+   "x+1/2,-y+1/2",
+   "y+1/2,x+1/2",
+   "-y+1/2,-x+1/2"
+  ],
+  "asymm_unit": "0\u2264x\u22641/2;0\u2264y\u22641/2;y\u22641/2-x",
+  "specpos": [
+   {
+    "name": "c",
+    "size": 4,
+    "sites": [
+     "x+1/2,-x",
+     "x,x+1/2",
+     "-x+1/2,x",
+     "-x,-x+1/2"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 2,
+    "sites": [
+     "0,1/2",
+     "1/2,0"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 2,
+    "sites": [
+     "1/2,1/2",
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "13": {
+  "lattice": "Hexagonal",
+  "genpos": [
+   "x,y",
+   "-y,x-y",
+   "-x+y,-x"
+  ],
+  "asymm_unit": "0\u2264x\u22642/3;0\u2264y\u22642/3;x\u2264(1+y)/2;y\u2264min(1-x,(1+x)/2)",
+  "specpos": [
+   {
+    "name": "c",
+    "size": 1,
+    "sites": [
+     "2/3,1/3"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 1,
+    "sites": [
+     "1/3,2/3"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 1,
+    "sites": [
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "14": {
+  "lattice": "Hexagonal",
+  "genpos": [
+   "x,y",
+   "-y,x-y",
+   "-x+y,-x",
+   "-y,-x",
+   "-x+y,y",
+   "x,x-y"
+  ],
+  "asymm_unit": "0\u2264x\u22642/3;0\u2264y\u22642/3;x\u22642y;y\u2264min(1-x,2x)",
+  "specpos": [
+   {
+    "name": "d",
+    "size": 3,
+    "sites": [
+     "x,2x",
+     "(-2x),-x",
+     "x,-x"
+    ]
+   },
+   {
+    "name": "c",
+    "size": 1,
+    "sites": [
+     "2/3,1/3"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 1,
+    "sites": [
+     "1/3,2/3"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 1,
+    "sites": [
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "15": {
+  "lattice": "Hexagonal",
+  "genpos": [
+   "x,y",
+   "-y,x-y",
+   "-x+y,-x",
+   "y,x",
+   "x-y,-y",
+   "-x,-x+y"
+  ],
+  "asymm_unit": "0\u2264x\u22642/3;0\u2264y\u22641/2;x\u2264(1+y)/2;y\u2264min(1-x,x)",
+  "specpos": [
+   {
+    "name": "c",
+    "size": 3,
+    "sites": [
+     "x,0",
+     "0,x",
+     "-x,-x"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 2,
+    "sites": [
+     "2/3,1/3",
+     "1/3,2/3"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 1,
+    "sites": [
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "16": {
+  "lattice": "Hexagonal",
+  "genpos": [
+   "x,y",
+   "-y,x-y",
+   "-x+y,-x",
+   "-x,-y",
+   "y,-x+y",
+   "x-y,x"
+  ],
+  "asymm_unit": "0\u2264x\u22642/3;0\u2264y\u22641/2;x\u2264(1+y)/2;y\u2264min(1-x,x)",
+  "specpos": [
+   {
+    "name": "c",
+    "size": 3,
+    "sites": [
+     "1/2,1/2",
+     "0,1/2",
+     "1/2,0"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 2,
+    "sites": [
+     "2/3,1/3",
+     "1/3,2/3"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 1,
+    "sites": [
+     "0,0"
+    ]
+   }
+  ]
+ },
+ "17": {
+  "lattice": "Hexagonal",
+  "genpos": [
+   "x,y",
+   "-y,x-y",
+   "-x+y,-x",
+   "-x,-y",
+   "y,-x+y",
+   "x-y,x",
+   "-y,-x",
+   "-x+y,y",
+   "x,x-y",
+   "y,x",
+   "x-y,-y",
+   "-x,-x+y"
+  ],
+  "asymm_unit": "0\u2264x\u22642/3;0\u2264y\u22641/3;x\u2264(1+y)/2;y\u2264x/2",
+  "specpos": [
+   {
+    "name": "e",
+    "size": 6,
+    "sites": [
+     "2x,x",
+     "x,2x",
+     "x,-x",
+     "(-2x),-x",
+     "-x,x",
+     "-x,(-2x)"
+    ]
+   },
+   {
+    "name": "d",
+    "size": 6,
+    "sites": [
+     "-x,0",
+     "-x,-x",
+     "x,x",
+     "0,-x",
+     "x,0",
+     "0,x"
+    ]
+   },
+   {
+    "name": "c",
+    "size": 3,
+    "sites": [
+     "1/2,1/2",
+     "0,1/2",
+     "1/2,0"
+    ]
+   },
+   {
+    "name": "b",
+    "size": 2,
+    "sites": [
+     "2/3,1/3",
+     "1/3,2/3"
+    ]
+   },
+   {
+    "name": "a",
+    "size": 1,
+    "sites": [
+     "0,0"
+    ]
+   }
+  ]
+ }
+}
