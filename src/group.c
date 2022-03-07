@@ -17,7 +17,7 @@ void action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALAR
             output[i] += data[j] * g[i * (n_dims + 1) + j];
         // w coord
         output[i] += s * g[i * (n_dims + 1) + j];
-        output[i] = fmod(output[i], 1.0);
+        // output[i] = fmod(output[i], 1.0);
     }
 }
 
@@ -35,6 +35,18 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
     {
         action(group->members[0].g, &positions[(i + i_offset) * N_DIMS],
                &params->scaled_positions[(i + i_offset) * N_DIMS], N_DIMS, 1.0);
+#ifdef DEBUG
+        printf("applied group %s root\n", group->name);
+        printf("scaled prior: %f %f\n", params->scaled_positions[(i + i_offset) * N_DIMS],
+               params->scaled_positions[(i + i_offset) * N_DIMS + 1]);
+        printf("scaled post: %f %f\n", positions[(i + i_offset) * N_DIMS],
+               positions[(i + i_offset) * N_DIMS + 1]);
+        unscale_coords(temp,
+                       &positions[index * N_DIMS], params->box);
+        printf("post: %f %f\n", temp[(i + i_offset) * N_DIMS],
+               temp[(i + i_offset) * N_DIMS + 1]);
+
+#endif
         memcpy(&params->scaled_positions[(i + i_offset) * N_DIMS], &positions[(i + i_offset) * N_DIMS], N_DIMS * sizeof(SCALAR));
     }
 
