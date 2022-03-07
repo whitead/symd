@@ -114,6 +114,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
 
   // project to get valid basis vector
   if (group)
+  {
     for (i = 0; i < N_DIMS * N_DIMS; i++)
     {
       for (j = 0; j < N_DIMS * N_DIMS; j++)
@@ -121,8 +122,11 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
         box->b_vectors[i] += unorm_b_vectors[j] * group->projector[i * N_DIMS * N_DIMS + j];
       }
     }
+  }
   else
+  {
     memcpy(box->b_vectors, unorm_b_vectors, sizeof(SCALAR) * N_DIMS * N_DIMS);
+  }
 
 #ifdef DEBUG
   printf("\nUnormed vectors (column wise):\n");
@@ -153,6 +157,14 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
     printf("\n");
   }
 #endif
+
+  // update group denomoniators for contraint forces
+  // should be  sum_i p_ij b_jk, with extra term for addition
+  if (group)
+  {
+    update_group(group, box);
+    group_t *tmp = group;
+  }
 
   // build out tilings
   // goes through integers -> 0, 1, 2, ...
@@ -327,7 +339,11 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
       unscale_coords(&positions[i * N_DIMS], &params->scaled_positions[i * N_DIMS], params->box);
 
     // now fold them
-    fold_particles(params, positions);
+    if (params->box->group)
+    {
+      update_group(params->box->group, params->box);
+      fold_particles(params, positions);
+    }
 
     // reset forces
     new_energy = params->force_parameters->gather(params, positions, forces);
