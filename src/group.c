@@ -28,27 +28,27 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
     SCALAR temp[N_DIMS];
     unsigned int i, j, k, l, index = index_offset;
 
-    // apply identity projector
-    // identity for normal group,
-    // but not for special groups
-    for (i = 0; i < group->n_gparticles; i++)
-    {
-        action(group->members[0].g, &positions[(i + i_offset) * N_DIMS],
-               &params->scaled_positions[(i + i_offset) * N_DIMS], N_DIMS, 1.0);
-#ifdef DEBUG
-        printf("applied group %s root\n", group->name);
-        printf("scaled prior: %f %f\n", params->scaled_positions[(i + i_offset) * N_DIMS],
-               params->scaled_positions[(i + i_offset) * N_DIMS + 1]);
-        printf("scaled post: %f %f\n", positions[(i + i_offset) * N_DIMS],
-               positions[(i + i_offset) * N_DIMS + 1]);
-        unscale_coords(temp,
-                       &positions[index * N_DIMS], params->box);
-        printf("post: %f %f\n", temp[(i + i_offset) * N_DIMS],
-               temp[(i + i_offset) * N_DIMS + 1]);
+    //     // apply identity projector -- ??
+    //     // identity for normal group,
+    //     // but not for special groups
+    //     for (i = 0; i < group->n_gparticles; i++)
+    //     {
+    //         action(group->members[0].g, &positions[(i + i_offset) * N_DIMS],
+    //                &params->scaled_positions[(i + i_offset) * N_DIMS], N_DIMS, 1.0);
+    // #ifdef DEBUG
+    //         printf("applied group %s root\n", group->name);
+    //         printf("scaled prior: %f %f\n", params->scaled_positions[(i + i_offset) * N_DIMS],
+    //                params->scaled_positions[(i + i_offset) * N_DIMS + 1]);
+    //         printf("scaled post: %f %f\n", positions[(i + i_offset) * N_DIMS],
+    //                positions[(i + i_offset) * N_DIMS + 1]);
+    //         unscale_coords(temp,
+    //                        &positions[(index + i_offset) * N_DIMS], params->box);
+    //         printf("post: %f %f\n", temp[0],
+    //                temp[1]);
 
-#endif
-        memcpy(&params->scaled_positions[(i + i_offset) * N_DIMS], &positions[(i + i_offset) * N_DIMS], N_DIMS * sizeof(SCALAR));
-    }
+    // #endif
+    //         memcpy(&params->scaled_positions[(i + i_offset) * N_DIMS], &positions[(i + i_offset) * N_DIMS], N_DIMS * sizeof(SCALAR));
+    //     }
 
     // unfold and update
 #pragma omp parallel for default(shared) private(i, j, k, l, temp)
@@ -93,28 +93,6 @@ void fold_particles(run_params_t *params, SCALAR *positions)
     }
 }
 
-void fold_velocities(run_params_t *params, SCALAR *velocities)
-{
-    group_t *group = params->box->group;
-    const unsigned int p = params->n_particles;
-    SCALAR temp[N_DIMS];
-    unsigned int i, j, k, l;
-
-    // zero other velocities
-    memset(&velocities[p], 0, params->n_ghost_particles * sizeof(SCALAR) * N_DIMS);
-
-// unfold and update
-#pragma omp parallel for default(shared) private(i, j, k, l, temp)
-    for (i = 0; i < p; i++)
-    {
-        for (j = 1; j < group->size; j++)
-        {
-            action(group->members[j].g, &velocities[j * p * N_DIMS + i * N_DIMS],
-                   &velocities[i * N_DIMS], N_DIMS, 0.0);
-        }
-    }
-}
-
 void apply_constraints(run_params_t *params, SCALAR *positions, SCALAR *velocities)
 {
     // Compute and add lagrange multipliers
@@ -138,9 +116,11 @@ void apply_constraints(run_params_t *params, SCALAR *positions, SCALAR *velociti
                 lambda = 0;
                 for (k = 0; k < N_DIMS; k++)
                     lambda += group->ainv[j * N_DIMS + k] * (params->scaled_positions[index * N_DIMS + k] - temp[k]);
+                printf("Constraint force for %d (dim %d): %f. Ainv = %f. Delta = %f\n", index, j, lambda, group->ainv[j * N_DIMS],
+                       params->scaled_positions[index * N_DIMS + j] - temp[j]);
                 // term of m / delta T cancels out
                 // add constraint force to velocity
-                velocities[index * N_DIMS + j] += lambda / params->time_step;
+                velocities[index * N_DIMS + j] += lambda / params->time_step / 2;
             }
             index++;
         }
@@ -177,6 +157,7 @@ void update_group(group_t *group, box_t *box)
                 c += group->members[0].g[k * (N_DIMS + 1) + j] * a;
                 d += group->members[0].g[l * (N_DIMS + 1) + j] * a;
             }
+            // add extra j term for translation term in group
             c += group->members[0].g[k * (N_DIMS + 1) + j];
             d += group->members[0].g[k * (N_DIMS + 1) + j];
             gsl_matrix_set(mat, k, l, (c - b) * (d - b));

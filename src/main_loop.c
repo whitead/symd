@@ -89,8 +89,8 @@ void main_loop(run_params_t *params)
     integrate_pos(params->time_step, positions, velocities, params->n_particles);
 
     // apply constraints
-    // if (params->box->group)
-    //   apply_constraints(params, positions, velocities);
+    if (params->box->group)
+      apply_constraints(params, positions, velocities);
 
     // integrate O
     // thermostat
@@ -101,8 +101,8 @@ void main_loop(run_params_t *params)
     integrate_pos(params->time_step, positions, velocities, params->n_particles);
 
     // apply constraints
-    // if (params->box->group)
-    //   apply_constraints(params, positions, velocities);
+    if (params->box->group)
+      apply_constraints(params, positions, velocities);
 
     // apply group fold
     if (params->box->group)
