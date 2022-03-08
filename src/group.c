@@ -26,39 +26,47 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
     const unsigned int p = params->n_particles;
     const unsigned int nc = params->n_cell_particles;
     SCALAR temp[N_DIMS];
-    unsigned int i, j, k, l, index = index_offset;
+    unsigned int i, j, k, l, index;
 
-    //     // apply identity projector -- ??
-    //     // identity for normal group,
-    //     // but not for special groups
-    //     for (i = 0; i < group->n_gparticles; i++)
-    //     {
-    //         action(group->members[0].g, &positions[(i + i_offset) * N_DIMS],
-    //                &params->scaled_positions[(i + i_offset) * N_DIMS], N_DIMS, 1.0);
-    // #ifdef DEBUG
-    //         printf("applied group %s root\n", group->name);
-    //         printf("scaled prior: %f %f\n", params->scaled_positions[(i + i_offset) * N_DIMS],
-    //                params->scaled_positions[(i + i_offset) * N_DIMS + 1]);
-    //         printf("scaled post: %f %f\n", positions[(i + i_offset) * N_DIMS],
-    //                positions[(i + i_offset) * N_DIMS + 1]);
-    //         unscale_coords(temp,
-    //                        &positions[(index + i_offset) * N_DIMS], params->box);
-    //         printf("post: %f %f\n", temp[0],
-    //                temp[1]);
-
-    // #endif
-    //         memcpy(&params->scaled_positions[(i + i_offset) * N_DIMS], &positions[(i + i_offset) * N_DIMS], N_DIMS * sizeof(SCALAR));
-    //     }
-
-    // unfold and update
-#pragma omp parallel for default(shared) private(i, j, k, l, temp)
-    for (j = 0; j < group->size; j++)
+    // tile
+    // asymmetric unit
+    j = 0;
+    index = i_offset;
+    for (i = 0; i < group->n_gparticles; i++, index++)
     {
-        for (i = 0; i < group->n_gparticles; i++)
+#ifdef DEBUG
+        printf("Tiling group %s: %d\n", group->name, i + i_offset);
+        printf("us: %f %f -> %f %f\n", params->scaled_positions[index * N_DIMS],
+               params->scaled_positions[index * N_DIMS + 1], temp[0],
+               temp[1]);
+#endif
+        // tile and unscale
+        for (k = 0; k < params->box->n_tilings; k++)
+        {
+            for (l = 0; l < N_DIMS; l++)
+                temp[l] = params->scaled_positions[index * N_DIMS + l] + params->box->tilings[k * N_DIMS + l];
+            unscale_coords(&positions[nc * N_DIMS * (k + 1) + index * N_DIMS],
+                           temp, params->box);
+        }
+        // this is done to ensure wrapping of asymmetric particles
+        unscale_coords(&positions[index * N_DIMS],
+                       &params->scaled_positions[index * N_DIMS], params->box);
+    }
+    // unfold and tile
+    index = p + index_offset;
+    for (j = 1; j < group->size; j++)
+    {
+        for (i = 0; i < group->n_gparticles; i++, index++)
         {
             // unfold scaled, store temporarily in positions
             action(group->members[j].g, &positions[index * N_DIMS],
                    &params->scaled_positions[(i + i_offset) * N_DIMS], N_DIMS, 1.0);
+#ifdef DEBUG
+            printf("Applying group %s:%d for %d -> %d\n", group->name, j, i + i_offset, index);
+            printf("us: %f %f -> %f %f\n", params->scaled_positions[(i + i_offset) * N_DIMS],
+                   params->scaled_positions[(i + i_offset) * N_DIMS + 1], positions[index * N_DIMS + 0],
+                   positions[index * N_DIMS + 1]);
+#endif
             // tile and unscale
             for (k = 0; k < params->box->n_tilings; k++)
             {
@@ -67,14 +75,14 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
                 unscale_coords(&positions[nc * N_DIMS * (k + 1) + index * N_DIMS],
                                temp, params->box);
             }
+
             // unscale the non-tiled folded scaled coordinates
             unscale_coords(temp,
                            &positions[index * N_DIMS], params->box);
             memcpy(&positions[index * N_DIMS], temp, N_DIMS * sizeof(SCALAR));
-            index++;
         }
     }
-    return index;
+    return index_offset + group->n_gparticles * (group->size - 1);
 }
 
 void fold_particles(run_params_t *params, SCALAR *positions)
@@ -88,7 +96,7 @@ void fold_particles(run_params_t *params, SCALAR *positions)
     i = 0, j = 0;
     for (group_t *group = params->box->group; group != NULL; group = group->next)
     {
-        j += _fold_particles(params, group, positions, i, j);
+        j = _fold_particles(params, group, positions, i, j);
         i += group->n_gparticles;
     }
 }
@@ -112,16 +120,23 @@ void apply_constraints(run_params_t *params, SCALAR *positions, SCALAR *velociti
             action(group->members[0].g, temp,
                    &params->scaled_positions[index * N_DIMS], N_DIMS, 1.0);
             for (j = 0; j < N_DIMS; j++)
+                temp[j] -= params->scaled_positions[index * N_DIMS + j];
+            for (j = 0; j < N_DIMS; j++)
             {
                 lambda = 0;
                 for (k = 0; k < N_DIMS; k++)
-                    lambda += group->ainv[j * N_DIMS + k] * (params->scaled_positions[index * N_DIMS + k] - temp[k]);
+                    lambda += group->ainv[j * N_DIMS + k] * temp[k];
+#ifdef DEBUG
                 printf("Constraint force for %d (dim %d): %f. Ainv = %f. Delta = %f\n", index, j, lambda, group->ainv[j * N_DIMS],
-                       params->scaled_positions[index * N_DIMS + j] - temp[j]);
+                       temp[j]);
+#endif
                 // term of m / delta T cancels out
                 // add constraint force to velocity
-                velocities[index * N_DIMS + j] += lambda / params->time_step / 2;
+                velocities[index * N_DIMS + j] -= lambda / params->time_step / 2;
+                // add to positions
+                positions[index * N_DIMS + j] -= lambda;
             }
+            scale_wrap_coords(&params->scaled_positions[index * N_DIMS], &positions[index * N_DIMS], params->box);
             index++;
         }
     }
@@ -130,9 +145,8 @@ void apply_constraints(run_params_t *params, SCALAR *positions, SCALAR *velociti
 void update_group(group_t *group, box_t *box)
 {
     // update lagrangian matrix for group
-
     gsl_matrix *mat = gsl_matrix_alloc(N_DIMS, N_DIMS);
-    gsl_matrix *mat2 = gsl_matrix_alloc(N_DIMS, N_DIMS);
+    SCALAR grad[N_DIMS]; // gradient of lagrange force
     // index meanings
     // i - euclidean coordinate
     // j - scaled coordinate
@@ -145,24 +159,24 @@ void update_group(group_t *group, box_t *box)
     {
         for (l = 0; l < N_DIMS; l++)
         {
-            b = 0, c = 0, d = 0;
+            c = 0, d = 0;
             for (j = 0; j < N_DIMS; j++)
             {
                 a = 0;
                 for (i = 0; i < N_DIMS; i++)
-                {
                     a += box->ib_vectors[j * N_DIMS + i];
-                }
-                b += a;
                 c += group->members[0].g[k * (N_DIMS + 1) + j] * a;
                 d += group->members[0].g[l * (N_DIMS + 1) + j] * a;
             }
-            // add extra j term for translation term in group
-            c += group->members[0].g[k * (N_DIMS + 1) + j];
-            d += group->members[0].g[k * (N_DIMS + 1) + j];
-            gsl_matrix_set(mat, k, l, (c - b) * (d - b));
-            gsl_matrix_set(mat2, k, l, (c - b) * (d - b));
+            a = 0, b = 0;
+            for (i = 0; i < N_DIMS; i++)
+            {
+                a += box->ib_vectors[k * N_DIMS + i];
+                b += box->ib_vectors[l * N_DIMS + i];
+            }
+            gsl_matrix_set(mat, k, l, (c - a) * (d - b));
         }
+        grad[k] = c - a;
     }
 
     // matrix inverse never work here - maybe I'm doing something wrong
@@ -201,13 +215,15 @@ void update_group(group_t *group, box_t *box)
     gsl_blas_dgemm(CblasNoTrans, CblasTrans, 1.0, Sp, mat, 0.0, inv);
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, V, inv, 0.0, mat);
 
-    gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, mat, mat2, 0.0, inv);
-
     // copy result
     memcpy(group->ainv, mat->data, sizeof(double) * N_DIMS * N_DIMS);
 
+    // now multiply by grad term
+    for (i = 0; i < N_DIMS; i++)
+        for (j = 0; j < N_DIMS; j++)
+            group->ainv[i * N_DIMS + j] *= grad[i];
+
     gsl_matrix_free(mat);
-    gsl_matrix_free(mat2);
     gsl_matrix_free(inv);
     gsl_matrix_free(V);
     gsl_matrix_free(Sp);
