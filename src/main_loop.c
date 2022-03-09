@@ -88,6 +88,10 @@ void main_loop(run_params_t *params)
     // integrate A1
     integrate_pos(params->time_step, positions, velocities, params->n_particles);
 
+    // apply constraints
+    if (params->box->group)
+      apply_constraints(params, positions, velocities);
+
     // integrate O
     // thermostat
     if (params->thermostat_parameters)
@@ -96,7 +100,11 @@ void main_loop(run_params_t *params)
     // integrate A2
     integrate_pos(params->time_step, positions, velocities, params->n_particles);
 
-    // apply group if necessary
+    // apply constraints
+    if (params->box->group)
+      apply_constraints(params, positions, velocities);
+
+    // apply group fold
     if (params->box->group)
       fold_particles(params, positions);
 

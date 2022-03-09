@@ -20,10 +20,12 @@ struct group_t
     unsigned int dof;
     g_t *members;
     SCALAR projector[N_DIMS * N_DIMS * N_DIMS * N_DIMS];
+    SCALAR ainv[N_DIMS * N_DIMS]; // inverse for lagrange constraints
     group_t *next;
 };
 
 void fold_particles(run_params_t *params, SCALAR *positions);
 void fold_velocities(run_params_t *params, SCALAR *velocities);
-void free_group(group_t *g);
+void update_group(group_t *group, box_t *box);
+void apply_constraints(run_params_t *params, SCALAR *positions, SCALAR *velocities);
 #endif // GROUP_H_

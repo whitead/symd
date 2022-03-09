@@ -559,6 +559,15 @@ group_t *load_group(char *filename)
   {
     // load member
     load_json_matrix(json_members, members[i++].g, g_dims * g_dims, "g matrix");
+#ifdef DEBUG
+    printf("Loaded %s group member %d\n", group->name, i);
+    for (unsigned int j = 0; j < g_dims * g_dims; j++)
+    {
+      printf("%g ", members[i - 1].g[j]);
+      if (j % g_dims == g_dims - 1)
+        printf("\n");
+    }
+#endif
   }
   group->members = members;
   group->total_size = group->size;

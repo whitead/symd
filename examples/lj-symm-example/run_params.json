@@ -1,36 +1,45 @@
 {
-    "steps": 2,
+    "steps": 400000,
     "time_step": 0.005,
     "temperature": 0.2,
-    "start_temperature": 0.2,
+    "start_temperature": 0.5,
     "velocity_seed": 456415615,
     "thermostat_seed": 1565,
-    "langevin_gamma": 0.5,
+    "langevin_gamma": 0.005,
     "rcut": 3,
     "lj_sigma": 1.0,
     "cell": [
-        15,
-        15
+        25,
+        25
     ],
     "images": [
-        1,
-        1
+        2,
+        2
     ],
-    "n_particles": 3,
-    "start_positions": "wp-5.xyz",
-    "print_period": 1,
+    "n_particles": 6,
+    "start_positions": "wp-15.xyz",
+    "print_period": 100,
     "positions_log_file": "positions.xyz",
-    "position_log_period": 1,
+    "velocities_log_file": "velocities.xyz",
+    "position_log_period": 100,
     "force_type": "lj",
-    "group": "wp-5.json",
+    "group": "wp-15.json",
     "wyckoffs": [
         {
-            "group": "wp-5-00.json",
+            "group": "wp-15-02.json",
+            "n_particles": 1
+        },
+        {
+            "group": "wp-15-00.json",
+            "n_particles": 1
+        },
+        {
+            "group": "wp-15-01.json",
             "n_particles": 1
         }
     ],
     "thermostat": "baoab",
     "com_remove_period": 0,
-    "pressure": null,
-    "box_update_period": 5
+    "pressure": 1,
+    "box_update_period": 25
 }
