@@ -248,7 +248,7 @@ static SCALAR rvolume(SCALAR *b_vectors, SCALAR v, unsigned int i, unsigned char
 SCALAR volume(box_t *box)
 {
   // https://math.stackexchange.com/a/1606559 -- Not sure if I believe it?
-  unsigned char index[N_DIMS];
+  unsigned char index[N_DIMS] = {0};
   return rvolume(box->b_vectors, 1, 0, index);
 }
 

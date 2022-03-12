@@ -32,6 +32,7 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
     // asymmetric unit
     j = 0;
     index = i_offset;
+#pragma omp parallel for default(shared) private(i, index, k, l, temp)
     for (i = 0; i < group->n_gparticles; i++, index++)
     {
         // tile and unscale
@@ -53,6 +54,7 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
 #endif
     }
     // unfold and tile
+    // TODO: can we get it to use OpenMP?
     index = p + index_offset;
     for (j = 1; j < group->size; j++)
     {
