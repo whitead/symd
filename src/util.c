@@ -11,7 +11,7 @@ static const char *
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
     \"box_update_period\": 0, \"force_type\": null,\
-     \"force_log_period\" : 0, \"n_images\": 1, \"langevin_gamma\": 0.1} ";
+     \"force_log_period\" : 0, \"n_images\": 2, \"langevin_gamma\": 0.1} ";
 
 #ifdef DEBUG
 const char *elements[] = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti",
@@ -320,7 +320,7 @@ run_params_t *read_parameters(char *file_name)
   // also will finish making box here, which was deferred
   group = NULL;
   item = cJSON_GetObjectItem(root, "group");
-  params->dof = (params->n_particles - 1) * N_DIMS;
+  params->dof = (params->n_particles) * N_DIMS;
   if (item)
   {
     group = load_group(item->valuestring);
@@ -360,6 +360,7 @@ run_params_t *read_parameters(char *file_name)
 
       // for simplicity, set total size at each group
       // Also, count number of ghost particles (those not in asymmetric unit)
+      params->dof = 0;
       for (next = group; next != NULL; next = next->next)
       {
         next->total_size = group_size;
@@ -368,7 +369,7 @@ run_params_t *read_parameters(char *file_name)
         printf("Info: Loaded group %s with %d particles and %d members\n", next->name, next->n_gparticles, next->size);
       }
       // remove translation dof
-      params->dof -= N_DIMS;
+      // params->dof -= N_DIMS;
     }
     else
     {

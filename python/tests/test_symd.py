@@ -1,27 +1,28 @@
 import matplotlib.pyplot as plt
-from SimpleMD import SimpleMD
 import numpy as np
 from scipy.stats import pearsonr
 from scipy.stats import probplot
 from scipy.stats import normaltest
 import matplotlib as mpl
 from math import ceil
+from symd import Symd
 
 mpl.use('Agg')
 
 
 class Test:
+    summary = ''
+
     def print_summary(self, force_print=False):
         if not force_print and self.passed:
-            print("%s:Passed" % self.name)
+            print(f"{self.name}:Passed ({self.summary})")
         else:
             print("%s:Failed" % self.name)
             print(self.summary)
             try:
+                print('Check plots:')
                 for p in self.plots:
-                    print('![%s](%s "%s")' % (p.caption, p.path, p.name))
-                    print(p.caption)
-                    print("\n")
+                    print(f'\t{p.path}')
             except AttributeError:
                 pass
 
@@ -30,7 +31,7 @@ class Plot:
     def __init__(self, name, path, caption="", size=[8, 6]):
         self.name = name
         self.path = path
-        self.caption = caption
+        self.caption = caption if caption else name
         self.size = size
 
 
@@ -38,19 +39,28 @@ class Tester:
     def __init__(self, md, name):
         self.name = name
         self.tests = []
+        self.md = md
+        md.log_output(period=100)
+        md.remove_overlap()
+        md.shrink()
         self.add(ExecuteTest(md, name))
-        self.add(EnergyConservationTest(md, name))
-        self.add(ThermostatTest(md, name))
+        if md.runParams['temperature'] == 0:
+            self.add(EnergyConservationTest(md, name))
+        else:
+            self.add(ThermostatTest(md, name))
 
     def add(self, test):
         self.tests.append(test)
 
     def run(self):
         print("SimpleMD Tester `%s`:" % self.name)
+        success = True
         for t in self.tests:
-            success = t.run()
+            success = success and t.run()
             print("*", end=" ")
             t.print_summary()
+        if success:
+            self.md.clean_files()
 
 
 class EnergyConservationTest(Test):
@@ -80,7 +90,7 @@ class EnergyConservationTest(Test):
 
         if dev < self.dtol:
             self.passed = True
-            self.summary = "Energy fluctation is %g" % dev
+            self.summary = "Energy fluctuation is %g" % dev
             return self.passed
 
         # Check if there's a correlation over time with energy (not good)
@@ -179,7 +189,6 @@ class ThermostatTest(Test):
         self.ptol = 0.05
 
     def run(self):
-
         # check to see if there is a temperature
         if md.runParams["temperature"] == 0:
             self.passed = True
@@ -198,7 +207,7 @@ class ThermostatTest(Test):
         if (np.mean(temperature) - set_temperature) / set_temperature < self.mtol:
             self.passed = True
             self.summary = "Temperature ppm difference less than %g" % self.mtol
-            return self.Passed
+            return self.passed
 
         # If it's not, let's check to see if the deviation is systematic and
         # see if the the deviation is normally distributed
@@ -217,7 +226,8 @@ class ThermostatTest(Test):
             pvalue,
         )
 
-        if pvalue > self.ptol:
+        # I've flipped this - it should be Maxwell-Boltzmann distributed not normal!
+        if pvalue < self.ptol:
             self.passed = True
 
         fig = plt.figure(figsize=(12, 6))
@@ -252,7 +262,7 @@ class ThermostatTest(Test):
         ax = plt.subplot2grid((2, 2), (1, 0))
 
         ax.hist(
-            temperature - set_temperature, 50, normed=1, facecolor="blue", alpha=0.75
+            temperature - set_temperature, 50, density=True, facecolor="blue", alpha=0.75
         )
 
         ax.axvline(0, color="green", linewidth=2)
@@ -273,47 +283,26 @@ class ThermostatTest(Test):
         ax.set_ylabel("Ordered Values")
 
         fig.tight_layout()
-
         plt.savefig(self.plots[0].path)
 
 
 if __name__ == "__main__":
-    md = SimpleMD(2, 1, steps=10000, exeDir="test")
-    md.log_output(period=10)
-    md.setup_positions(box_size=[4])
-    md.setup_masses(1)
 
-    runner = Tester(md, "LJ_1_NVE")
-    runner.run()
+    np.random.seed(0)
 
-    md = SimpleMD(2, 2, steps=10000, exeDir="test")
-    md.log_output(period=10)
-    md.setup_positions(box_size=[4, 4])
-    md.setup_masses(1)
+    cell = [15, 15]
+    for i in range(1, 3):
+        md = Symd(nparticles=5, cell=cell, ndims=2, force='soft',
+                  group=i, steps=50000, exeDir="test")
+        runner = Tester(md, f"SF_2_{i}_NVE")
+        runner.run()
 
-    runner = Tester(md, "LJ_2_NVE")
-    runner.run()
+        md = Symd(nparticles=5, cell=cell, ndims=2,
+                  group=i, steps=500000, exeDir="test")
+        runner = Tester(md, f"LJ_2_{i}_NVE")
+        runner.run()
 
-    md = SimpleMD(2, 3, steps=10000, exeDir="test")
-    md.log_output(period=10)
-    md.setup_positions(box_size=[4, 4, 4])
-    md.setup_masses(1)
-
-    runner = Tester(md, "LJ_3_NVE")
-    runner.run()
-
-    md = SimpleMD(2, 4, steps=10000, exeDir="test")
-    md.log_output(period=10)
-    md.setup_positions(box_size=[4, 4, 4, 4])
-    md.setup_masses(1)
-
-    runner = Tester(md, "LJ_4_NVE")
-    runner.run()
-
-    md = SimpleMD(100, 3, steps=500000, temperature=0.7, exeDir="test")
-    md.log_output(period=100)
-    md.setup_positions(0.7)
-    md.setup_masses(1)
-
-    runner = Tester(md, "LJ_3_NVT")
-    runner.run()
+        md = Symd(nparticles=5, cell=cell, temperature=0.5, ndims=2,
+                  group=i, steps=500000, exeDir="test")
+        runner = Tester(md, f"LJ_2_{i}_NVT")
+        runner.run()

@@ -1,6 +1,7 @@
 import numpy as np
 import json
 import re
+import os
 
 
 def str2mat(s):
@@ -172,7 +173,6 @@ def write_group(f, name, group, dim):
     dof = np.sum(np.sum(m[:-1, :-1]**2, axis=1) > 0)
     result['dof'] = int(dof)
     json.dump(result, f, indent=True)
-    print('Wrote group with', len(members), 'members')
 
 
 def load_group(gnum, dim):
@@ -189,16 +189,19 @@ def load_group(gnum, dim):
     return group
 
 
-def prepare_input(gnum, dim, N, name):
+def prepare_input(gnum, dim, N, name, dir='.'):
     group = load_group(gnum, dim)
     asymm_unit = asymm_constraints(group['asymm_unit'])
-    with open(f'{name}.json', 'w') as f:
+    with open(os.path.join(dir, f'{name}.json'), 'w') as f:
         write_group(f, name, group, dim)
+    paths = []
     for i, g in enumerate(group['specpos']):
-        with open(f'{name}-{i:02d}.json', 'w') as f:
+        fn = os.path.join(dir, f'{name}-{i:02d}.json')
+        paths.append(fn)
+        with open(fn, 'w') as f:
             write_group(f, name + f'-{i}', g, dim)
     Ni = N
-    with open(f'{name}.xyz', 'w') as f:
+    with open(os.path.join(dir, f'{name}.xyz'), 'w') as f:
         while Ni > 0:
             x = np.random.uniform()
             y = np.random.uniform()
@@ -206,3 +209,4 @@ def prepare_input(gnum, dim, N, name):
             if (dim == 2 and asymm_unit(x, y)) or (dim == 3 and asymm_unit(x, y, z)):
                 f.write(f'{x} {y}\n' if dim == 2 else f'{x} {y} {z}\n')
                 Ni -= 1
+    return paths
