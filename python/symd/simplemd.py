@@ -4,7 +4,6 @@ import subprocess
 import json
 from math import *
 import numpy as np
-import build_lattice
 
 SimpleMDLocation = "../build/"
 
