@@ -198,14 +198,6 @@ run_params_t *read_parameters(char *file_name)
 
     for (item = item->child; item != NULL; item = item->next)
     {
-      if (i == N_DIMS)
-      {
-        // maybe it's default with no cell ?
-        if (sdata[0] == 0)
-          break;
-        fprintf(stderr, "Error: Number of cell dimensions not equal to simulation dimension\n");
-        exit(1);
-      }
       sdata[i] = item->valuedouble;
       i++;
     }
@@ -493,6 +485,12 @@ run_params_t *read_parameters(char *file_name)
     params->positions_file = fopen(item->valuestring, "w");
   else
     params->positions_file = NULL;
+
+  item = cJSON_GetObjectItem(root, "cell_log_file");
+  if (item)
+    params->cell_file = fopen(item->valuestring, "w");
+  else
+    params->cell_file = NULL;
 
   item = cJSON_GetObjectItem(root, "velocities_log_file");
   if (item)

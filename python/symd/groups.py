@@ -163,10 +163,10 @@ def write_group(f, name, group, dim):
     members = [str2mat(s) for s in group[key]]
     result = {'name': name, 'size': len(
         members), 'members': [], 'projector': fmt(projector)}
-    # if we do not have identiy as zeroth, make one with
+    # if we do not have identity as zeroth, make one with
     # least translation be zero
     if not np.allclose(members[0][:-1, :-1], np.eye(dim)):
-        members.sort(key=lambda m: np.sum(m[:, -1]))
+        members.sort(key=lambda m: np.sum((m - np.eye(dim+1))**2))
     for m in members:
         result['members'].append(fmt(m))
     # should be same for all, so use last

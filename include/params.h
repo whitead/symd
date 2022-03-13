@@ -43,6 +43,7 @@ typedef struct
     FILE *final_positions_file;
     FILE *velocities_file;
     FILE *forces_file;
+    FILE *cell_file;
     unsigned int position_log_period;
     unsigned int velocity_log_period;
     unsigned int force_log_period;

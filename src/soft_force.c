@@ -52,7 +52,10 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 				{
 					forces[i * n_dims + k] += -sin(PI * r / 1.5) * PI * force_vector[k] / r;
 					if (j < params->n_particles)
+					{
 						forces[j * n_dims + k] += sin(PI * r / 1.5) * PI * force_vector[k] / r;
+						penergy += cos(PI * r / 1.5);
+					}
 				}
 #ifdef DEBUG
 				printf("F(%d <-> %d, %g) = %g\n", i, j, r, -sin(PI * r / 1.5));

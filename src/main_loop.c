@@ -69,7 +69,7 @@ void main_loop(run_params_t *params)
 
     if (do_exit)
     {
-      fprintf(stderr, "Exiting due to high temperature or energy\n");
+      fprintf(stderr, "Exiting due to high temperature or energy  (T = %g)\n", insta_temperature);
       exit(1);
     }
 
@@ -141,6 +141,9 @@ void main_loop(run_params_t *params)
     scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
   log_array(params->final_positions_file, params->scaled_positions, N_DIMS,
             params->n_particles, false);
+
+  log_array(params->cell_file, params->box->b_vectors, N_DIMS,
+            N_DIMS, false);
 
   free(forces);
 }

@@ -23,6 +23,7 @@ class Symd:
         images=None,
         steps=100,
         temperature=None,
+        start_temperature=0.5,
         pressure=None,
         exeDir='',
         exePrefix=SymdLocation,
@@ -58,10 +59,11 @@ class Symd:
             'temperature': 0,
             'pressure': 0,
             'box_update_period': 0,
-            'start_temperature': 0.5,
+            'start_temperature': start_temperature,
             'thermostat': thermostat,
             'force_type': force,
             'final_positions': os.path.join(self.prefix, 'final_positions.xyz'),
+            'cell_log_file': os.path.join(self.prefix, 'cell_log_file.dat'),
             'print_period': max(1, (steps / 100)),
             'cell': cell,
         }
@@ -107,10 +109,10 @@ class Symd:
         cache_params = self.runParams.copy()
         self.runParams['force_type'] = 'soft'
         self.runParams['thermostat'] = 'baoab'
-        self.runParams['temperature'] = 0.2
+        self.runParams['temperature'] = 0.1
         self.runParams['steps'] = 1000
         self.runParams['final_positions'] = self.runParams['start_positions']
-        self.execute()
+        self.run()
         self.runParams['force_type'] = 'lj'
         self.runParams['thermostat'] = 'baoab'
         self.runParams['langevin_gamma'] = 10
@@ -119,7 +121,7 @@ class Symd:
         self.runParams['lj_sigma'] = 1.0
         self.runParams['steps'] = 1000
         self.runParams['final_positions'] = self.runParams['start_positions']
-        self.execute()
+        self.run()
         self.runParams = cache_params
 
     def shrink(self):
@@ -134,14 +136,18 @@ class Symd:
         self.runParams['final_positions'] = self.runParams['start_positions']
         self.runParams['pressure'] = 0.1
         self.runParams['box_update_period'] = 1
-        self.execute()
+        self.run()
         print(f'Shrunk from {self.v[0]} to {self.v[-1]}')
         self.runParams = cache_params
+        self.runParams['cell'] = self.read_cell()
+        print(f'New cell: {self.runParams["cell"]}')
 
-    def log_positions(self, filename='positions.xyz', period=0):
+    def log_positions(self, filename='positions.xyz', period=0, frames=0):
         '''enable logging of the xyz positions of the simulation. Default is to output 100 frames'''
         if period == 0:
-            period = ceil(self.runParams['steps'] / 100.0)
+            if frames == 0:
+                frames = 100
+            period = ceil(self.runParams['steps'] / frames)
 
         self.runParams['position_log_period'] = int(period)
         self.runParams['positions_log_file'] = os.path.join(
@@ -196,7 +202,7 @@ class Symd:
         if self.createdDir:
             os.rmdir(self.prefix)
 
-    def execute(self):
+    def run(self):
 
         output_lines = ceil(
             self.runParams['steps'] / self.runParams['print_period'])
@@ -247,4 +253,45 @@ class Symd:
             except ValueError:
                 pass
         self.executed = True
+        if 'positions_log_file' in self.runParams:
+            self.read_positions()
         return True
+
+    def read_cell(self):
+        cell = []
+        with open(self.runParams['cell_log_file'], 'r') as f:
+            for line in f.readlines():
+                cell.extend([float(s) for s in line.split()])
+        return cell
+
+    def read_positions(self):
+        '''Reads the positions from the positions log file'''
+        # read one frame to get position conut
+        with open(self.runParams['positions_log_file'], 'r') as f:
+            N = -1
+            for line in f.readlines():
+                if 'Frame' in line:
+                    if N > 0:
+                        break
+                    else:
+                        N = 0
+                else:
+                    N += 1
+        N -= 1
+        with open(self.runParams['positions_log_file'], 'r') as f:
+            lines = f.readlines()
+            K = len(lines)
+            T = K // (N + 2)  # 2 for the header
+            assert (N + 2) * T == K
+            self.positions = np.empty((T, N, self.ndims))
+            j = -1  # since we have Frame appear before first frame
+            k = 0
+            for i, line in enumerate(lines):
+                sline = line.split()
+                if len(sline) == 4:
+                    self.positions[j, k, :] = [float(x)
+                                               for x in sline[1:self.ndims + 1]]
+                    k += 1
+                elif 'Frame' in line:
+                    j += 1
+                    k = 0

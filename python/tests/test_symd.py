@@ -40,13 +40,14 @@ class Tester:
         self.name = name
         self.tests = []
         self.md = md
-        md.log_output(period=100)
         md.remove_overlap()
         md.shrink()
         self.add(ExecuteTest(md, name))
         if md.runParams['temperature'] == 0:
+            md.log_output(period=1)
             self.add(EnergyConservationTest(md, name))
         else:
+            md.log_output(period=100)
             self.add(ThermostatTest(md, name))
 
     def add(self, test):
@@ -77,7 +78,7 @@ class EnergyConservationTest(Test):
     def run(self):
 
         if not md.executed:
-            md.execute()
+            md.run()
 
         start_index = round(len(md.te) * self.equil_frac)
         energy = md.te[start_index:]
@@ -165,7 +166,7 @@ class ExecuteTest(Test):
         self.passed = False
 
     def run(self):
-        md.execute()
+        md.run()
         if md.outerr != b"":
             self.summary = "Execute test stderr out:\n %s" % md.outerr
         else:
@@ -196,7 +197,7 @@ class ThermostatTest(Test):
             return self.passed
 
         if not md.executed:
-            md.execute()
+            md.run()
 
         start_index = round(len(md.temperature) * self.equil_frac)
 
@@ -293,16 +294,16 @@ if __name__ == "__main__":
     cell = [15, 15]
     for i in range(1, 3):
         md = Symd(nparticles=5, cell=cell, ndims=2, force='soft',
-                  group=i, steps=50000, exeDir="test")
+                  group=i, steps=500, exeDir="test")
         runner = Tester(md, f"SF_2_{i}_NVE")
         runner.run()
 
         md = Symd(nparticles=5, cell=cell, ndims=2,
-                  group=i, steps=500000, exeDir="test")
+                  group=i, steps=500, exeDir="test")
         runner = Tester(md, f"LJ_2_{i}_NVE")
         runner.run()
 
         md = Symd(nparticles=5, cell=cell, temperature=0.5, ndims=2,
-                  group=i, steps=500000, exeDir="test")
+                  group=i, steps=5000, exeDir="test")
         runner = Tester(md, f"LJ_2_{i}_NVT")
         runner.run()

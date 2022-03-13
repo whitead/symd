@@ -180,7 +180,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
     for (i = 0; i < n_particles; i++)
     {
 
-      // iterate through neighbor list
+      // iterate through remaining particles list
       for (j = i + 1; j < n_particles + params->n_ghost_particles; j++)
       {
         r = 0;
@@ -211,11 +211,11 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
           if (j < params->n_particles)
           {
             forces[j * n_dims + k] -= force / r * force_vector[k];
-            penergy += e / 2;
+            penergy += e;
           }
         }
 
-        penergy += e / 2;
+        penergy += e;
       }
     }
   }
