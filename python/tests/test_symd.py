@@ -73,7 +73,7 @@ class EnergyConservationTest(Test):
 
         self.dtol = 1e-10
         self.ptol = 0.05
-        self.equil_frac = 0.3
+        self.equil_frac = 0.1
 
     def run(self):
 
@@ -292,18 +292,13 @@ if __name__ == "__main__":
     np.random.seed(0)
 
     cell = [15, 15]
-    for i in range(1, 3):
-        md = Symd(nparticles=5, cell=cell, ndims=2, force='soft',
-                  group=i, steps=500, exeDir="test")
-        runner = Tester(md, f"SF_2_{i}_NVE")
-        runner.run()
-
+    for i in range(1, 18):
         md = Symd(nparticles=5, cell=cell, ndims=2,
-                  group=i, steps=500, exeDir="test")
+                  group=i, steps=50000, exeDir="test")
         runner = Tester(md, f"LJ_2_{i}_NVE")
         runner.run()
 
         md = Symd(nparticles=5, cell=cell, temperature=0.5, ndims=2,
-                  group=i, steps=5000, exeDir="test")
+                  group=i, steps=50000, exeDir="test")
         runner = Tester(md, f"LJ_2_{i}_NVT")
         runner.run()

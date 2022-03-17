@@ -617,7 +617,7 @@ double calculate_kenergy(double *velocities, double *masses, unsigned int n_dims
     kenergy += 0.5 * etemp * masses[i];
   }
 
-  return (kenergy);
+  return kenergy;
 }
 
 void log_xyz(FILE *file, double *array, char *frame_string,
@@ -727,46 +727,6 @@ double *load_matrix(char *filename, unsigned int nrow, unsigned int ncol, unsign
   }
 
   return NULL;
-}
-
-double remove_com(double *data, double *masses, unsigned int n_dims, unsigned int n_particles)
-{
-
-  unsigned int i, k;
-  double com[n_dims];
-  double mass_sum = 0;
-  double com_mag = 0;
-
-  // zero
-  for (i = 0; i < n_dims; i++)
-    com[i] = 0;
-  // calculate COM in 2 parts, sum ( mass) and sum(momentum)
-  for (i = 0; i < n_particles; i++)
-  {
-    mass_sum += masses[i];
-    for (k = 0; k < n_dims; k++)
-    {
-      com[k] += data[i * n_dims + k] / masses[i];
-    }
-  }
-
-  // turn into COM
-  for (i = 0; i < n_dims; i++)
-  {
-    com[i] /= mass_sum;
-    com_mag += com[i] * com[i];
-  }
-
-  // remove COM motion
-  for (i = 0; i < n_particles; i++)
-  {
-    for (k = 0; k < n_dims; k++)
-    {
-      data[i * n_dims + k] -= com[k];
-    }
-  }
-
-  return sqrt(com_mag);
 }
 
 void free_run_params(run_params_t *params)

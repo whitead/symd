@@ -189,6 +189,7 @@ class Symd:
             'forces_log_file',
             'log_file',
             'final_positions',
+            'cell_log_file',
             'group'
         ]
         for k in files:

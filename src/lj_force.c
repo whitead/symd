@@ -20,8 +20,8 @@ static inline void lj(double r, double epsilon, double sigma, double result[2])
 {
   double ri6 = pow(sigma / r, 6);
   double ri12 = ri6 * ri6;
-  result[1] = 4 * epsilon * (ri12 - ri6);
   result[0] = 4 * epsilon * (6 * ri6 * sigma / r - 12 * ri12 * sigma / r);
+  result[1] = 4 * epsilon * (ri12 - ri6);
 }
 
 double nlj_gather_forces(run_params_t *params, double *positions, double *forces)
@@ -211,11 +211,10 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
           if (j < params->n_particles)
           {
             forces[j * n_dims + k] -= force / r * force_vector[k];
-            penergy += e;
+            penergy += e / 2;
           }
         }
-
-        penergy += e;
+        penergy += e / 2;
       }
     }
   }

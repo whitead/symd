@@ -53,11 +53,6 @@ double process_double(char ***pstrings, char *key, bool *success);
 
 char *process_string(char ***pstrings, char *key, bool *success);
 
-/* Remove center of mass translational motion. Returns the magnitude of the COM
- *
- */
-double remove_com(double *velocities, double *masses, unsigned int n_dims, unsigned int n_particles);
-
 // free all the memory bits in the run_params_t struct
 void free_run_params(run_params_t *params);
 
