@@ -153,9 +153,11 @@ class Symd:
         self.runParams['positions_log_file'] = os.path.join(
             self.prefix, filename)
 
-    def log_output(self, filename='md.log', period=0):
-        if period != 0:
-            self.runParams['print_period'] = period
+    def log_output(self, filename='md.log', period=0, frames=0):
+        if period == 0:
+            if frames == 0:
+                frames = 100
+            period = ceil(self.runParams['print_period'] / frames)
         self.runParams['log_file'] = os.path.join(self.prefix, filename)
         self.do_log_output = True
 
