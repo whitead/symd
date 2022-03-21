@@ -156,7 +156,8 @@ class Symd:
         if period == 0:
             if frames == 0:
                 frames = 100
-            period = ceil(self.runParams['print_period'] / frames)
+            period = ceil(self.runParams['steps'] / frames)
+        self.runParams['print_period'] = int(period)
         self.runParams['log_file'] = os.path.join(self.prefix, filename)
         self.do_log_output = True
 
