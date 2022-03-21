@@ -54,7 +54,7 @@ class Symd:
             'langevin_gamma': 0.1,
             'bussi_taut': 0.5,
             'thermostat_seed': 54344,
-            'rcut': 3,
+            'rcut': 10,
             'skin': 3 * 0.2,
             'temperature': 0,
             'pressure': 0,
@@ -109,7 +109,7 @@ class Symd:
         cache_params = self.runParams.copy()
         self.runParams['force_type'] = 'soft'
         self.runParams['thermostat'] = 'baoab'
-        self.runParams['temperature'] = 0.1
+        self.runParams['temperature'] = 1.0
         self.runParams['steps'] = 1000
         self.runParams['final_positions'] = self.runParams['start_positions']
         self.run()
@@ -117,7 +117,7 @@ class Symd:
         self.runParams['thermostat'] = 'baoab'
         self.runParams['langevin_gamma'] = 10
         self.runParams['temperature'] = 0.01
-        self.runParams['start_temperature'] = 0.01
+        self.runParams['start_temperature'] = 0.5
         self.runParams['lj_sigma'] = 1.0
         self.runParams['steps'] = 1000
         self.runParams['final_positions'] = self.runParams['start_positions']
@@ -129,13 +129,12 @@ class Symd:
         self.runParams['force_type'] = 'lj'
         self.runParams['thermostat'] = 'baoab'
         self.runParams['langevin_gamma'] = 10
-        self.runParams['temperature'] = 0.2
-        self.runParams['start_temperature'] = 0.5
-        self.runParams['lj_sigma'] = 1.0
+        self.runParams['temperature'] = 0.1
+        self.runParams['start_temperature'] = 0.2
         self.runParams['steps'] = 5000
         self.runParams['final_positions'] = self.runParams['start_positions']
         self.runParams['pressure'] = 0.1
-        self.runParams['box_update_period'] = 1
+        self.runParams['box_update_period'] = 3
         self.run()
         print(f'Shrunk from {self.v[0]} to {self.v[-1]}')
         self.runParams = cache_params

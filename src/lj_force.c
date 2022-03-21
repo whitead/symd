@@ -126,10 +126,7 @@ double nlj_gather_forces(run_params_t *params, double *positions, double *forces
         {
           forces[i * n_dims + k] += force / r * force_vector[k];
           if (j < params->n_particles)
-          {
             forces[j * n_dims + k] -= force / r * force_vector[k];
-            penergy += e;
-          }
         }
 
         penergy += e;
@@ -146,7 +143,6 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 {
   unsigned int n_dims = N_DIMS;
   unsigned int n_particles = params->n_particles;
-  double *box_size = params->box->box_size;
   force_t *force_p = params->force_parameters;
   lj_parameters_t *parameters = (lj_parameters_t *)force_p->parameters;
   const double epsilon = parameters->epsilon;
@@ -157,7 +153,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   double r, force, diff, e, lj_result[2];
   double force_vector[n_dims];
   // TODO better
-  double rcut = sigma * 3;
+  double rcut = sigma * 2.5;
   double e_shift, lj_shift;
   lj(rcut, epsilon, sigma, lj_result);
   lj_shift = lj_result[0];
@@ -209,12 +205,11 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         {
           forces[i * n_dims + k] += force / r * force_vector[k];
           if (j < params->n_particles)
-          {
             forces[j * n_dims + k] -= force / r * force_vector[k];
-            penergy += e / 2;
-          }
         }
         penergy += e / 2;
+        if (j < params->n_particles)
+          penergy += e / 2;
       }
     }
   }

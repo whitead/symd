@@ -146,6 +146,16 @@ projectors3d = {
 projectors3d['Trigonal'] = projectors3d['Hexagonal']
 
 
+def _projector_key(p):
+    # sort so asymmetric unit is valid
+    dim = p.shape[0]
+    # see which is closest to identity
+    s = np.sum((p - np.eye(dim))**2)
+    # prefer positive coordinates (in x first)
+    #s += np.sum((p < 0) @ np.arange(dim, 0, -1).T)
+    return s
+
+
 def write_group(f, name, group, dim):
     # tiling code needs to be updated for more than 2D
     def fmt(n):
@@ -166,7 +176,7 @@ def write_group(f, name, group, dim):
     # if we do not have identity as zeroth, make one with
     # least translation be zero
     if not np.allclose(members[0][:-1, :-1], np.eye(dim)):
-        members.sort(key=lambda m: np.sum((m - np.eye(dim+1))**2))
+        members.sort(key=_projector_key)
     for m in members:
         result['members'].append(fmt(m))
     # should be same for all, so use last
