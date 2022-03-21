@@ -131,10 +131,12 @@ void main_loop(run_params_t *params)
       do_exit = 1;
     }
   }
-  for (i = 0; i < params->n_particles; i++)
-    scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
-  log_array(params->final_positions_file, params->scaled_positions, N_DIMS,
-            params->n_particles, false);
+  // want to store whole cell
+  SCALAR* temp =  (SCALAR*) malloc(sizeof(SCALAR) * N_DIMS * params->n_cell_particles);
+  for (i = 0; i < params->n_cell_particles; i++)
+    scale_wrap_coords(&temp[i * N_DIMS], &positions[i * N_DIMS], params->box);
+  log_array(params->final_positions_file, temp, N_DIMS,
+            params->n_cell_particles, false);
 
   log_array(params->cell_file, params->box->b_vectors, N_DIMS,
             N_DIMS, false);

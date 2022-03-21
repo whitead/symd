@@ -7,7 +7,7 @@ from weakref import WeakKeyDictionary
 import numpy as np
 from .groups import *
 
-SymdLocation = '/mnt/c/Users/white/repos/simple-MD/build'
+SymdLocation = ''
 
 
 class Symd:
@@ -62,7 +62,7 @@ class Symd:
             'start_temperature': start_temperature,
             'thermostat': thermostat,
             'force_type': force,
-            'final_positions': os.path.join(self.prefix, 'final_positions.xyz'),
+            'final_positions': os.path.join(self.prefix, 'final_positions.dat'),
             'cell_log_file': os.path.join(self.prefix, 'cell_log_file.dat'),
             'print_period': max(1, (steps / 100)),
             'cell': cell,
@@ -77,7 +77,7 @@ class Symd:
             self.runParams['thermostat'] = None
         if pressure != None:
             self.runParams['pressure'] = pressure
-            self.runParams['box_update_period'] = 25
+            self.runParams['box_update_period'] = 5
         else:
             self.runParams['pressure'] = None
         if force == 'lj':
@@ -93,7 +93,7 @@ class Symd:
         gname = 'group-' + str(group)
         outputs = prepare_input(group, ndims, nparticles, gname, self.prefix)
         self.runParams['start_positions'] = os.path.join(
-            self.prefix, gname + '.xyz')
+            self.prefix, gname + '.dat')
         self.runParams['group'] = os.path.join(self.prefix, f'{gname}.json')
         if wyckoffs is not None:
             if type(wyckoffs) == int:

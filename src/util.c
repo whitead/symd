@@ -7,7 +7,7 @@
 static const char *
     default_json = " { \"com_remove_period\" : 1000, \"skin\" : 0, \
     \"seed\" : 1523, \"anderson_nu\" : 10.0, \"pressure\": 0,\
-    \"temperature\": 0, \"final_positions\": \"final_positions.xyz\",\
+    \"temperature\": 0, \"final_positions\": \"final_positions.dat\",\
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
     \"box_update_period\": 0, \"force_type\": null,\

@@ -68,4 +68,6 @@ target_link_libraries(symd2 GSL::gsl GSL::gslcblas)
 target_link_libraries(symd2 m)
 #target_link_libraries(symd2 OpenMP::OpenMP_CXX)
 
+install(TARGETS symd2 symd3)
+
 add_subdirectory(python)

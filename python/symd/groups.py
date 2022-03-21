@@ -211,7 +211,7 @@ def prepare_input(gnum, dim, N, name, dir='.'):
         with open(fn, 'w') as f:
             write_group(f, name + f'-{i}', g, dim)
     Ni = N
-    with open(os.path.join(dir, f'{name}.xyz'), 'w') as f:
+    with open(os.path.join(dir, f'{name}.dat'), 'w') as f:
         while Ni > 0:
             x = np.random.uniform()
             y = np.random.uniform()
