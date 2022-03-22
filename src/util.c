@@ -202,7 +202,7 @@ run_params_t *read_parameters(char *file_name)
       i++;
     }
     if (i != N_DIMS && i != N_DIMS * N_DIMS)
-      fprintf(stderr, "Not enough cel dims set\n");
+      fprintf(stderr, "Not enough cell dims set\n");
     // convert if was sizes, not basis vectors
     if (i == N_DIMS)
     {

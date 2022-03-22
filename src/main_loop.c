@@ -43,6 +43,7 @@ void main_loop(run_params_t *params)
   double kenergy = 0;
   double insta_temperature;
   double therm_conserved = 0;
+  SCALAR *output = (SCALAR *)malloc(sizeof(SCALAR) * N_DIMS * params->n_cell_particles);
 
   // apply group if necessary
   if (params->box->group)
@@ -125,21 +126,44 @@ void main_loop(run_params_t *params)
       printf("%12d %12g %12g %12g %12g %12g %12g %12g\n",
              i, i * params->time_step, insta_temperature, penergy, kenergy,
              penergy + kenergy, penergy + kenergy - therm_conserved, volume(params->box));
+
+      // store "final" values at print period in case of bad exit
+      for (j = 0; j < params->n_cell_particles; j++)
+        scale_wrap_coords(&output[j * N_DIMS], &positions[j * N_DIMS], params->box);
+
+      fseek(params->final_positions_file, 0, SEEK_SET);
+      fseek(params->cell_file, 0, SEEK_SET);
+      log_array(params->final_positions_file, output, N_DIMS,
+                params->n_cell_particles, false);
+
+      log_array(params->cell_file, params->box->b_vectors, N_DIMS,
+                N_DIMS, false);
+      log_array(params->cell_file, params->box->unorm_b_vectors, N_DIMS,
+                N_DIMS, false);
     }
     if (params->n_particles > 1 && (insta_temperature != insta_temperature || insta_temperature > 1e25))
     {
       do_exit = 1;
     }
   }
-  // want to store whole cell
-  SCALAR* temp =  (SCALAR*) malloc(sizeof(SCALAR) * N_DIMS * params->n_cell_particles);
-  for (i = 0; i < params->n_cell_particles; i++)
-    scale_wrap_coords(&temp[i * N_DIMS], &positions[i * N_DIMS], params->box);
-  log_array(params->final_positions_file, temp, N_DIMS,
-            params->n_cell_particles, false);
 
-  log_array(params->cell_file, params->box->b_vectors, N_DIMS,
-            N_DIMS, false);
+  // only store if we had a clean exit
+  if (!do_exit)
+  {
+    fseek(params->final_positions_file, 0, SEEK_SET);
+    fseek(params->cell_file, 0, SEEK_SET);
+    // want to store whole cell
+    for (i = 0; i < params->n_cell_particles; i++)
+      scale_wrap_coords(&output[i * N_DIMS], &positions[i * N_DIMS], params->box);
+    log_array(params->final_positions_file, output, N_DIMS,
+              params->n_cell_particles, false);
+
+    log_array(params->cell_file, params->box->b_vectors, N_DIMS,
+              N_DIMS, false);
+    log_array(params->cell_file, params->box->unorm_b_vectors, N_DIMS,
+              N_DIMS, false);
+  }
 
   free(forces);
+  free(output);
 }

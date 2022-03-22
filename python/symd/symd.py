@@ -109,6 +109,8 @@ class Symd:
         cache_params = self.runParams.copy()
         self.runParams['force_type'] = 'soft'
         self.runParams['thermostat'] = 'baoab'
+        self.runParams['pressure'] = None
+        self.runParams['box_update_period'] = 0
         self.runParams['temperature'] = 1.0
         self.runParams['steps'] = 1000
         self.runParams['final_positions'] = self.runParams['start_positions']
@@ -229,12 +231,6 @@ class Symd:
             stderr=subprocess.PIPE,
         )
         output, outerr = proc.communicate(json.dumps(self.runParams).encode())
-        if proc.returncode != 0:
-            print(json.dumps(self.runParams))
-            print(output.decode())
-            print(outerr.decode())
-            raise RuntimeError(
-                f'Failed to complete simulation. Ended with code {proc.returncode}')
 
         if self.do_log_output:
             with open(self.runParams['log_file'], 'wb') as f:
@@ -255,17 +251,34 @@ class Symd:
                 index += 1
             except ValueError:
                 pass
-        self.executed = True
         if 'positions_log_file' in self.runParams:
             self.read_positions()
+
+        # update so next run is valid
+        self.runParams['cell'] = self.read_cell()
+        self.runParams['start_positions'] = self.runParams['final_positions']
+
+        # Do it at the end in case we want to catch
+        # and still use results
+        if proc.returncode != 0:
+            print(json.dumps(self.runParams))
+            print(output.decode())
+            print(outerr.decode())
+            raise RuntimeError(
+                f'Failed to complete simulation. Ended with code {proc.returncode}')
+        self.executed = True
+
         return True
 
-    def read_cell(self):
+    def read_cell(self, normed=False):
         cell = []
         with open(self.runParams['cell_log_file'], 'r') as f:
             for line in f.readlines():
                 cell.extend([float(s) for s in line.split()])
-        return cell
+        N = len(cell)
+        if normed:
+            return cell[:N // 2]
+        return cell[N // 2:]
 
     def read_positions(self):
         '''Reads the positions from the positions log file'''
