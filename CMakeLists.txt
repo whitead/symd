@@ -21,7 +21,7 @@ project(symd)
 if (CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
 set(APPEND CMAKE_C_FLAGS_RELEASE "-O2 -g")
 else()
-set(CMAKE_C_FLAGS_RELEASE "-Og -fno-tree-pta -g -march=native -funroll-loops -fmodulo-sched -fmodulo-sched-allow-regmoves")
+set(CMAKE_C_FLAGS_RELEASE "-O3 -fno-tree-pta -g -march=native -funroll-loops -fmodulo-sched -fmodulo-sched-allow-regmoves")
 #set(CMAKE_C_FLAGS_RELEASE "-O3 -g -Wall")
 endif()
 

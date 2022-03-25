@@ -104,6 +104,11 @@ class Symd:
                     raise ValueError('Too many Wyckoff positions specified')
                 ws.append({'group': outputs[i], 'n_particles': w})
             self.runParams['wyckoffs'] = ws
+        else:
+            wyckoffs = []
+        # compute cell particle count
+        self.cell_nparticles = cell_nparticles(
+            load_group(group, ndims), nparticles, *wyckoffs)
 
     def remove_overlap(self):
         cache_params = self.runParams.copy()
@@ -138,10 +143,8 @@ class Symd:
         self.runParams['pressure'] = 0.1
         self.runParams['box_update_period'] = 3
         self.run()
-        print(f'Shrunk from {self.v[0]} to {self.v[-1]}')
         self.runParams = cache_params
         self.runParams['cell'] = self.read_cell()
-        print(f'New cell: {self.runParams["cell"]}')
 
     def log_positions(self, filename='positions.xyz', period=0, frames=0):
         '''enable logging of the xyz positions of the simulation. Default is to output 100 frames'''
@@ -270,15 +273,21 @@ class Symd:
 
         return True
 
-    def read_cell(self, normed=False):
+    def read_cell(self, bravais=False):
         cell = []
         with open(self.runParams['cell_log_file'], 'r') as f:
             for line in f.readlines():
                 cell.extend([float(s) for s in line.split()])
         N = len(cell)
-        if normed:
+        if bravais:
             return cell[:N // 2]
         return cell[N // 2:]
+
+    def number_density(self):
+        '''returns the packing fraction of the system'''
+        cell = self.read_cell(True)
+        cell = np.array(cell).reshape((self.ndims, self.ndims))
+        return self.cell_nparticles / cell_volume(cell)
 
     def read_positions(self):
         '''Reads the positions from the positions log file'''

@@ -220,3 +220,71 @@ def prepare_input(gnum, dim, N, name, dir='.'):
                 f.write(f'{x} {y}\n' if dim == 2 else f'{x} {y} {z}\n')
                 Ni -= 1
     return paths
+
+
+def cell_nparticles(group, genpos, *specpos):
+    '''Get number of unit cell particles given genpos and specpos'''
+    N = 0
+    if specpos is None:
+        specpos = []
+    for i, w in enumerate(specpos):
+        genpos -= w
+        if i == len(group['specpos']):
+            raise ValueError('Too many specpos')
+        N += w * group['specpos'][i]['size']
+
+    return N + genpos * len(group['genpos'])
+
+
+def _sign(x): return bool(x > 0) - bool(x < 0)
+
+
+def _levi_civta(index):
+    p = 1
+    d = len(index)
+    for i in range(d):
+        for j in range(i + 1, d):
+            p *= _sign(index[j] - index[i])
+    return p
+
+
+def _rvolume(b, v, i, index):
+    d = len(index)
+    if i == d:
+        return _levi_civta(index) * v
+    vi = 0
+    for j in range(d):
+        index[i] = j
+        vi += _rvolume(b, b[j][i] * v, i + 1, index)
+    return vi
+
+
+def cell_volume(b):
+    index = [0] * len(b)
+    return _rvolume(b, 1, 0, index)
+
+
+def project_cell(cell, projector):
+    ndim = cell.shape[0]
+    fub = cell.flatten()
+    fb = np.array(projector).reshape(ndim**2, ndim**2) @ fub
+    return fb.reshape(ndim, ndim)
+
+
+def get_cell(number_density, gnum, dim, n, w=None):
+    import scipy.optimize as opt
+    if w is None:
+        w = []
+    group = load_group(gnum, dim)
+    pname = group['lattice']
+    projector = projectors2d[pname
+                             ] if dim == 2 else projectors3d[pname]
+    N = cell_nparticles(group, n, *w)
+    cell = np.eye(dim) * N
+
+    def obj(s):
+        c = project_cell(cell * s, projector)
+        v = cell_volume(c)
+        return (N / v - number_density)**2
+    result = opt.minimize(obj, x0=1, bounds=[(1e-5, 1e5)])
+    return list((result.x * cell).flatten().astype(float))
