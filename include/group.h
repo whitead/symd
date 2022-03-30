@@ -24,7 +24,7 @@ struct group_t
     group_t *next;
 };
 
-void fold_particles(run_params_t *params, SCALAR *positions);
+void fold_particles(run_params_t *params, SCALAR *positions, SCALAR *velocities);
 void fold_velocities(run_params_t *params, SCALAR *velocities);
 void update_group(group_t *group, box_t *box);
 void apply_constraints(run_params_t *params, SCALAR *positions, SCALAR *velocities);

@@ -33,7 +33,6 @@ class Symd:
 
         self.ndims = ndims
         self.nparticles = nparticles
-        self.group = group
 
         self.prefix = exeDir
         if self.prefix != '' and (not os.path.exists(self.prefix)):
@@ -44,6 +43,7 @@ class Symd:
 
         self.executed = False
         self.do_log_output = False
+        self.positions = None
 
         self.runParams = {
             'steps': steps,
@@ -90,7 +90,10 @@ class Symd:
             elif type(images) == list:
                 self.runParams['images'] = images
 
-        gname = 'group-' + str(group)
+        if type(group) == int:
+            gname = 'group-' + str(group)
+        else:
+            gname = 'group-custom'
         outputs = prepare_input(group, ndims, nparticles, gname, self.prefix)
         self.runParams['start_positions'] = os.path.join(
             self.prefix, gname + '.dat')
@@ -108,7 +111,7 @@ class Symd:
             wyckoffs = []
         # compute cell particle count
         self.cell_nparticles = cell_nparticles(
-            load_group(group, ndims), nparticles, *wyckoffs)
+            group, nparticles, *wyckoffs)
 
     def remove_overlap(self):
         cache_params = self.runParams.copy()
@@ -255,7 +258,11 @@ class Symd:
             except ValueError:
                 pass
         if 'positions_log_file' in self.runParams:
-            self.read_positions()
+            try:
+                self.read_positions()
+            except AssertionError as e:
+                print(e)
+                print('could not read positions')
 
         # update so next run is valid
         self.runParams['cell'] = self.read_cell()
@@ -308,15 +315,19 @@ class Symd:
             K = len(lines)
             T = K // (N + 2)  # 2 for the header
             assert (N + 2) * T == K
-            self.positions = np.empty((T, N, self.ndims))
+            positions = np.empty((T, N, self.ndims))
             j = -1  # since we have Frame appear before first frame
             k = 0
             for i, line in enumerate(lines):
                 sline = line.split()
                 if len(sline) == 4:
-                    self.positions[j, k, :] = [float(x)
-                                               for x in sline[1:self.ndims + 1]]
+                    positions[j, k, :] = [float(x)
+                                          for x in sline[1:self.ndims + 1]]
                     k += 1
                 elif 'Frame' in line:
                     j += 1
                     k = 0
+        if self.positions is None:
+            self.positions = positions
+        else:
+            self.positions = np.concatenate((self.positions, positions))

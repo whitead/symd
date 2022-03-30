@@ -21,18 +21,18 @@ void action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALAR
     }
 }
 
-static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR *positions, unsigned int i_offset, unsigned int index_offset)
+static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR *positions, SCALAR *velocities, unsigned int i_offset, unsigned int index_offset)
 {
     const unsigned int p = params->n_particles;
     const unsigned int nc = params->n_cell_particles;
-    SCALAR temp[N_DIMS];
+    SCALAR temp[N_DIMS], temps;
     unsigned int i, j, k, l, index;
 
     // tile
     // asymmetric unit
     j = 0;
     index = i_offset;
-#pragma omp parallel for default(shared) private(i, index, k, l, temp)
+#pragma omp parallel for default(shared) private(i, index, k, l, temp, temps)
     for (i = 0; i < group->n_gparticles; i++, index++)
     {
         // tile and unscale
@@ -87,18 +87,19 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
     return index_offset + group->n_gparticles * (group->size - 1);
 }
 
-void fold_particles(run_params_t *params, SCALAR *positions)
+void fold_particles(run_params_t *params, SCALAR *positions, SCALAR *velocities)
 {
     unsigned int i, j;
     // update scaled and wrap
 #pragma omp parallel for default(shared) private(i)
     for (i = 0; i < params->n_particles; i++)
-        scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
+        scale_wrap_coords(&params->scaled_positions[i * N_DIMS],
+                          &positions[i * N_DIMS], params->box, velocities ? &velocities[i * N_DIMS] : NULL);
     // i is real particle, j is folded particle
     i = 0, j = 0;
     for (group_t *group = params->box->group; group != NULL; group = group->next)
     {
-        j = _fold_particles(params, group, positions, i, j);
+        j = _fold_particles(params, group, positions, velocities, i, j);
         i += group->n_gparticles;
     }
 }
@@ -117,7 +118,7 @@ void apply_constraints(run_params_t *params, SCALAR *positions, SCALAR *velociti
 #pragma omp parallel for default(shared) private(i, j, k, temp, lambda, delta, index)
         for (i = 0; i < group->n_gparticles; i++)
         {
-            scale_wrap_coords(&params->scaled_positions[index * N_DIMS], &positions[index * N_DIMS], params->box);
+            scale_wrap_coords(&params->scaled_positions[index * N_DIMS], &positions[index * N_DIMS], params->box, NULL);
             action(group->members[0].g, temp,
                    &params->scaled_positions[index * N_DIMS], N_DIMS, 1.0);
             for (j = 0; j < N_DIMS; j++)
@@ -143,7 +144,7 @@ void apply_constraints(run_params_t *params, SCALAR *positions, SCALAR *velociti
                 printf("position after constraints: %f %f\n", positions[index * N_DIMS + 0], positions[index * N_DIMS + 1]);
 #endif
             }
-            scale_wrap_coords(&params->scaled_positions[index * N_DIMS], &positions[index * N_DIMS], params->box);
+            scale_wrap_coords(&params->scaled_positions[index * N_DIMS], &positions[index * N_DIMS], params->box, NULL);
             index++;
         }
     }

@@ -47,7 +47,7 @@ void main_loop(run_params_t *params)
 
   // apply group if necessary
   if (params->box->group)
-    fold_particles(params, positions);
+    fold_particles(params, positions, velocities);
 
   // gather forces -> must be here so we don't do integrate 1 without forces
   if (params->force_parameters)
@@ -101,7 +101,7 @@ void main_loop(run_params_t *params)
 
     // apply group fold
     if (params->box->group)
-      fold_particles(params, positions);
+      fold_particles(params, positions, velocities);
 
     // apply NPT step (before forces)
     if (params->box_update_period > 0 && i % params->box_update_period == 0)
@@ -129,7 +129,7 @@ void main_loop(run_params_t *params)
 
       // store "final" values at print period in case of bad exit
       for (j = 0; j < params->n_cell_particles; j++)
-        scale_wrap_coords(&output[j * N_DIMS], &positions[j * N_DIMS], params->box);
+        scale_wrap_coords(&output[j * N_DIMS], &positions[j * N_DIMS], params->box, NULL);
 
       fseek(params->final_positions_file, 0, SEEK_SET);
       fseek(params->cell_file, 0, SEEK_SET);
@@ -154,7 +154,7 @@ void main_loop(run_params_t *params)
     fseek(params->cell_file, 0, SEEK_SET);
     // want to store whole cell
     for (i = 0; i < params->n_cell_particles; i++)
-      scale_wrap_coords(&output[i * N_DIMS], &positions[i * N_DIMS], params->box);
+      scale_wrap_coords(&output[i * N_DIMS], &positions[i * N_DIMS], params->box, NULL);
     log_array(params->final_positions_file, output, N_DIMS,
               params->n_cell_particles, false);
 

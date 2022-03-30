@@ -8,6 +8,16 @@
 #include <gsl/gsl_matrix_double.h>
 #include <gsl/gsl_linalg.h>
 
+static SCALAR triangle_wave(SCALAR x)
+{
+  return 2 * fabs(x / 2 - floor(x / 2 + 0.5));
+}
+
+static SCALAR square_wave(SCALAR x)
+{
+  return 2 * (2 * floor(x / 2) - floor(x)) + 1;
+}
+
 static void
 invert_matrix(SCALAR *data, SCALAR *inv_data)
 {
@@ -58,7 +68,7 @@ double wrap(double x, double img)
   return x - floor(x / img) * img;
 }
 
-void scale_wrap_coords(SCALAR *dest, SCALAR *src, box_t *box)
+void scale_wrap_coords(SCALAR *dest, SCALAR *src, box_t *box, SCALAR *velocities)
 {
   unsigned int i, j;
   memset(dest, 0, N_DIMS * sizeof(SCALAR));
@@ -66,7 +76,18 @@ void scale_wrap_coords(SCALAR *dest, SCALAR *src, box_t *box)
   {
     for (j = 0; j < N_DIMS; j++)
       dest[i] += src[j] * box->ib_vectors[i * N_DIMS + j];
-    dest[i] = fmod(dest[i], 1.0);
+    // apply boundaries
+    // reflect coords
+    // by moving them back into the unit cell (triangle wave)
+    // and reflecting velocity (square wave)
+    if (box->reflect[i])
+    {
+      if (velocities)
+        velocities[i] *= square_wave(dest[i]);
+      dest[i] = triangle_wave(dest[i]);
+    }
+    else
+      dest[i] = fmod(dest[i], 1.0);
   }
 }
 
@@ -111,6 +132,14 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
   memcpy(box->images, images, N_DIMS * sizeof(unsigned int));
 
   unsigned int i, j, k, l;
+
+  for (i = 0; i < N_DIMS; i++)
+  {
+    if (images[i] == 0)
+      box->reflect[i] = 1;
+    else
+      box->reflect[i] = 0;
+  }
 
   // project to get valid basis vector
   if (group)
@@ -263,11 +292,12 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
   // make random step along some sides
   // scale by .1% at most because it sounds reasonable
   char success = 0;
-  while (!success)
+  for (j = 0; !success && j < N_DIMS * N_DIMS * N_DIMS * N_DIMS; j++)
   {
     for (i = 0; i < N_DIMS * N_DIMS; i++)
     {
-      if (unorm_b_vectors[i] && gsl_rng_uniform(params->rng) < 1.0 / N_DIMS)
+      // do not change reflected vectors (single column)
+      if (gsl_rng_uniform(params->rng) < 1.0 / N_DIMS)
       {
         // between 99% and 101%
         unorm_b_vectors[i] *= 1.0 + gsl_rng_uniform(params->rng) * 0.002 - 0.001;
@@ -294,16 +324,16 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
   new_box = make_box(unorm_b_vectors, params->box->group, params->box->images);
   newV = volume(new_box);
 
-  // rescale coordinates
+  // rescale coordinates - already done in fold!
   // go to scaled
-  for (i = 0; i < params->n_particles; i++)
-    scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box);
-  // unscale with new box
-  for (i = 0; i < params->n_particles; i++)
-    unscale_coords(&positions[i * N_DIMS], &params->scaled_positions[i * N_DIMS], new_box);
+  // for (i = 0; i < params->n_particles; i++)
+  //   scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], params->box, NULL);
+  // // unscale with new box
+  // for (i = 0; i < params->n_particles; i++)
+  //   unscale_coords(&positions[i * N_DIMS], &params->scaled_positions[i * N_DIMS], new_box);
 
   // now fold them
-  fold_particles(params, positions);
+  fold_particles(params, positions, NULL);
 
   // get energy
   SCALAR new_energy = params->force_parameters->gather(params, positions, forces);
@@ -333,7 +363,7 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
     // undo rescale coordinates
     // go to scaled
     for (i = 0; i < params->n_particles; i++)
-      scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], new_box);
+      scale_wrap_coords(&params->scaled_positions[i * N_DIMS], &positions[i * N_DIMS], new_box, NULL);
     // unscale with old box
     for (i = 0; i < params->n_particles; i++)
       unscale_coords(&positions[i * N_DIMS], &params->scaled_positions[i * N_DIMS], params->box);
@@ -342,7 +372,7 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
     if (params->box->group)
     {
       update_group(params->box->group, params->box);
-      fold_particles(params, positions);
+      fold_particles(params, positions, NULL);
     }
 
     // reset forces

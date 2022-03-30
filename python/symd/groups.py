@@ -120,7 +120,7 @@ projectors3d = {
     'Triclinic': np.eye(9),
     'Monoclinic':  # TODO: might be missing potential rotation around z
         np.array([
-            6 * [1] + 3 * [0],  # ax
+            [1] + 8 * [0],  # ax
             9 * [0],  # bx
             2 * [0] + [1] + 6 * [0],  # cx
             9 * [0],  # ay
@@ -199,8 +199,9 @@ def load_group(gnum, dim):
     return group
 
 
-def prepare_input(gnum, dim, N, name, dir='.'):
-    group = load_group(gnum, dim)
+def prepare_input(group, dim, N, name, dir='.'):
+    if type(group) is int:
+        group = load_group(group, dim)
     asymm_unit = asymm_constraints(group['asymm_unit'])
     with open(os.path.join(dir, f'{name}.json'), 'w') as f:
         write_group(f, name, group, dim)
@@ -271,11 +272,12 @@ def project_cell(cell, projector):
     return fb.reshape(ndim, ndim)
 
 
-def get_cell(number_density, gnum, dim, n, w=None):
+def get_cell(number_density, group, dim, n, w=None):
     import scipy.optimize as opt
     if w is None:
         w = []
-    group = load_group(gnum, dim)
+    if type(group) is int:
+        group = load_group(gnum, dim)
     pname = group['lattice']
     projector = projectors2d[pname
                              ] if dim == 2 else projectors3d[pname]
