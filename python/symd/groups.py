@@ -277,7 +277,7 @@ def get_cell(number_density, group, dim, n, w=None):
     if w is None:
         w = []
     if type(group) is int:
-        group = load_group(gnum, dim)
+        group = load_group(group, dim)
     pname = group['lattice']
     projector = projectors2d[pname
                              ] if dim == 2 else projectors3d[pname]

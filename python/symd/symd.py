@@ -111,7 +111,7 @@ class Symd:
             wyckoffs = []
         # compute cell particle count
         self.cell_nparticles = cell_nparticles(
-            group, nparticles, *wyckoffs)
+            load_group(group, ndims), nparticles, *wyckoffs)
 
     def remove_overlap(self):
         cache_params = self.runParams.copy()
