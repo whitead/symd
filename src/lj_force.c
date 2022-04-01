@@ -153,7 +153,7 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
   double r, force, diff, e, lj_result[2];
   double force_vector[n_dims];
   // TODO better
-  double rcut = sigma * 2.5;
+  double rcut = sigma * 3.5;
   double e_shift, lj_shift;
   lj(rcut, epsilon, sigma, lj_result);
   lj_shift = lj_result[0];
