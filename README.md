@@ -1,9 +1,6 @@
 Symmetric Molecular Dynamics Engine
 =========================
 
-Science
-* Water (https://github.com/lammps/lammps/blob/d6a6f64576281906e4194387d070ac0327c24100/src/MANYBODY/pair_sw.cpp)
-
 Compiling
 -------------------------
 
