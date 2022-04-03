@@ -16,8 +16,9 @@ class Symd:
     def __init__(
         self,
         nparticles,
-        cell,
         ndims,
+        cell=None,
+        density=None,
         group=1,
         wyckoffs=None,
         images=None,
@@ -44,6 +45,26 @@ class Symd:
         self.executed = False
         self.do_log_output = False
         self.positions = None
+        if wyckoffs is not None:
+            if type(wyckoffs) == int:
+                wyckoffs = [wyckoffs] * len(outputs)
+            ws = []
+            for i, w in enumerate(wyckoffs):
+                if i >= len(outputs):
+                    raise ValueError('Too many Wyckoff positions specified')
+                ws.append({'group': outputs[i], 'n_particles': w})
+            self.runParams['wyckoffs'] = ws
+        else:
+            wyckoffs = []
+
+        if cell is None:
+            if density is None:
+                raise ValueError('Must specify density or cell')
+            else:
+                cell = get_cell(density, group, ndims, nparticles, wyckoffs)
+        else:
+            if density is not None:
+                raise ValueError('Cannot specify both density and cell')
 
         self.runParams = {
             'steps': steps,
@@ -98,17 +119,6 @@ class Symd:
         self.runParams['start_positions'] = os.path.join(
             self.prefix, gname + '.dat')
         self.runParams['group'] = os.path.join(self.prefix, f'{gname}.json')
-        if wyckoffs is not None:
-            if type(wyckoffs) == int:
-                wyckoffs = [wyckoffs] * len(outputs)
-            ws = []
-            for i, w in enumerate(wyckoffs):
-                if i >= len(outputs):
-                    raise ValueError('Too many Wyckoff positions specified')
-                ws.append({'group': outputs[i], 'n_particles': w})
-            self.runParams['wyckoffs'] = ws
-        else:
-            wyckoffs = []
         # compute cell particle count
         self.cell_nparticles = cell_nparticles(
             load_group(group, ndims), nparticles, *wyckoffs)

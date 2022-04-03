@@ -1,10 +1,40 @@
+from dataclasses import dataclass
 import numpy as np
 import json
 import re
 import os
+from typing import *
+from dataclasses import dataclass, asdict
 
 
-def str2mat(s):
+@dataclass
+class Group:
+    '''A group with information on genpos, specpos, Bravais lattice'''
+    lattice: str
+    genpos: List[str]
+    specpos: List[object]
+    name: Optional[str] = None
+    asymm_unit: Optional[str] = None
+
+
+def _dict2group(d, name=None):
+    specpos = []
+    if 'specpos' in d:
+        for s in d['specpos']:
+            g = Group(lattice=d['lattice'],
+                      genpos=s['sites'], specpos=[], name=s['name'])
+            specpos.append(g)
+    return Group(d['lattice'], d['genpos'], specpos, name, d['asymm_unit'] if 'asymm_unit' in d else None)
+
+
+def str2mat(s: str) -> np.ndarray:
+    '''
+    Convert affine matrix specified in xyz notation to matrix. For example, -x, y - x, z.
+    Can be 2D or 3D.
+
+    :param : string in xyz notation
+    :return: numpy.ndarray: matrix
+    '''
     rows = []
     N = len(s.split(','))
     env = {'x': np.array([1, 0, 0]), 'y': np.array(
@@ -33,7 +63,15 @@ def str2mat(s):
     return result
 
 
-def asymm_constraints(s):
+def asymm_constraints(s: str) -> Union[Callable[[float, float, float], bool], Callable[[float, float], bool]]:
+    '''
+    Converts inequalities in xyz notation to lambda function. For example,
+    0\u2264x\u22642/3;0\u2264y\u22641/3;x\u2264(1+y)/2;y\u2264x/2 is converted to a
+    lambda function that returns True if the given point satisfies the constraints. Works in 2D and 3D.
+
+    :param s: string in xyz notation
+    :return: lambda function
+    '''
     s = s.replace('≤', '<=')
     env = {}
     in3d = 'z' in s
@@ -152,25 +190,22 @@ def _projector_key(p):
     # see which is closest to identity
     s = np.sum((p - np.eye(dim))**2)
     # prefer positive coordinates (in x first)
-    #s += np.sum((p < 0) @ np.arange(dim, 0, -1).T)
+    # s += np.sum((p < 0) @ np.arange(dim, 0, -1).T)
     return s
 
 
-def write_group(f, name, group, dim):
+def _write_group(f, name, group, dim):
     # tiling code needs to be updated for more than 2D
     def fmt(n):
         if n is None:
             return list(np.round(np.eye(dim**2).astype(float).flatten(), 8))
         return list(np.round(n.astype(float).flatten(), 8))
     try:
-        projector = projectors2d[group['lattice']
-                                 ] if dim == 2 else projectors3d[group['lattice']]
+        projector = projectors2d[group.lattice
+                                 ] if dim == 2 else projectors3d[group.lattice]
     except KeyError:
         projector = None
-    key = 'genpos'
-    if key not in group:
-        key = 'sites'
-    members = [str2mat(s) for s in group[key]]
+    members = [str2mat(s) for s in group.genpos]
     result = {'name': name, 'size': len(
         members), 'members': [], 'projector': fmt(projector)}
     # if we do not have identity as zeroth, make one with
@@ -185,7 +220,16 @@ def write_group(f, name, group, dim):
     json.dump(result, f, indent=True)
 
 
-def load_group(gnum, dim):
+def load_group(gnum: int, dim: int) -> Group:
+    '''
+    Load one of the 2D planar groups or 3D space groups that tile space. The :obj:`Group`
+    contains the name of the Bravais lattice, the general positions,
+    and a list of special positions.
+
+    :param gnum: group number (Hall number)
+    :param dim: dimensionality of space
+    :return: The :obj:`Group`
+    '''
     gnum = str(gnum)
     from importlib_resources import files
     import symd.data
@@ -196,21 +240,31 @@ def load_group(gnum, dim):
     if gnum not in all_groups:
         raise KeyError('Could not find group ' + gnum)
     group = all_groups[gnum]
-    return group
+    return _dict2group(group)
 
 
-def prepare_input(group, dim, N, name, dir='.'):
+def prepare_input(group: Union[Group, int], dim: int, N: int, name: str, dir='.') -> List[str]:
+    '''
+    Prepare input files for running symmetry MD.
+
+    :param group: group number (Hall number) or :obj:`Group`
+    :param dim: dimensionality of space
+    :param N: number of atoms
+    :param name: name of the group (used to name output files)
+    :param dir: directory to write files to
+    :return: list of input files
+    '''
     if type(group) is int:
         group = load_group(group, dim)
-    asymm_unit = asymm_constraints(group['asymm_unit'])
+    asymm_unit = asymm_constraints(group.asymm_unit)
     with open(os.path.join(dir, f'{name}.json'), 'w') as f:
-        write_group(f, name, group, dim)
+        _write_group(f, name, group, dim)
     paths = []
-    for i, g in enumerate(group['specpos']):
+    for i, g in enumerate(group.specpos):
         fn = os.path.join(dir, f'{name}-{i:02d}.json')
         paths.append(fn)
         with open(fn, 'w') as f:
-            write_group(f, name + f'-{i}', g, dim)
+            _write_group(f, name + f'-{i}', g, dim)
     Ni = N
     with open(os.path.join(dir, f'{name}.dat'), 'w') as f:
         while Ni > 0:
@@ -223,18 +277,24 @@ def prepare_input(group, dim, N, name, dir='.'):
     return paths
 
 
-def cell_nparticles(group, genpos, *specpos):
-    '''Get number of unit cell particles given genpos and specpos'''
+def cell_nparticles(group: Group, genpos: int, *specpos: int) -> int:
+    '''Get number of unit cell particles given genpos and specpos
+
+    :param group: The :obj:`Group`
+    :param genpos: The number of particles in the general positions in asymmetric unit
+    :param specpos: The numbers of particles in the special positions
+    :return: The number of particles in the unit cell
+    '''
     N = 0
     if specpos is None:
         specpos = []
     for i, w in enumerate(specpos):
         genpos -= w
-        if i == len(group['specpos']):
+        if i == len(group.specpos):
             raise ValueError('Too many specpos')
-        N += w * group['specpos'][i]['size']
+        N += w * len(group.specpos[i].genpos)
 
-    return N + genpos * len(group['genpos'])
+    return N + genpos * len(group.genpos)
 
 
 def _sign(x): return bool(x > 0) - bool(x < 0)
@@ -260,25 +320,49 @@ def _rvolume(b, v, i, index):
     return vi
 
 
-def cell_volume(b):
+def cell_volume(b: np.ndarray) -> float:
+    '''
+    Compute volume of given unit cell.
+
+    :param b: lattice vectors as columns
+    :return: volume of unit cell
+    '''
     index = [0] * len(b)
     return _rvolume(b, 1, 0, index)
 
 
-def project_cell(cell, projector):
+def project_cell(cell: np.ndarray, projector: Union[str, np.ndarray]) -> np.ndarray:
+    '''
+    Project unit cell to constraints of Bravais lattice.
+
+    :param cell: unit cell as columns
+    :param projector: projector tensor or str of Bravais lattice
+    '''
     ndim = cell.shape[0]
+    if projector is type(str):
+        projector = projectors2d[projector] if ndim == 2 else projectors3d[projector]
     fub = cell.flatten()
     fb = np.array(projector).reshape(ndim**2, ndim**2) @ fub
     return fb.reshape(ndim, ndim)
 
 
-def get_cell(number_density, group, dim, n, w=None):
+def get_cell(number_density: float, group: Union[int, Group], dim: int, n: int, w: Optional[List[int]] = None) -> List[float]:
+    '''
+    Compute unit cell given number density, group, and numver of particles in asymmetric unit.
+
+    :param number_density: number density of particles
+    :param group: group number (Hall number) or :obj:`Group`
+    :param dim: dimensionality of space
+    :param n: number of particles in asymmetric unit general positions
+    :param w: list of number of particles in special positions
+    :return: unit cell flattened (for use in symd MD engine)
+    '''
     import scipy.optimize as opt
     if w is None:
         w = []
     if type(group) is int:
         group = load_group(group, dim)
-    pname = group['lattice']
+    pname = group.lattice
     projector = projectors2d[pname
                              ] if dim == 2 else projectors3d[pname]
     N = cell_nparticles(group, n, *w)
