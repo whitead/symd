@@ -17,8 +17,7 @@ setup(
     license="MIT",
     packages=["symd"],
     include_package_data=True,
-    package_data={'symd': [
-        'data/*json']},
+    package_data={"symd": ["data/*json"]},
     install_requires=[
         "numpy",
     ],
@@ -29,6 +28,6 @@ setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-        "Topic :: Scientific/Engineering :: Chemistry"
+        "Topic :: Scientific/Engineering :: Chemistry",
     ],
 )

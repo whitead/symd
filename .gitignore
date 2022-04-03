@@ -156,3 +156,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+notebooks/atlas2d*
