@@ -1,26 +1,17 @@
 {
-    "steps": 400000,
-    "time_step": 0.005,
+    "steps": 4000,
     "temperature": 0.2,
     "start_temperature": 0.5,
-    "velocity_seed": 456415615,
-    "thermostat_seed": 1565,
     "langevin_gamma": 0.005,
-    "rcut": 3,
-    "lj_sigma": 1.0,
     "cell": [
         25,
         25
     ],
-    "images": [
-        2,
-        2
-    ],
+    "n_images": 2,
     "n_particles": 6,
     "start_positions": "wp-15.xyz",
     "print_period": 100,
     "positions_log_file": "positions.xyz",
-    "velocities_log_file": "velocities.xyz",
     "position_log_period": 100,
     "force_type": "lj",
     "group": "wp-15.json",
@@ -39,7 +30,6 @@
         }
     ],
     "thermostat": "baoab",
-    "com_remove_period": 0,
     "pressure": 1,
     "box_update_period": 25
 }

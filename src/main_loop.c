@@ -131,8 +131,10 @@ void main_loop(run_params_t *params)
       for (j = 0; j < params->n_cell_particles; j++)
         scale_wrap_coords(&output[j * N_DIMS], &positions[j * N_DIMS], params->box, NULL);
 
-      fseek(params->final_positions_file, 0, SEEK_SET);
-      fseek(params->cell_file, 0, SEEK_SET);
+      if (params->final_positions_file)
+        fseek(params->final_positions_file, 0, SEEK_SET);
+      if (params->cell_file)
+        fseek(params->cell_file, 0, SEEK_SET);
       log_array(params->final_positions_file, output, N_DIMS,
                 params->n_cell_particles, false);
 
@@ -150,8 +152,10 @@ void main_loop(run_params_t *params)
   // only store if we had a clean exit
   if (!do_exit)
   {
-    fseek(params->final_positions_file, 0, SEEK_SET);
-    fseek(params->cell_file, 0, SEEK_SET);
+    if (params->final_positions_file)
+      fseek(params->final_positions_file, 0, SEEK_SET);
+    if (params->cell_file)
+      fseek(params->cell_file, 0, SEEK_SET);
     // want to store whole cell
     for (i = 0; i < params->n_cell_particles; i++)
       scale_wrap_coords(&output[i * N_DIMS], &positions[i * N_DIMS], params->box, NULL);

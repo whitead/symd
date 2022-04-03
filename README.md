@@ -14,7 +14,7 @@ Compiling
 ```sh
 mkdir build && cd build
 cmake ..
-make && make install
+make && [sudo] make install
 ```
 The executable is `symdX` where `X` is the number of spatial dimensions
 
