@@ -191,7 +191,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
       if (i < N_DIMS - 1)
         printf("\nInfo:");
       else
-        print("\n");
+        printf("\n");
     }
   }
 

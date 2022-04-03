@@ -118,14 +118,11 @@ class Symd:
         else:
             if density is not None:
                 raise ValueError("Cannot specify both density and cell")
-        self.runParams['cell'] = cell
-        self.runParams["start_positions"] = os.path.join(
-            self.prefix, gname + ".dat")
+        self.runParams["cell"] = cell
+        self.runParams["start_positions"] = os.path.join(self.prefix, gname + ".dat")
         self.runParams["group"] = os.path.join(self.prefix, f"{gname}.json")
         # compute cell particle count
-        self.cell_nparticles = cell_nparticles(
-            group, nparticles, *wyckoffs
-        )
+        self.cell_nparticles = cell_nparticles(group, nparticles, *wyckoffs)
 
     def remove_overlap(self):
         """Attempt to remove overlapping particles"""
@@ -173,12 +170,10 @@ class Symd:
             period = ceil(self.runParams["steps"] / frames)
 
         self.runParams["position_log_period"] = int(period)
-        self.runParams["positions_log_file"] = os.path.join(
-            self.prefix, filename)
+        self.runParams["positions_log_file"] = os.path.join(self.prefix, filename)
 
     def log_output(self, filename="md.log", period=0, frames=0):
-        """ Log simulation output
-        """
+        """Log simulation output"""
         if period == 0:
             if frames == 0:
                 frames = 100
@@ -209,8 +204,7 @@ class Symd:
                 f.write("%d\n" % m)
 
     def clean_files(self):
-        """ Remove output files
-        """
+        """Remove output files"""
         files = [
             "masses_file",
             "start_positions",
@@ -235,8 +229,7 @@ class Symd:
 
     def run(self):
         """Run the simulation"""
-        output_lines = ceil(
-            self.runParams["steps"] / self.runParams["print_period"])
+        output_lines = ceil(self.runParams["steps"] / self.runParams["print_period"])
 
         self.out_times = np.empty(output_lines)
         self.temperature = np.empty(output_lines)
@@ -246,8 +239,7 @@ class Symd:
         self.htherm = np.empty_like(self.temperature)
         self.v = np.empty_like(self.temperature)
 
-        out_arrays = (self.temperature, self.pe, self.ke,
-                      self.te, self.htherm, self.v)
+        out_arrays = (self.temperature, self.pe, self.ke, self.te, self.htherm, self.v)
 
         proc = subprocess.Popen(
             self.exe,
@@ -302,7 +294,7 @@ class Symd:
         return True
 
     def read_cell(self, bravais=False):
-        """ Return the output unit cell.
+        """Return the output unit cell.
         :param bravais: if True, return the cell fit to be in Bravais (projected) for use in p1 or non-symmetric MD. If False, return a unit cell that will repeat the simulation.
         """
         cell = []
@@ -312,7 +304,7 @@ class Symd:
         N = len(cell)
         if bravais:
             return cell[: N // 2]
-        return cell[N // 2:]
+        return cell[N // 2 :]
 
     def number_density(self):
         """returns the packing fraction of the system"""
@@ -345,8 +337,7 @@ class Symd:
             for i, line in enumerate(lines):
                 sline = line.split()
                 if len(sline) == 4:
-                    positions[j, k, :] = [float(x)
-                                          for x in sline[1: self.ndims + 1]]
+                    positions[j, k, :] = [float(x) for x in sline[1 : self.ndims + 1]]
                     k += 1
                 elif "Frame" in line:
                     j += 1

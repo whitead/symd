@@ -28,8 +28,7 @@ def _dict2group(d, name=None):
     if "specpos" in d:
         for s in d["specpos"]:
             g = Group(
-                lattice=d["lattice"], genpos=s["sites"], specpos=[
-                ], name=s["name"]
+                lattice=d["lattice"], genpos=s["sites"], specpos=[], name=s["name"]
             )
             specpos.append(g)
     return Group(
@@ -51,13 +50,11 @@ def str2mat(s: str) -> np.ndarray:
     """
     rows = []
     N = len(s.split(","))
-    env = {"x": np.array([1, 0, 0]), "y": np.array(
-        [0, 1, 0]), "z": np.array([0, 0, 1])}
+    env = {"x": np.array([1, 0, 0]), "y": np.array([0, 1, 0]), "z": np.array([0, 0, 1])}
     fake_env = {"x": 0, "y": 0, "z": 0}
     for i, si in enumerate(s.split(",")):
         # treat implicit multiplication - 2x = 2 * x
-        si = re.sub("(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)",
-                    "*", si, flags=re.X)
+        si = re.sub("(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)", "*", si, flags=re.X)
         r = [0] * N
         l = {}
         # use fake ones to get translation
@@ -71,8 +68,7 @@ def str2mat(s: str) -> np.ndarray:
             l["scale"] = t
         # remove trans and add
         rows.append(
-            np.append((l["scale"] - l["translation"])
-                      [:N], np.sum(l["translation"]))
+            np.append((l["scale"] - l["translation"])[:N], np.sum(l["translation"]))
         )
     rows.append(np.array(N * [0] + [1]))
     result = np.vstack(rows)
@@ -97,8 +93,7 @@ def asymm_constraints(
     funcs = []
     for i, si in enumerate(s.split(";")):
         # treat implicit multiplication - 2x = 2 * x
-        si = re.sub("(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)",
-                    "*", si, flags=re.X)
+        si = re.sub("(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)", "*", si, flags=re.X)
         l = {}
         if in3d:
             exec(f"l{i} = lambda x,y,z:" + si, env, l)

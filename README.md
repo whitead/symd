@@ -47,4 +47,3 @@ the input files and parsing output files. See the examples in the `notebooks` di
 An example can be found in the `examples/lj-symm-example` directory.
 
 ## Citation
-

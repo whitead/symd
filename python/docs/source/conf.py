@@ -65,9 +65,7 @@ html_theme = "sphinx_rtd_theme"
 autosectionlabel_prefix_document = True
 add_module_names = False
 
-intersphinx_mapping = {
-    "numpy": ("https://numpy.org/doc/stable/", None)
-}
+intersphinx_mapping = {"numpy": ("https://numpy.org/doc/stable/", None)}
 
 
 master_doc = "toc"
