@@ -7,6 +7,7 @@
 static const char *
     default_json = " { \"com_remove_period\" : 1000, \"skin\" : 0, \
     \"seed\" : 1523, \"anderson_nu\" : 10.0, \"pressure\": 0,\
+    \"time_step\": 0.005, \
     \"temperature\": 0, \"final_positions\": \"final_positions.dat\",\
     \"harmonic_constant\" : 1.0, \"lj_epsilon\" : 1.0, \"lj_sigma\" : 1.0, \
     \"position_log_period\" : 0, \"velocity_log_period\" : 0,\
@@ -371,7 +372,7 @@ run_params_t *read_parameters(char *file_name)
     {
       printf("Info: Loaded group %s with %d particles and %d members\n", group->name, group->n_gparticles, group->size);
     }
-    params->box = make_box(sdata, group, images);
+    params->box = make_box(sdata, group, images, 1);
     sdata = NULL;
     // expand ghost particles to include tilings
     // we subtract at the end to avoid counting the asymmetric unit particles
@@ -414,7 +415,7 @@ run_params_t *read_parameters(char *file_name)
   }
   else
   {
-    params->box = make_box(sdata, NULL, images);
+    params->box = make_box(sdata, NULL, images, 1);
     sdata = NULL;
   }
 

@@ -120,9 +120,12 @@ void free_box(box_t *box)
   free(box);
 }
 
-box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_DIMS])
+box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_DIMS], char verbose)
 {
 
+#ifdef DEBUG
+  verbose = 1;
+#endif
   box_t *box = (box_t *)malloc(sizeof(box_t));
   box->box_size = (SCALAR *)calloc(N_DIMS, sizeof(SCALAR));
   box->b_vectors = (SCALAR *)calloc(N_DIMS * N_DIMS, sizeof(SCALAR));
@@ -157,35 +160,37 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
     memcpy(box->b_vectors, unorm_b_vectors, sizeof(SCALAR) * N_DIMS * N_DIMS);
   }
 
-#ifdef DEBUG
-  printf("\nUnormed vectors (column wise):\n");
-  for (i = 0; i < N_DIMS; i++)
+  if (verbose)
   {
-    for (j = 0; j < N_DIMS; j++)
-      printf("%f ", unorm_b_vectors[i * N_DIMS + j]);
-    printf("\n");
+    printf("Info: Unormed vectors (column wise):\nInfo: ");
+    for (i = 0; i < N_DIMS; i++)
+    {
+      for (j = 0; j < N_DIMS; j++)
+        printf("%f ", unorm_b_vectors[i * N_DIMS + j]);
+      printf("\n Info: ");
+    }
+    printf("Projected vectors:\nInfo: ");
+    for (i = 0; i < N_DIMS; i++)
+    {
+      for (j = 0; j < N_DIMS; j++)
+        printf("%f ", box->b_vectors[i * N_DIMS + j]);
+      printf("\nInfo: ");
+    }
   }
-  printf("Projected vectors:\n");
-  for (i = 0; i < N_DIMS; i++)
-  {
-    for (j = 0; j < N_DIMS; j++)
-      printf("%f ", box->b_vectors[i * N_DIMS + j]);
-    printf("\n");
-  }
-#endif
 
   // compute their inverse
   invert_matrix(box->b_vectors, box->ib_vectors);
 
-#ifdef DEBUG
-  printf("Inverse Projected vectors:\n");
-  for (i = 0; i < N_DIMS; i++)
+  if (verbose)
   {
-    for (j = 0; j < N_DIMS; j++)
-      printf("%f ", box->ib_vectors[i * N_DIMS + j]);
-    printf("\n");
+    printf("Inverse Projected vectors:\nInfo: ");
+    for (i = 0; i < N_DIMS; i++)
+    {
+      for (j = 0; j < N_DIMS; j++)
+        printf("%f ", box->ib_vectors[i * N_DIMS + j]);
+      printf("\n");
+    }
   }
-#endif
 
   // update group denomoniators for contraint forces
   // should be  sum_i p_ij b_jk, with extra term for addition
@@ -321,7 +326,7 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
   printf("\n");
 #endif
 
-  new_box = make_box(unorm_b_vectors, params->box->group, params->box->images);
+  new_box = make_box(unorm_b_vectors, params->box->group, params->box->images, 0);
   newV = volume(new_box);
 
   // rescale coordinates - already done in fold!

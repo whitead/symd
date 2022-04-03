@@ -18,7 +18,7 @@ int try_rescale(run_params_t *params, double *positions, double *penergy, double
 
 void tile(run_params_t *params, double *positions);
 
-box_t *make_box(double *unorm_b_vectors, group_t *group, unsigned int images[N_DIMS]);
+box_t *make_box(double *unorm_b_vectors, group_t *group, unsigned int images[N_DIMS], char verbose);
 
 void free_box(box_t *box);
 
