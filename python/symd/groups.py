@@ -11,10 +11,15 @@ from dataclasses import dataclass, asdict
 class Group:
     """A group with information on genpos, specpos, Bravais lattice"""
 
+    #: Bravais lattice name
     lattice: str
+    #: general positions as affine matrix strings (call :func:`str2mat` to convert to matrix)
     genpos: List[str]
+    #: list of :obj:`Group` special positions
     specpos: List[object]
+    #: name of the group
     name: Optional[str] = None
+    #: string indicating asymmetric unit (call :func:`asymm_constraints` to convert to lambda)
     asymm_unit: Optional[str] = None
 
 
@@ -23,7 +28,8 @@ def _dict2group(d, name=None):
     if "specpos" in d:
         for s in d["specpos"]:
             g = Group(
-                lattice=d["lattice"], genpos=s["sites"], specpos=[], name=s["name"]
+                lattice=d["lattice"], genpos=s["sites"], specpos=[
+                ], name=s["name"]
             )
             specpos.append(g)
     return Group(
@@ -40,16 +46,18 @@ def str2mat(s: str) -> np.ndarray:
     Convert affine matrix specified in xyz notation to matrix. For example, -x, y - x, z.
     Can be 2D or 3D.
 
-    :param : string in xyz notation
-    :return: numpy.ndarray: matrix
+    :param s: string in xyz notation
+    :return: np.ndarray: matrix
     """
     rows = []
     N = len(s.split(","))
-    env = {"x": np.array([1, 0, 0]), "y": np.array([0, 1, 0]), "z": np.array([0, 0, 1])}
+    env = {"x": np.array([1, 0, 0]), "y": np.array(
+        [0, 1, 0]), "z": np.array([0, 0, 1])}
     fake_env = {"x": 0, "y": 0, "z": 0}
     for i, si in enumerate(s.split(",")):
         # treat implicit multiplication - 2x = 2 * x
-        si = re.sub("(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)", "*", si, flags=re.X)
+        si = re.sub("(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)",
+                    "*", si, flags=re.X)
         r = [0] * N
         l = {}
         # use fake ones to get translation
@@ -63,7 +71,8 @@ def str2mat(s: str) -> np.ndarray:
             l["scale"] = t
         # remove trans and add
         rows.append(
-            np.append((l["scale"] - l["translation"])[:N], np.sum(l["translation"]))
+            np.append((l["scale"] - l["translation"])
+                      [:N], np.sum(l["translation"]))
         )
     rows.append(np.array(N * [0] + [1]))
     result = np.vstack(rows)
@@ -79,7 +88,7 @@ def asymm_constraints(
     lambda function that returns True if the given point satisfies the constraints. Works in 2D and 3D.
 
     :param s: string in xyz notation
-    :return: lambda function
+    :return: lambda function that is ``True`` when the point is in the asymmetric unit
     """
     s = s.replace("≤", "<=")
     env = {}
@@ -88,7 +97,8 @@ def asymm_constraints(
     funcs = []
     for i, si in enumerate(s.split(";")):
         # treat implicit multiplication - 2x = 2 * x
-        si = re.sub("(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)", "*", si, flags=re.X)
+        si = re.sub("(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)",
+                    "*", si, flags=re.X)
         l = {}
         if in3d:
             exec(f"l{i} = lambda x,y,z:" + si, env, l)
@@ -289,6 +299,7 @@ def cell_nparticles(group: Group, genpos: int, *specpos: int) -> int:
     :return: The number of particles in the unit cell
     """
     N = 0
+
     if specpos is None:
         specpos = []
     for i, w in enumerate(specpos):
@@ -326,7 +337,7 @@ def _rvolume(b, v, i, index):
 
 def cell_volume(b: np.ndarray) -> float:
     """
-    Compute volume of given unit cell.
+    Compute volume of given unit cell in arbitrary dimension
 
     :param b: lattice vectors as columns
     :return: volume of unit cell
@@ -358,14 +369,14 @@ def get_cell(
     w: Optional[List[int]] = None,
 ) -> List[float]:
     """
-    Compute unit cell given number density, group, and numver of particles in asymmetric unit.
+    Compute unit cell given number density, group, and number of particles in asymmetric unit.
 
     :param number_density: number density of particles
     :param group: group number (Hall number) or :obj:`Group`
     :param dim: dimensionality of space
     :param n: number of particles in asymmetric unit general positions
     :param w: list of number of particles in special positions
-    :return: unit cell flattened (for use in symd MD engine)
+    :return: flattened unit cell (for use in symd MD engine)
     """
     import scipy.optimize as opt
 

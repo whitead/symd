@@ -167,7 +167,7 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
     {
       for (j = 0; j < N_DIMS; j++)
         printf("%f ", unorm_b_vectors[i * N_DIMS + j]);
-      printf("\n Info: ");
+      printf("\nInfo: ");
     }
     printf("Projected vectors:\nInfo: ");
     for (i = 0; i < N_DIMS; i++)
@@ -188,7 +188,10 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
     {
       for (j = 0; j < N_DIMS; j++)
         printf("%f ", box->ib_vectors[i * N_DIMS + j]);
-      printf("\n");
+      if (i < N_DIMS - 1)
+        printf("\nInfo:");
+      else
+        print("\n");
     }
   }
 

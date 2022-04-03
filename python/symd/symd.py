@@ -45,26 +45,6 @@ class Symd:
         self.executed = False
         self.do_log_output = False
         self.positions = None
-        if wyckoffs is not None:
-            if type(wyckoffs) == int:
-                wyckoffs = [wyckoffs] * len(outputs)
-            ws = []
-            for i, w in enumerate(wyckoffs):
-                if i >= len(outputs):
-                    raise ValueError("Too many Wyckoff positions specified")
-                ws.append({"group": outputs[i], "n_particles": w})
-            self.runParams["wyckoffs"] = ws
-        else:
-            wyckoffs = []
-
-        if cell is None:
-            if density is None:
-                raise ValueError("Must specify density or cell")
-            else:
-                cell = get_cell(density, group, ndims, nparticles, wyckoffs)
-        else:
-            if density is not None:
-                raise ValueError("Cannot specify both density and cell")
 
         self.runParams = {
             "steps": steps,
@@ -113,17 +93,42 @@ class Symd:
 
         if type(group) == int:
             gname = "group-" + str(group)
+            group = load_group(group, ndims)
         else:
             gname = "group-custom"
         outputs = prepare_input(group, ndims, nparticles, gname, self.prefix)
-        self.runParams["start_positions"] = os.path.join(self.prefix, gname + ".dat")
+
+        if wyckoffs is not None:
+            if type(wyckoffs) == int:
+                wyckoffs = [wyckoffs] * len(outputs)
+            ws = []
+            for i, w in enumerate(wyckoffs):
+                if i >= len(outputs):
+                    raise ValueError("Too many Wyckoff positions specified")
+                ws.append({"group": outputs[i], "n_particles": w})
+            self.runParams["wyckoffs"] = ws
+        else:
+            wyckoffs = []
+
+        if cell is None:
+            if density is None:
+                raise ValueError("Must specify density or cell")
+            else:
+                cell = get_cell(density, group, ndims, nparticles, wyckoffs)
+        else:
+            if density is not None:
+                raise ValueError("Cannot specify both density and cell")
+        self.runParams['cell'] = cell
+        self.runParams["start_positions"] = os.path.join(
+            self.prefix, gname + ".dat")
         self.runParams["group"] = os.path.join(self.prefix, f"{gname}.json")
         # compute cell particle count
         self.cell_nparticles = cell_nparticles(
-            load_group(group, ndims), nparticles, *wyckoffs
+            group, nparticles, *wyckoffs
         )
 
     def remove_overlap(self):
+        """Attempt to remove overlapping particles"""
         cache_params = self.runParams.copy()
         self.runParams["force_type"] = "soft"
         self.runParams["thermostat"] = "baoab"
@@ -145,6 +150,7 @@ class Symd:
         self.runParams = cache_params
 
     def shrink(self):
+        """Run a brief NPT simulation"""
         cache_params = self.runParams.copy()
         self.runParams["force_type"] = "lj"
         self.runParams["thermostat"] = "baoab"
@@ -167,9 +173,12 @@ class Symd:
             period = ceil(self.runParams["steps"] / frames)
 
         self.runParams["position_log_period"] = int(period)
-        self.runParams["positions_log_file"] = os.path.join(self.prefix, filename)
+        self.runParams["positions_log_file"] = os.path.join(
+            self.prefix, filename)
 
     def log_output(self, filename="md.log", period=0, frames=0):
+        """ Log simulation output
+        """
         if period == 0:
             if frames == 0:
                 frames = 100
@@ -200,6 +209,8 @@ class Symd:
                 f.write("%d\n" % m)
 
     def clean_files(self):
+        """ Remove output files
+        """
         files = [
             "masses_file",
             "start_positions",
@@ -223,8 +234,9 @@ class Symd:
             os.rmdir(self.prefix)
 
     def run(self):
-
-        output_lines = ceil(self.runParams["steps"] / self.runParams["print_period"])
+        """Run the simulation"""
+        output_lines = ceil(
+            self.runParams["steps"] / self.runParams["print_period"])
 
         self.out_times = np.empty(output_lines)
         self.temperature = np.empty(output_lines)
@@ -234,7 +246,8 @@ class Symd:
         self.htherm = np.empty_like(self.temperature)
         self.v = np.empty_like(self.temperature)
 
-        out_arrays = (self.temperature, self.pe, self.ke, self.te, self.htherm, self.v)
+        out_arrays = (self.temperature, self.pe, self.ke,
+                      self.te, self.htherm, self.v)
 
         proc = subprocess.Popen(
             self.exe,
@@ -289,6 +302,9 @@ class Symd:
         return True
 
     def read_cell(self, bravais=False):
+        """ Return the output unit cell.
+        :param bravais: if True, return the cell fit to be in Bravais (projected) for use in p1 or non-symmetric MD. If False, return a unit cell that will repeat the simulation.
+        """
         cell = []
         with open(self.runParams["cell_log_file"], "r") as f:
             for line in f.readlines():
@@ -296,7 +312,7 @@ class Symd:
         N = len(cell)
         if bravais:
             return cell[: N // 2]
-        return cell[N // 2 :]
+        return cell[N // 2:]
 
     def number_density(self):
         """returns the packing fraction of the system"""
@@ -329,7 +345,8 @@ class Symd:
             for i, line in enumerate(lines):
                 sline = line.split()
                 if len(sline) == 4:
-                    positions[j, k, :] = [float(x) for x in sline[1 : self.ndims + 1]]
+                    positions[j, k, :] = [float(x)
+                                          for x in sline[1: self.ndims + 1]]
                     k += 1
                 elif "Frame" in line:
                     j += 1
