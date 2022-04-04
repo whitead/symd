@@ -1,0 +1,9 @@
+sphinx
+myst-nb
+sphinx-rtd-theme
+sphinx_autodoc_typehints
+seaborn
+pandas
+matplotlib
+skunk
+svglib
