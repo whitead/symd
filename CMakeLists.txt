@@ -70,4 +70,4 @@ target_link_libraries(symd2 m)
 
 install(TARGETS symd2 symd3 RUNTIME DESTINATION bin)
 
-add_subdirectory(python)
+#add_subdirectory(python)

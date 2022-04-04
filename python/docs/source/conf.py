@@ -28,7 +28,7 @@ author = "Andrew D White"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "myst_parser",
+    "myst_nb",
     "sphinx.ext.autodoc",
     "sphinx_autodoc_typehints",
     "sphinx.ext.autosectionlabel",
@@ -69,3 +69,12 @@ intersphinx_mapping = {"numpy": ("https://numpy.org/doc/stable/", None)}
 
 
 master_doc = "toc"
+myst_enable_extensions = [
+    "amsmath",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "html_image",
+]
+myst_url_schemes = ["http", "https", "mailto"]
+execution_timeout = -1
