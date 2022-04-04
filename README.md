@@ -22,7 +22,11 @@ There is a companion python package (`symd`) that can be installed via:
 pip install symd
 ```
 
-This does not include the MD engine, but instead includes necessary details to set-up symmetry constraints like getting affine matrices and Bravais lattice tensors. See [the docs](https://whitead.github.io/symd)
+This does not include the MD engine, but instead includes necessary details to set-up symmetry constraints like getting affine matrices and Bravais lattice tensors.
+
+## Docs & Examples
+
+See [the docs](https://whitead.github.io/symd) which includes the python API, examples of running simulations, and shows how the figures from the manuscript were generated.
 
 ## Compiling
 
@@ -43,7 +47,7 @@ The executable is `symdX` where `X` is the number of spatial dimensions
 ## Python Interface
 
 It is recommended to use the python interface, which simplifies building
-the input files and parsing output files. See the examples in the `notebooks` directory.
+the input files and parsing output files. See the examples in [the docs](https://whitead.github.io/symd/tocs.html).
 
 ## Example
 
