@@ -4,10 +4,8 @@ name: docs
 on:
   push:
     branches: [ main ]
-
-defaults:
-  run:
-    working-directory: python
+  pull_request:
+    branches: [ main ]
 
 
 jobs:
@@ -21,18 +19,27 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.8'
+    - name: Install symd
+      run: |
+        sudo apt-get install libgsl-dev cmake
+        mkdir build && cd build && cmake .. && make && sudo make install
     - name: Install dependencies
+      working-directory: python
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install
+      working-directory: python
       run: |
         pip install . && pip install -r docs/requirements.txt
     - name: Sphinx build
+      working-directory: python/docs
       run: |
-        cd docs && make html
+        cp ../../notebooks/*ipynb source
+        make html
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: python/docs/build/html
