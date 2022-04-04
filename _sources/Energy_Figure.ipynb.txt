@@ -5,7 +5,7 @@
    "id": "f5f91fd3",
    "metadata": {},
    "source": [
-    "## Figure 2 from Paper"
+    "## Figure 1 from Paper"
    ]
   },
   {
