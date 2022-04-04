@@ -8,5 +8,5 @@ exmol
     changelog.rst
     Custom_Group.ipynb
     Energy_Figure.ipynb
-    Atlast_Figure.ipynb
+    Atlas_Figure.ipynb
     api.rst
