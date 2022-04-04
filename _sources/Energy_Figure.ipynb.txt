@@ -1,0 +1,220 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "f5f91fd3",
+   "metadata": {},
+   "source": [
+    "## Figure 2 from Paper"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b9b0af9a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import symd\n",
+    "import matplotlib.pyplot as plt\n",
+    "import matplotlib as mpl\n",
+    "import numpy as np\n",
+    "import pickle\n",
+    "import pandas as pd\n",
+    "import skunk\n",
+    "import svglib\n",
+    "import seaborn as sns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "841ee66e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "base_colors = [\n",
+    "    \"f94144\",\n",
+    "    \"f3722c\",\n",
+    "    \"f8961e\",\n",
+    "    \"f9844a\",\n",
+    "    \"f9c74f\",\n",
+    "    \"90be6d\",\n",
+    "    \"43aa8b\",\n",
+    "    \"4d908e\",\n",
+    "    \"577590\",\n",
+    "    \"277da1\",\n",
+    "]\n",
+    "colors = [\"#\" + c for c in base_colors]\n",
+    "sns.set_style(\"white\")\n",
+    "sns.set_style(\"ticks\")\n",
+    "sns.set(\n",
+    "    rc={\n",
+    "        \"axes.facecolor\": \"#f5f4e9\",\n",
+    "        \"grid.color\": \"#AAAAAA\",\n",
+    "        \"axes.edgecolor\": \"#333333\",\n",
+    "        \"figure.facecolor\": \"#FFFFFF\",\n",
+    "        \"axes.grid\": False,\n",
+    "        \"axes.prop_cycle\": plt.cycler(\"color\", plt.cm.Dark2.colors),\n",
+    "        \"font.family\": \"monospace\",\n",
+    "    }\n",
+    ")\n",
+    "print(symd.__version__)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "dddf14cd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def run_sim(n, number_density, group, w=None, retries=5, pos_frames=0, steps=30000):\n",
+    "    for i in range(retries):\n",
+    "        try:\n",
+    "            np.random.seed(i)\n",
+    "            cell = symd.groups.get_cell(number_density, group, 3, n, w)\n",
+    "            md = symd.Symd(\n",
+    "                nparticles=n,\n",
+    "                cell=cell,\n",
+    "                ndims=3,\n",
+    "                images=2,\n",
+    "                force=\"lj\",\n",
+    "                wyckoffs=w,\n",
+    "                group=group,\n",
+    "                steps=steps,\n",
+    "                exeDir=\"sim2d\",\n",
+    "                start_temperature=0.5,\n",
+    "            )\n",
+    "            md.remove_overlap()\n",
+    "            if pos_frames > 0:\n",
+    "                md.log_positions(frames=pos_frames)\n",
+    "            md.log_output(period=int(1 / md.runParams[\"time_step\"]))\n",
+    "            md.run()\n",
+    "            break\n",
+    "        except RuntimeError as e:\n",
+    "            print(e)\n",
+    "            md = None\n",
+    "    return md"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f3f59eca",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.random.seed(0)\n",
+    "md = run_sim(5, 0.2, 17, pos_frames=100)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1356aeb6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.plot(md.pe, label=\"potential\")\n",
+    "plt.plot(md.ke, label=\"kinetic\")\n",
+    "plt.plot(md.te, label=\"total\")\n",
+    "plt.legend(loc=\"best\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8d470f70",
+   "metadata": {},
+   "source": [
+    "### All Sims"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0e931daf",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "titles = [str(i) for i in range(1, 231, 14)]\n",
+    "df = pd.DataFrame()\n",
+    "retries = 3\n",
+    "\n",
+    "\n",
+    "def standardize(te):\n",
+    "    i = int(md.te.shape[0] * 0.2)\n",
+    "    te = md.te[i:]\n",
+    "    return te - np.mean(te)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3c4d4ad1",
+   "metadata": {
+    "tags": [
+     "hide-output"
+    ]
+   },
+   "outputs": [],
+   "source": [
+    "for i, t in enumerate(titles):\n",
+    "    md = run_sim(4, 0.2, i + 1)\n",
+    "    df = df.assign(**{t: standardize(md.te)})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2a7774ad",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fig = plt.figure(figsize=(4, 5.7))\n",
+    "ax = plt.gca()\n",
+    "mx = df.shape[0] // 2\n",
+    "for i, n in enumerate(df.columns):\n",
+    "    color = colors[i % len(base_colors)]\n",
+    "    ax.plot(df[n] + i, color=color)\n",
+    "    offsetbox = mpl.offsetbox.TextArea(n)\n",
+    "    ab = mpl.offsetbox.AnnotationBbox(\n",
+    "        offsetbox,\n",
+    "        (mx, i),\n",
+    "        xybox=(mx, i),\n",
+    "        xycoords=\"data\",\n",
+    "        boxcoords=\"data\",\n",
+    "        arrowprops=None,\n",
+    "        bboxprops=dict(fc=\"#f5f4e9\", lw=0),\n",
+    "    )\n",
+    "    ax.add_artist(ab)\n",
+    "ax.set_xlabel(r\"Time [$\\tau$]\")\n",
+    "ax.set_facecolor(\"#f5f4e9\")\n",
+    "ax.set_ylabel(r\"$\\Delta$ Energy [$\\epsilon$]\")\n",
+    "plt.savefig(\"energy3d.svg\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "celltoolbar": "Tags",
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

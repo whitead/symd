@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Figure 2 from Paper &mdash; symd  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/mystnb.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Figure 1 From Paper" href="Atlas_Figure.html" />
+    <link rel="prev" title="Custom Symmetry Group Example" href="Custom_Group.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="toc.html" class="icon icon-home"> symd
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Custom_Group.html">Custom Symmetry Group Example</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Figure 2 from Paper</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#all-sims">All Sims</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Atlas_Figure.html">Figure 1 From Paper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="toc.html">symd</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="toc.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Figure 2 from Paper</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Energy_Figure.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="figure-2-from-paper">
+<h1>Figure 2 from Paper<a class="headerlink" href="#figure-2-from-paper" title="Permalink to this headline"></a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">symd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">skunk</span>
+<span class="kn">import</span> <span class="nn">svglib</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_colors</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;f94144&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f3722c&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f8961e&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f9844a&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f9c74f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;90be6d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;43aa8b&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;4d908e&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;577590&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;277da1&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">base_colors</span><span class="p">]</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;ticks&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">rc</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;axes.facecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;#f5f4e9&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;grid.color&quot;</span><span class="p">:</span> <span class="s2">&quot;#AAAAAA&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;axes.edgecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;#333333&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;figure.facecolor&quot;</span><span class="p">:</span> <span class="s2">&quot;#FFFFFF&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;axes.grid&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;axes.prop_cycle&quot;</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">cycler</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">Dark2</span><span class="o">.</span><span class="n">colors</span><span class="p">),</span>
+        <span class="s2">&quot;font.family&quot;</span><span class="p">:</span> <span class="s2">&quot;monospace&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">symd</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0.1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_sim</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">number_density</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pos_frames</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">30000</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">retries</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">cell</span> <span class="o">=</span> <span class="n">symd</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">get_cell</span><span class="p">(</span><span class="n">number_density</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+            <span class="n">md</span> <span class="o">=</span> <span class="n">symd</span><span class="o">.</span><span class="n">Symd</span><span class="p">(</span>
+                <span class="n">nparticles</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+                <span class="n">cell</span><span class="o">=</span><span class="n">cell</span><span class="p">,</span>
+                <span class="n">ndims</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                <span class="n">images</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">force</span><span class="o">=</span><span class="s2">&quot;lj&quot;</span><span class="p">,</span>
+                <span class="n">wyckoffs</span><span class="o">=</span><span class="n">w</span><span class="p">,</span>
+                <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
+                <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span>
+                <span class="n">exeDir</span><span class="o">=</span><span class="s2">&quot;sim2d&quot;</span><span class="p">,</span>
+                <span class="n">start_temperature</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">md</span><span class="o">.</span><span class="n">remove_overlap</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">pos_frames</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">md</span><span class="o">.</span><span class="n">log_positions</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="n">pos_frames</span><span class="p">)</span>
+            <span class="n">md</span><span class="o">.</span><span class="n">log_output</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">md</span><span class="o">.</span><span class="n">runParams</span><span class="p">[</span><span class="s2">&quot;time_step&quot;</span><span class="p">]))</span>
+            <span class="n">md</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="k">break</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">md</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">md</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">md</span> <span class="o">=</span> <span class="n">run_sim</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="n">pos_frames</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">md</span><span class="o">.</span><span class="n">pe</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;potential&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">md</span><span class="o">.</span><span class="n">ke</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;kinetic&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">md</span><span class="o">.</span><span class="n">te</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;total&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f50e48f2eb0&gt;
+</pre></div>
+</div>
+<img alt="_images/Energy_Figure_5_1.png" src="_images/Energy_Figure_5_1.png" />
+</div>
+</div>
+<section id="all-sims">
+<h2>All Sims<a class="headerlink" href="#all-sims" title="Permalink to this headline"></a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">titles</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">231</span><span class="p">,</span> <span class="mi">14</span><span class="p">)]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+<span class="n">retries</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">def</span> <span class="nf">standardize</span><span class="p">(</span><span class="n">te</span><span class="p">):</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">md</span><span class="o">.</span><span class="n">te</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">te</span> <span class="o">=</span> <span class="n">md</span><span class="o">.</span><span class="n">te</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">te</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">te</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">titles</span><span class="p">):</span>
+    <span class="n">md</span> <span class="o">=</span> <span class="n">run_sim</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="n">standardize</span><span class="p">(</span><span class="n">md</span><span class="o">.</span><span class="n">te</span><span class="p">)})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-3.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [2.71442, 0.0, 0.0, 0.0, 2.71442, 0.0, 0.0, 0.0, 2.71442], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-3.dat&quot;, &quot;group&quot;: &quot;sim2d/group-3.json&quot;}
+Info: You are running version 229b of symd
+Assuming you&#39;ll pass parameters via stdin. Waiting...
+Warning: assuming default value for com_remove_period = 1000
+Warning: assuming default value for position_log_period = 0
+Warning: assuming default value for velocity_log_period = 0
+Warning: assuming default value for force_log_period = 0
+Warning: Setting masses to 1.0
+Info: Loaded group group-3 with 4 particles and 2 members
+Info: Unormed vectors (column wise):
+Info: 2.714420 0.000000 0.000000 
+Info: 0.000000 2.714420 0.000000 
+Info: 0.000000 0.000000 2.714420 
+Info: Projected vectors:
+Info: 2.714420 0.000000 0.000000 
+Info: 0.000000 5.428840 0.000000 
+Info: 0.000000 0.000000 2.714420 
+Info: Inverse Projected vectors:
+Info: 0.368403 0.000000 0.000000 
+Info:0.000000 0.184201 0.000000 
+Info:0.000000 0.000000 0.368403 
+Info: Duplicating 4 particles into 4 real particles and 996 ghost for group with 2 elements and 124 tilings. Each cell has 8 particles.
+Info: Computed 12 degrees of freedom
+        Step         Time            T           PE           KE            E       Htherm            V
+           0            0  1.09929e+07      80187.3  6.59574e+07  6.60376e+07  6.60376e+07      40.0001
+         300          1.5  3.25732e+20     -5.42198  1.95439e+21  1.95439e+21  1.95439e+21      40.0001
+
+Exiting due to high temperature or energy  (T = 3.44219e+27)
+
+Failed to complete simulation. Ended with code 1
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-6.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [2.71442, 0.0, 0.0, 0.0, 2.71442, 0.0, 0.0, 0.0, 2.71442], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-6.dat&quot;, &quot;group&quot;: &quot;sim2d/group-6.json&quot;}
+Info: You are running version 229b of symd
+Assuming you&#39;ll pass parameters via stdin. Waiting...
+Warning: assuming default value for com_remove_period = 1000
+Warning: assuming default value for position_log_period = 0
+Warning: assuming default value for velocity_log_period = 0
+Warning: assuming default value for force_log_period = 0
+Warning: Setting masses to 1.0
+Info: Loaded group group-6 with 4 particles and 2 members
+Info: Unormed vectors (column wise):
+Info: 2.714420 0.000000 0.000000 
+Info: 0.000000 2.714420 0.000000 
+Info: 0.000000 0.000000 2.714420 
+Info: Projected vectors:
+Info: 2.714420 0.000000 0.000000 
+Info: 0.000000 5.428840 0.000000 
+Info: 0.000000 0.000000 2.714420 
+Info: Inverse Projected vectors:
+Info: 0.368403 0.000000 0.000000 
+Info:0.000000 0.184201 0.000000 
+Info:0.000000 0.000000 0.368403 
+Info: Duplicating 4 particles into 4 real particles and 996 ghost for group with 2 elements and 124 tilings. Each cell has 8 particles.
+Info: Computed 12 degrees of freedom
+        Step         Time            T           PE           KE            E       Htherm            V
+           0            0      6074.91     -2.60315      36449.5      36446.9      36446.9      40.0001
+
+Exiting due to high temperature or energy  (T = 1.87251e+36)
+
+Failed to complete simulation. Ended with code 1
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-10.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [3.41995, 0.0, 0.0, 0.0, 3.41995, 0.0, 0.0, 0.0, 3.41995], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-10.dat&quot;, &quot;group&quot;: &quot;sim2d/group-10.json&quot;}
+Info: You are running version 229b of symd
+Assuming you&#39;ll pass parameters via stdin. Waiting...
+Warning: assuming default value for com_remove_period = 1000
+Warning: assuming default value for position_log_period = 0
+Warning: assuming default value for velocity_log_period = 0
+Warning: assuming default value for force_log_period = 0
+Warning: Setting masses to 1.0
+Info: Loaded group group-10 with 4 particles and 4 members
+Info: Unormed vectors (column wise):
+Info: 3.419950 0.000000 0.000000 
+Info: 0.000000 3.419950 0.000000 
+Info: 0.000000 0.000000 3.419950 
+Info: Projected vectors:
+Info: 3.419950 0.000000 0.000000 
+Info: 0.000000 6.839900 0.000000 
+Info: 0.000000 0.000000 3.419950 
+Info: Inverse Projected vectors:
+Info: 0.292402 0.000000 0.000000 
+Info:0.000000 0.146201 0.000000 
+Info:0.000000 0.000000 0.292402 
+Info: Duplicating 4 particles into 4 real particles and 1996 ghost for group with 4 elements and 124 tilings. Each cell has 16 particles.
+Info: Computed 12 degrees of freedom
+        Step         Time            T           PE           KE            E       Htherm            V
+           0            0  1.63155e+07      19.0551  9.78928e+07  9.78928e+07  9.78928e+07      79.9999
+
+Exiting due to high temperature or energy  (T = 2.34589e+41)
+
+Failed to complete simulation. Ended with code 1
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-11.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [3.41995, 0.0, 0.0, 0.0, 3.41995, 0.0, 0.0, 0.0, 3.41995], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-11.dat&quot;, &quot;group&quot;: &quot;sim2d/group-11.json&quot;}
+Info: You are running version 229b of symd
+Assuming you&#39;ll pass parameters via stdin. Waiting...
+Warning: assuming default value for com_remove_period = 1000
+Warning: assuming default value for position_log_period = 0
+Warning: assuming default value for velocity_log_period = 0
+Warning: assuming default value for force_log_period = 0
+Warning: Setting masses to 1.0
+Info: Loaded group group-11 with 4 particles and 4 members
+Info: Unormed vectors (column wise):
+Info: 3.419950 0.000000 0.000000 
+Info: 0.000000 3.419950 0.000000 
+Info: 0.000000 0.000000 3.419950 
+Info: Projected vectors:
+Info: 3.419950 0.000000 0.000000 
+Info: 0.000000 6.839900 0.000000 
+Info: 0.000000 0.000000 3.419950 
+Info: Inverse Projected vectors:
+Info: 0.292402 0.000000 0.000000 
+Info:0.000000 0.146201 0.000000 
+Info:0.000000 0.000000 0.292402 
+Info: Duplicating 4 particles into 4 real particles and 1996 ghost for group with 4 elements and 124 tilings. Each cell has 16 particles.
+Info: Computed 12 degrees of freedom
+        Step         Time            T           PE           KE            E       Htherm            V
+           0            0       329900      14972.7   1.9794e+06  1.99437e+06  1.99437e+06      79.9999
+
+Exiting due to high temperature or energy  (T = 4.1176e+40)
+
+Failed to complete simulation. Ended with code 1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">5.7</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">mx</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">base_colors</span><span class="p">)]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+    <span class="n">offsetbox</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">offsetbox</span><span class="o">.</span><span class="n">TextArea</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">ab</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">offsetbox</span><span class="o">.</span><span class="n">AnnotationBbox</span><span class="p">(</span>
+        <span class="n">offsetbox</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
+        <span class="n">xybox</span><span class="o">=</span><span class="p">(</span><span class="n">mx</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
+        <span class="n">xycoords</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
+        <span class="n">boxcoords</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
+        <span class="n">arrowprops</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">bboxprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">fc</span><span class="o">=</span><span class="s2">&quot;#f5f4e9&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">ab</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Time [$\tau$]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;#f5f4e9&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\Delta$ Energy [$\epsilon$]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;energy3d.svg&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/Energy_Figure_9_0.png" src="_images/Energy_Figure_9_0.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Custom_Group.html" class="btn btn-neutral float-left" title="Custom Symmetry Group Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Atlas_Figure.html" class="btn btn-neutral float-right" title="Figure 1 From Paper" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Andrew D White.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

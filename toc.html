@@ -7,6 +7,8 @@
   <title>exmol &mdash; symd  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/mystnb.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -15,6 +17,11 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -39,6 +46,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Custom_Group.html">Custom Symmetry Group Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Energy_Figure.html">Figure 2 from Paper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Atlas_Figure.html">Figure 1 From Paper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
 
@@ -76,6 +86,20 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v1-0-0-2022-4-3">v1.0.0 (2022-4-3)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Custom_Group.html">Custom Symmetry Group Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Custom_Group.html#make-custom-group">Make custom group</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Custom_Group.html#run">Run</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Energy_Figure.html">Figure 2 from Paper</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Energy_Figure.html#all-sims">All Sims</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Atlas_Figure.html">Figure 1 From Paper</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Atlas_Figure.html#make-atlas">Make Atlas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Atlas_Figure.html#plot-figure">Plot Figure</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
