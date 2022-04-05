@@ -31,7 +31,7 @@
    "source": [
     "### A group\n",
     "\n",
-    "All 2D and 3D groups that tile periodically can be loaded with `symd` (see custom group example to make more). Let's load a 2D group using its Hall Number (1-17 in 2D).}"
+    "All 2D and 3D groups that tile periodically can be loaded with `symd` (see custom group example to make more). Let's load a 2D group using its Hall Number (1-17 in 2D)."
    ]
   },
   {
