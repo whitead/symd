@@ -117,9 +117,6 @@ double nlj_gather_forces(run_params_t *params, double *positions, double *forces
         lj(r, epsilon, sigma, lj_result);
         force = lj_result[0] - lj_shift;
         e = lj_result[1] - e_shift;
-#ifdef DEBUG
-        printf("F(%d <-> %d, %g) = %g, %g\n", i, j, r, force, e);
-#endif // DEBUG
 
 #pragma omp critical(update_forces)
         for (k = 0; k < n_dims; k++)
@@ -131,7 +128,6 @@ double nlj_gather_forces(run_params_t *params, double *positions, double *forces
 
         penergy += e;
       }
-      // TODO: Turn back on when nlsit is working
       offset += nlist->nlist_count[i];
     }
   }
@@ -196,9 +192,6 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
         lj(r, epsilon, sigma, lj_result);
         force = lj_result[0] - lj_shift;
         e = lj_result[1] - e_shift;
-#ifdef DEBUG
-        printf("F(%d <-> %d, %g) = %g, %g\n", i, j, r, force, e);
-#endif // DEBUG
 
 #pragma omp critical(update_forces)
         for (k = 0; k < n_dims; k++)

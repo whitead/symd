@@ -58,7 +58,7 @@ double b_thermostat(thermostat_t *params, double temperature, double time_step, 
   double kenergy = 0;
   double etemp, scaling_factor, new_kenergy;
 
-  //calculate kinetic energy
+  // calculate kinetic energy
 #pragma omp parallel for default(shared) private(etemp) reduction(+ \
                                                                   : kenergy)
   for (i = 0; i < n_particles; i++)
@@ -70,25 +70,21 @@ double b_thermostat(thermostat_t *params, double temperature, double time_step, 
     }
     kenergy += 0.5 * etemp * masses[i];
   }
-  //Removed COM
+  // Removed COM
   ndeg = (n_particles * n_dims - n_dims);
 
-  //Equation A7 from Bussi2007
+  // Equation A7 from Bussi2007
   new_kenergy = resamplekin(params->rng, kenergy, 0.5 * temperature * ndeg, ndeg, params->param / time_step);
 
-  //according to gromacs implementation, it can be negative due to rounding(?)
+  // according to gromacs implementation, it can be negative due to rounding(?)
   if (new_kenergy < 0)
     new_kenergy = 0;
-
-#ifdef DEBUG
-  printf("Bussi kenergy = %f, desired = %f, sampled = %f (scaling factor = %f)\n", kenergy, 0.5 * temperature * ndeg, new_kenergy, sqrt(new_kenergy / kenergy));
-#endif
 
   scaling_factor = sqrt(new_kenergy / kenergy);
   if (scaling_factor != scaling_factor)
     scaling_factor = 1;
 
-    //update velocities
+    // update velocities
 #pragma omp parallel for
   for (i = 0; i < n_particles; i++)
   {

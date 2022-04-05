@@ -57,9 +57,6 @@ double soft_gather_forces(run_params_t *params, double *positions, double *force
 						penergy += cos(PI * r / 1.5);
 					}
 				}
-#ifdef DEBUG
-				printf("F(%d <-> %d, %g) = %g\n", i, j, r, -sin(PI * r / 1.5));
-#endif // DEBUG
 				penergy += cos(PI * r / 1.5);
 			}
 			else

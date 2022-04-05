@@ -17,7 +17,6 @@ void action(SCALAR *g, SCALAR *output, SCALAR *data, unsigned int n_dims, SCALAR
             output[i] += data[j] * g[i * (n_dims + 1) + j];
         // w coord
         output[i] += s * g[i * (n_dims + 1) + j];
-        // output[i] = fmod(output[i], 1.0);
     }
 }
 
@@ -46,12 +45,6 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
         // this is done to ensure wrapping of asymmetric particles
         unscale_coords(&positions[index * N_DIMS],
                        &params->scaled_positions[index * N_DIMS], params->box);
-#ifdef DEBUG
-        printf("Tiling only group %s: %d\n", group->name, i + i_offset);
-        printf("us: %f %f -> s: %f %f\n", params->scaled_positions[index * N_DIMS],
-               params->scaled_positions[index * N_DIMS + 1], positions[index * N_DIMS],
-               positions[index * N_DIMS + 1]);
-#endif
     }
     // unfold and tile
     // TODO: can we get it to use OpenMP?
@@ -63,12 +56,6 @@ static unsigned int _fold_particles(run_params_t *params, group_t *group, SCALAR
             // unfold scaled, store temporarily in positions
             action(group->members[j].g, &positions[index * N_DIMS],
                    &params->scaled_positions[(i + i_offset) * N_DIMS], N_DIMS, 1.0);
-#ifdef DEBUG
-            printf("Applying group %s:%d for %d -> %d\n", group->name, j, i + i_offset, index);
-            printf("us: %f %f -> %f %f\n", params->scaled_positions[(i + i_offset) * N_DIMS],
-                   params->scaled_positions[(i + i_offset) * N_DIMS + 1], positions[index * N_DIMS + 0],
-                   positions[index * N_DIMS + 1]);
-#endif
             // tile and unscale
             for (k = 0; k < params->box->n_tilings; k++)
             {
@@ -128,21 +115,11 @@ void apply_constraints(run_params_t *params, SCALAR *positions, SCALAR *velociti
                 lambda = 0;
                 for (k = 0; k < N_DIMS; k++)
                     lambda += group->ainv[j * N_DIMS + k] * temp[k];
-#ifdef DEBUG
-                printf("Constraint force for %d (dim %d) in group %s: %f. Ainv = %f. Delta = %f\n", index, j, group->name, lambda, group->ainv[j * N_DIMS],
-                       temp[j]);
-#endif
                 // term of m / delta T cancels out
                 // add constraint force to velocity
                 velocities[index * N_DIMS + j] -= lambda / params->time_step * 2;
-#ifdef DEBUG
-                printf("position before constraints: %f %f\n", positions[index * N_DIMS + 0], positions[index * N_DIMS + 1]);
-#endif
                 // add to positions
                 positions[index * N_DIMS + j] -= lambda;
-#ifdef DEBUG
-                printf("position after constraints: %f %f\n", positions[index * N_DIMS + 0], positions[index * N_DIMS + 1]);
-#endif
             }
             scale_wrap_coords(&params->scaled_positions[index * N_DIMS], &positions[index * N_DIMS], params->box, NULL);
             index++;
@@ -176,20 +153,6 @@ void update_group(group_t *group, box_t *box)
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, mat, grad, -1.0, grad);
     // mat = grad @ grad
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, grad, grad, 0.0, mat);
-
-// print A matrix
-#ifdef DEBUG
-
-    printf("A for group %s:\n", group->name);
-    for (i = 0; i < N_DIMS; i++)
-    {
-        for (j = 0; j < N_DIMS; j++)
-        {
-            printf("%f ", gsl_matrix_get(mat, i, j));
-        }
-        printf("\n");
-    }
-#endif
 
     // matrix inverse never works here - maybe I'm doing something wrong
     // so use SVD
@@ -227,34 +190,9 @@ void update_group(group_t *group, box_t *box)
     gsl_blas_dgemm(CblasNoTrans, CblasTrans, 1.0, Sp, mat, 0.0, inv);
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, V, inv, 0.0, mat);
 
-// print A inv matrix
-#ifdef DEBUG
-    printf("A inv for group %s:\n", group->name);
-    for (i = 0; i < N_DIMS; i++)
-    {
-        for (j = 0; j < N_DIMS; j++)
-        {
-            printf("%f ", gsl_matrix_get(mat, i, j));
-        }
-        printf("\n");
-    }
-#endif
     // now multiply by grad term
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, mat, grad, 0.0, inv);
 
-// print A inv matrix
-#ifdef DEBUG
-
-    printf("A inv w/grad for group %s:\n", group->name);
-    for (i = 0; i < N_DIMS; i++)
-    {
-        for (j = 0; j < N_DIMS; j++)
-        {
-            printf("%f ", gsl_matrix_get(inv, i, j));
-        }
-        printf("\n");
-    }
-#endif
     // copy result
     memcpy(group->ainv, inv->data, sizeof(double) * N_DIMS * N_DIMS);
 
