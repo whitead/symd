@@ -102,22 +102,19 @@
 <span class="k">for</span> <span class="n">ri</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rot</span><span class="p">):</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ri</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">rot</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ri</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">rot</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ri</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c1"># asymm = f&#39;0≤x≤{c};0≤y≤{s}&#39;</span>
-        <span class="n">asymm</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;1/2≤x≤1.0;1/2≤y≤1.0&quot;</span>
+    <span class="c1"># convert numbers to affine notation</span>
     <span class="n">genpos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">x </span><span class="si">{</span><span class="o">-</span><span class="n">s</span><span class="si">:</span><span class="s2">+</span><span class="si">}</span><span class="s2">y </span><span class="si">{</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">s</span> <span class="o">+</span> <span class="mf">0.5</span><span class="si">:</span><span class="s2">+</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">x </span><span class="si">{</span><span class="n">c</span><span class="si">:</span><span class="s2">+</span><span class="si">}</span><span class="s2">y </span><span class="si">{</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">s</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="mf">0.5</span><span class="si">:</span><span class="s2">+</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="p">)</span>
 <span class="n">specpos</span> <span class="o">=</span> <span class="p">[</span><span class="n">symd</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="s2">&quot;Oblique&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;1/2, 1/2&quot;</span><span class="p">],</span> <span class="n">specpos</span><span class="o">=</span><span class="p">[])]</span>
-
-<span class="n">my_group</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;lattice&quot;</span><span class="p">:</span> <span class="s2">&quot;Oblique&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;genpos&quot;</span><span class="p">:</span> <span class="n">genpos</span><span class="p">,</span>
-    <span class="s2">&quot;asymm_unit&quot;</span><span class="p">:</span> <span class="n">asymm</span><span class="p">,</span>
-    <span class="s2">&quot;specpos&quot;</span><span class="p">:</span> <span class="n">specpos</span><span class="p">,</span>
-<span class="p">}</span>
-
+<span class="n">asymm</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;1/2≤x≤1.0;1/2≤y≤1.0&quot;</span>
 <span class="n">my_group</span> <span class="o">=</span> <span class="n">symd</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="s2">&quot;Oblique&quot;</span><span class="p">,</span> <span class="n">genpos</span><span class="p">,</span> <span class="n">specpos</span><span class="p">,</span> <span class="s2">&quot;quasi&quot;</span><span class="p">,</span> <span class="n">asymm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_group</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Group(lattice=&#39;Oblique&#39;, genpos=[&#39;1.0x -0.0y +0.0,0.0x +1.0y +0.0&#39;, &#39;0.6235x -0.7818y +0.57915,0.7818x +0.6235y -0.20265&#39;, &#39;-0.2225x -0.9749y +1.0987,0.9749x -0.2225y +0.12380000000000002&#39;, &#39;-0.901x -0.4339y +1.16745,0.4339x -0.901y +0.73355&#39;, &#39;-0.901x +0.4339y +0.73355,-0.4339x -0.901y +1.16745&#39;, &#39;-0.2225x +0.9749y +0.12380000000000002,-0.9749x -0.2225y +1.0987&#39;, &#39;0.6235x +0.7818y -0.20265,-0.7818x +0.6235y +0.57915&#39;], specpos=[Group(lattice=&#39;Oblique&#39;, genpos=[&#39;1/2, 1/2&#39;], specpos=[], name=None, asymm_unit=None)], name=&#39;quasi&#39;, asymm_unit=&#39;1/2≤x≤1.0;1/2≤y≤1.0&#39;)
 </pre></div>
 </div>
 </div>
@@ -196,7 +193,7 @@
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000000, &quot;n_particles&quot;: 256, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 0.5, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.1, &quot;pressure&quot;: 0.25, &quot;box_update_period&quot;: 10, &quot;start_temperature&quot;: 0.1, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;quasi/final_positions.dat&quot;, &quot;cell_log_file&quot;: &quot;quasi/cell_log_file.dat&quot;, &quot;print_period&quot;: 10000.0, &quot;cell&quot;: [38.0257, 0.0, 0.0, 37.0197], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1, &quot;images&quot;: [0, 0], &quot;wyckoffs&quot;: [{&quot;group&quot;: &quot;quasi/group-custom-00.json&quot;, &quot;n_particles&quot;: 1}], &quot;start_positions&quot;: &quot;quasi/final_positions.dat&quot;, &quot;group&quot;: &quot;quasi/group-custom.json&quot;, &quot;position_log_period&quot;: 1000, &quot;positions_log_file&quot;: &quot;quasi/positions.xyz&quot;}
-Info: You are running version 0227 of symd
+Info: You are running version 0801 of symd
 Assuming you&#39;ll pass parameters via stdin. Waiting...
 Warning: assuming default value for com_remove_period = 1000
 Warning: assuming default value for velocity_log_period = 0
@@ -253,7 +250,7 @@ Exiting due to high temperature or energy  (T = 7.35016e+31)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f6e842b73d0&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f7592e2d4f0&gt;]
 </pre></div>
 </div>
 <img alt="_images/Custom_Group_7_1.png" src="_images/Custom_Group_7_1.png" />
