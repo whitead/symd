@@ -6,6 +6,7 @@ exmol
 
     index.md
     changelog.rst
+    Tutorial.ipynb
     Custom_Group.ipynb
     Energy_Figure.ipynb
     Atlas_Figure.ipynb

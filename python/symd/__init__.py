@@ -8,5 +8,6 @@ from .groups import (
     asymm_constraints,
     str2mat,
     Group,
+    get_cell,
 )
 from .symd import Symd
