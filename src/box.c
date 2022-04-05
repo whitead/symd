@@ -243,27 +243,12 @@ box_t *make_box(SCALAR *unorm_b_vectors, group_t *group, unsigned int images[N_D
     }
   }
   box->n_tilings = ntot - 1;
-#ifdef DEBUG
-  printf("tilings %d:\n", box->n_tilings);
-  for (i = 0; i < box->n_tilings; i++)
-  {
-    printf("%d: ", i);
-    for (j = 0; j < N_DIMS; j++)
-      printf("%d ", box->tilings[i * N_DIMS + j]);
-    printf("\n");
-  }
-#endif
 
   // get max box size in each dimension
   for (i = 0; i < N_DIMS; i++)
     for (j = 0; j < N_DIMS; j++)
       box->box_size[i] = fmax(box->box_size[i], n[i] * box->b_vectors[i * N_DIMS + j]);
 
-#ifdef DEBUG
-  printf("Box is size ");
-  for (i = 0; i < N_DIMS; i++)
-    printf("%f ", box->box_size[i]);
-#endif
   return box;
 }
 
@@ -314,21 +299,6 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
     }
   }
 
-#ifdef DEBUG
-  printf("old box: ");
-  for (i = 0; i < N_DIMS * N_DIMS; i++)
-  {
-    printf("%g ", params->box->b_vectors[i]);
-  }
-  printf("\n");
-  printf("Proposed new box: ");
-  for (i = 0; i < N_DIMS * N_DIMS; i++)
-  {
-    printf("%g ", unorm_b_vectors[i]);
-  }
-  printf("\n");
-#endif
-
   new_box = make_box(unorm_b_vectors, params->box->group, params->box->images, 0);
   newV = volume(new_box);
 
@@ -352,9 +322,6 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
 
   if (gsl_rng_uniform(params->rng) < exp(-mhc / params->temperature))
   {
-#ifdef DEBUG
-    printf("Accepted with MHC %g (delta E = %g, delta V = %g)\n", mhc, new_energy - *penergy, newV - oldV);
-#endif
     // accepted
     // TODO: rebuild cells in nlist
     *penergy = new_energy;
@@ -365,9 +332,6 @@ int try_rescale(run_params_t *params, SCALAR *positions, SCALAR *penergy, SCALAR
   }
   else
   {
-#ifdef DEBUG
-    printf("Rejected with MHC %g (delta E = %g, delta V = %g)\n", mhc, new_energy - *penergy, newV - oldV);
-#endif
     // undo rescale coordinates
     // go to scaled
     for (i = 0; i < params->n_particles; i++)

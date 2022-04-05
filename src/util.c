@@ -14,18 +14,8 @@ static const char *
     \"box_update_period\": 0, \"force_type\": null,\
      \"force_log_period\" : 0, \"n_images\": 2, \"langevin_gamma\": 0.1} ";
 
-#ifdef DEBUG
-const char *elements[] = {"H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti",
-                          "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc",
-                          "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd",
-                          "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po", "At",
-                          "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg",
-                          "Bh", "Hs", "Mt", "Ds", "Rg"};
-const unsigned int n_elements = 100;
-#else
 const char *elements[] = {"H"};
 const unsigned int n_elements = 1;
-#endif
 
 void load_json_matrix(cJSON *item, double *mat, unsigned int size, const char *message);
 
@@ -46,11 +36,6 @@ double *generate_velocities(double temperature, gsl_rng *rng, double *masses, un
         velocities[i * n_dims + j] = 0;
     }
   }
-
-#ifdef DEBUG
-  double ke = calculate_kenergy(velocities, masses, n_dims, n_particles);
-  printf("Generated velocity distribution with %g temperature\n", ke * 2 / (n_dims * n_particles));
-#endif
 
   return (velocities);
 }
@@ -563,15 +548,6 @@ group_t *load_group(char *filename)
   {
     // load member
     load_json_matrix(json_members, members[i++].g, g_dims * g_dims, "g matrix");
-#ifdef DEBUG
-    printf("Loaded %s group member %d\n", group->name, i);
-    for (unsigned int j = 0; j < g_dims * g_dims; j++)
-    {
-      printf("%g ", members[i - 1].g[j]);
-      if (j % g_dims == g_dims - 1)
-        printf("\n");
-    }
-#endif
   }
   group->members = members;
   group->total_size = group->size;
