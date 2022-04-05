@@ -5,7 +5,7 @@
 #define PARAM_FILE_BUFFER 4096
 
 static const char *
-    default_json = " { \"com_remove_period\" : 1000, \"skin\" : 0, \
+    default_json = " { \"skin\" : 0, \
     \"seed\" : 1523, \"anderson_nu\" : 10.0, \"pressure\": 0,\
     \"time_step\": 0.005, \
     \"temperature\": 0, \"final_positions\": \"final_positions.dat\",\
@@ -149,7 +149,6 @@ run_params_t *read_parameters(char *file_name)
 
   // get single value parameters
   params->steps = (unsigned int)retrieve_item(root, default_root, "steps")->valueint;
-  params->com_remove_period = (unsigned int)retrieve_item(root, default_root, "com_remove_period")->valueint;
   params->time_step = retrieve_item(root, default_root, "time_step")->valuedouble;
 
   params->temperature = retrieve_item(root, default_root, "temperature")->valuedouble;

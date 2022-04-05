@@ -24,7 +24,6 @@ typedef struct
 {
 
     unsigned int steps;
-    unsigned int com_remove_period;
     double time_step;
     double temperature;
     double pressure;
