@@ -1,0 +1,254 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "b3416b9c",
+   "metadata": {},
+   "source": [
+    "## Python Tutorial\n",
+    "\n",
+    "This tutorial is meant to show you how to work with the `symd`. This will not focus on running simulations -- see the other examples for that. Let's install if you have not:\n",
+    "\n",
+    "```shell\n",
+    "pip install symd\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bd6f9c31",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import symd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "34645917",
+   "metadata": {},
+   "source": [
+    "### A group\n",
+    "\n",
+    "All 2D and 3D groups that tile periodically can be loaded with `symd` (see custom group example to make more). Let's load a 2D group using its Hall Number (1-17 in 2D).}"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e59e159c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "my_group = symd.load_group(11, dim=2)\n",
+    "print(my_group)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "44f0f266",
+   "metadata": {},
+   "source": [
+    "You can see the group is a data structure consisting of the Bravais lattice, the general positions (group elements represented as affine matrices), special positions (itself a group), and an asymmetric unit specified as an inequality. The group in this format cannot be used for many calculations, so we'll need to convert these strings into python objects. \n",
+    "\n",
+    "#### Group Elements\n",
+    "\n",
+    "Let's get access to the group elements and apply them to some points. We'll access them using the {obj}`symd.str2mat` function. These are affine matrices, so they are shape $D+1\\times D+1$, where $D$ is the number of dimensions. Thus, we need to add work in [homogeneous coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates), which are $(x,y,1)$. \n",
+    "\n",
+    "We'll just apply the group elements to these homogeneous coordinates and plot the results. Remember we wrap the coordinates here, as done in the engine and paper."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "72d10778",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "N = 8\n",
+    "D = 2\n",
+    "some_points = np.random.rand(N, D)\n",
+    "homo_points = np.concatenate((some_points, np.ones((N, 1))), axis=-1)\n",
+    "\n",
+    "for s in my_group.genpos:\n",
+    "    g = symd.str2mat(s)\n",
+    "    xp = homo_points @ g\n",
+    "    xp = np.fmod(xp, 1.0)\n",
+    "    plt.plot(xp[:, 0], xp[:, 1], \"o\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b832212b",
+   "metadata": {},
+   "source": [
+    "Now let's try applying the special positions, also known as Wyckoff sites."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2b853356",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for sp in my_group.specpos:\n",
+    "    for s in sp.genpos:\n",
+    "        g = symd.str2mat(s)\n",
+    "        xp = homo_points @ g\n",
+    "        xp = np.fmod(xp, 1.0)\n",
+    "        plt.plot(xp[:, 0], xp[:, 1], \"o\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b951b8e8",
+   "metadata": {},
+   "source": [
+    "You can see the two sub groups: points on the line and the origin."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f40331c2",
+   "metadata": {},
+   "source": [
+    "#### Asymmetric unit\n",
+    "\n",
+    "As you add more point, you'll notice that there is overlap:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "78380a2e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "N = 8000\n",
+    "D = 2\n",
+    "some_points = np.random.rand(N, D)\n",
+    "homo_points = np.concatenate((some_points, np.ones((N, 1))), axis=-1)\n",
+    "\n",
+    "for s in my_group.genpos:\n",
+    "    g = symd.str2mat(s)\n",
+    "    xp = homo_points @ g\n",
+    "    xp = np.fmod(xp, 1.0)\n",
+    "    plt.plot(xp[:, 0], xp[:, 1], \".\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e81016ce",
+   "metadata": {},
+   "source": [
+    "This is because our randomly generated points do not all lie in the asymmetric unit. We can load the asymmetric unit test function and use it to filter our points"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "19c5f681",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "in_unit = symd.asymm_constraints(my_group.asymm_unit)\n",
+    "print(in_unit(0.2, -0.3))\n",
+    "print(in_unit(0.2, 0.3))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f0980426",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# filter out those not in asmmetric unit\n",
+    "some_points = some_points[[in_unit(*p) for p in some_points]]\n",
+    "homo_points = np.concatenate((some_points, np.ones((some_points.shape[0], 1))), axis=-1)\n",
+    "\n",
+    "for s in my_group.genpos:\n",
+    "    g = symd.str2mat(s)\n",
+    "    xp = homo_points @ g\n",
+    "    xp = np.fmod(xp, 1.0)\n",
+    "    plt.plot(xp[:, 0], xp[:, 1], \".\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1f9877fd",
+   "metadata": {},
+   "source": [
+    "### Bravais Lattice\n",
+    "\n",
+    "To project lattice vectors into the correct Bravais lattice, we can use the {obj}`symd.project_cell` function:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "60fe137d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "lattice_vectors = np.random.uniform(size=(2, 2))\n",
+    "blattice_vectors = symd.project_cell(lattice_vectors, my_group.lattice)\n",
+    "print(\"This lattice is\", my_group.lattice)\n",
+    "print(blattice_vectors)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7921f899",
+   "metadata": {},
+   "source": [
+    "There are a few other convenience functions, like counting the number of particles in a cell if you duplicate for all sites, and getting the cell volume"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1297f281",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(\"The volume of my cell is\", symd.cell_volume(blattice_vectors))\n",
+    "print(\n",
+    "    \"If I have 8 particles in asymmetric unit, there will be\",\n",
+    "    symd.cell_nparticles(my_group, 8),\n",
+    "    \"in the unit cell\",\n",
+    ")\n",
+    "print(\n",
+    "    \"If I want to have a number density of 0.6 with 8 particles,\\nmy cell should be\",\n",
+    "    symd.get_cell(0.6, my_group, dim=2, n=8),\n",
+    ")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
