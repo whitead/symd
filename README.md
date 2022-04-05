@@ -3,7 +3,7 @@
 [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/whitead/symd)
 [![PyPI version](https://badge.fury.io/py/symd.svg)](https://badge.fury.io/py/symd)
 
-This is a simple MD engine written in C that can be constraint to obey given symmetry groups at every frame. It can be compiled for any dimensions. It supports the following features:
+This is a simple MD engine written in C that can be constrained to obey given symmetry groups at every frame. It can be compiled for any dimensions. It supports the following features:
 
 * NVE, NVT (BAOAB, CSVR thermostats), NPT
 * LJ, harmonic, cosine potentials
