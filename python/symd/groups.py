@@ -349,7 +349,7 @@ def project_cell(cell: np.ndarray, projector: Union[str, np.ndarray]) -> np.ndar
     :param projector: projector tensor or str of Bravais lattice
     """
     ndim = cell.shape[0]
-    if projector is type(str):
+    if type(projector) is str:
         projector = projectors2d[projector] if ndim == 2 else projectors3d[projector]
     fub = cell.flatten()
     fb = np.array(projector).reshape(ndim**2, ndim**2) @ fub

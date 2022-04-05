@@ -18,9 +18,7 @@ setup(
     packages=["symd"],
     include_package_data=True,
     package_data={"symd": ["data/*json"]},
-    install_requires=[
-        "numpy",
-    ],
+    install_requires=["numpy", "scipy"],
     test_suite="tests",
     long_description=long_description,
     long_description_content_type="text/markdown",

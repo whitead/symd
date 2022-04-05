@@ -31,5 +31,4 @@ force_t *build_lj(const double epsilon, const double sigma);
 
 force_t *build_soft();
 
-force_t *build_gravity();
 #endif

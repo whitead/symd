@@ -454,10 +454,6 @@ run_params_t *read_parameters(char *file_name)
   {
     params->force_parameters = build_soft();
   }
-  else if (!strcmp(force_type, "gravity"))
-  {
-    params->force_parameters = build_gravity();
-  }
   else
   {
     fprintf(stderr, "Could not understand force type %s\n", force_type);
