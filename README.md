@@ -47,10 +47,21 @@ The executable is `symdX` where `X` is the number of spatial dimensions
 ## Python Interface
 
 It is recommended to use the python interface, which simplifies building
-the input files and parsing output files. See the examples in [the docs](https://whitead.github.io/symd/tocs.html).
+the input files and parsing output files. See the examples in [the docs](https://whitead.github.io/symd/toc).
 
 ## Example
 
 An example can be found in the `examples/lj-symm-example` directory.
 
 ## Citation
+
+[See preprint](https://arxiv.org/abs/2204.01114)
+
+```bibtex
+@article{cox2022symmetric,
+  title={Symmetric Molecular Dynamics},
+  author={Sam Cox and Andrew D. White},
+  journal={arXiv preprint arXiv:2204.01114},
+  year={2022}
+}
+```
