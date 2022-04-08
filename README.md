@@ -12,6 +12,9 @@ This is a simple MD engine written in C that can be constrained to obey given sy
 
 ## Purpose
 
+https://user-images.githubusercontent.com/908389/162356564-95f35117-e31b-412c-8a3a-c3a92a92ae81.mp4
+
+
 This is not really intended to be a production-ready simulation engine. Instead, it is a reference implementation of symmetry MD. I hope then the algorithm can be incorporated into other engines, or this engine can be extended, for others to use the algorithm. The Python package (see below) should make implementing the method as easy as possible. With that said, the most important files are `box.c` and `group.c`, which contain the key algorithms: `fold_particles` and the NPT algorithms: `make_box`, and `try_rescale`.
 
 ## Python Package
