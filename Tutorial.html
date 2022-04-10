@@ -55,6 +55,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#asymmetric-unit">Asymmetric unit</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#fractional-vs-euclidean-coordinates">Fractional vs Euclidean Coordinates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bravais-lattice">Bravais Lattice</a></li>
 </ul>
 </li>
@@ -90,7 +91,8 @@
              
   <section id="python-tutorial">
 <h1>Python Tutorial<a class="headerlink" href="#python-tutorial" title="Permalink to this headline"></a></h1>
-<p>This tutorial is meant to show you how to work with the <code class="docutils literal notranslate"><span class="pre">symd</span></code>. This will not focus on running simulations – see the other examples for that. Let’s install if you have not:</p>
+<p>This tutorial is meant to show you how to work with the <code class="docutils literal notranslate"><span class="pre">symd</span></code>. This will not focus on running simulations – see the other examples (<a class="reference internal" href="toc.html"><span class="doc">exmol</span></a>) for that. Some of the ideas here help with re-implementing the symmetric molecular dynamics engine, but you should refer to <a class="reference external" href="https://arxiv.org/abs/2204.01114">the paper</a> for exact details.</p>
+<p>Let’s install if you have not:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install symd
 </pre></div>
 </div>
@@ -107,12 +109,49 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_group</span> <span class="o">=</span> <span class="n">symd</span><span class="o">.</span><span class="n">load_group</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">my_group</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">my_group</span><span class="o">.</span><span class="n">lattice</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Group(lattice=&#39;Square&#39;, genpos=[&#39;x,y&#39;, &#39;-x,-y&#39;, &#39;-y,x&#39;, &#39;y,-x&#39;, &#39;-x,y&#39;, &#39;x,-y&#39;, &#39;y,x&#39;, &#39;-y,-x&#39;], specpos=[Group(lattice=&#39;Square&#39;, genpos=[&#39;x,x&#39;, &#39;x,-x&#39;, &#39;-x,-x&#39;, &#39;-x,x&#39;], specpos=[], name=&#39;f&#39;, asymm_unit=None), Group(lattice=&#39;Square&#39;, genpos=[&#39;1/2,x&#39;, &#39;1/2,-x&#39;, &#39;x,1/2&#39;, &#39;-x,1/2&#39;], specpos=[], name=&#39;e&#39;, asymm_unit=None), Group(lattice=&#39;Square&#39;, genpos=[&#39;0,-x&#39;, &#39;x,0&#39;, &#39;-x,0&#39;, &#39;0,x&#39;], specpos=[], name=&#39;d&#39;, asymm_unit=None), Group(lattice=&#39;Square&#39;, genpos=[&#39;0,1/2&#39;, &#39;1/2,0&#39;], specpos=[], name=&#39;c&#39;, asymm_unit=None), Group(lattice=&#39;Square&#39;, genpos=[&#39;1/2,1/2&#39;], specpos=[], name=&#39;b&#39;, asymm_unit=None), Group(lattice=&#39;Square&#39;, genpos=[&#39;0,0&#39;], specpos=[], name=&#39;a&#39;, asymm_unit=None)], name=None, asymm_unit=&#39;0≤x≤1/2;0≤y≤1/2;x≤y&#39;)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Square
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">my_group</span><span class="o">.</span><span class="n">genpos</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;x,y&#39;, &#39;-x,-y&#39;, &#39;-y,x&#39;, &#39;y,-x&#39;, &#39;-x,y&#39;, &#39;x,-y&#39;, &#39;y,x&#39;, &#39;-y,-x&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">my_group</span><span class="o">.</span><span class="n">asymm_unit</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0≤x≤1/2;0≤y≤1/2;x≤y
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">my_group</span><span class="o">.</span><span class="n">specpos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Group(lattice=&#39;Square&#39;, genpos=[&#39;x,x&#39;, &#39;x,-x&#39;, &#39;-x,-x&#39;, &#39;-x,x&#39;], specpos=[], name=&#39;f&#39;, asymm_unit=None)
 </pre></div>
 </div>
 </div>
@@ -120,7 +159,7 @@
 <p>You can see the group is a data structure consisting of the Bravais lattice, the general positions (group elements represented as affine matrices), special positions (itself a group), and an asymmetric unit specified as an inequality. The group in this format cannot be used for many calculations, so we’ll need to convert these strings into python objects.</p>
 <section id="group-elements">
 <h3>Group Elements<a class="headerlink" href="#group-elements" title="Permalink to this headline"></a></h3>
-<p>Let’s get access to the group elements and apply them to some points. We’ll access them using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">symd.str2mat</span></code> function. These are affine matrices, so they are shape <span class="math notranslate nohighlight">\(D+1\times D+1\)</span>, where <span class="math notranslate nohighlight">\(D\)</span> is the number of dimensions. Thus, we need to add work in <a class="reference external" href="https://en.wikipedia.org/wiki/Homogeneous_coordinates">homogeneous coordinates</a>, which are <span class="math notranslate nohighlight">\((x,y,1)\)</span>.</p>
+<p>Let’s get access to the group elements and apply them to some points. We’ll access them using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">symd.str2mat</span></code> function. These are affine matrices, so they are shape <span class="math notranslate nohighlight">\(D+1\times D+1\)</span>, where <span class="math notranslate nohighlight">\(D\)</span> is the number of dimensions. Thus, we need to add work in <a class="reference external" href="https://en.wikipedia.org/wiki/Homogeneous_coordinates">homogeneous coordinates</a>, which are <span class="math notranslate nohighlight">\((x,y,1)\)</span> in 2D.</p>
 <p>We’ll just apply the group elements to these homogeneous coordinates and plot the results. Remember we wrap the coordinates here, as done in the engine and paper.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -142,7 +181,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/Tutorial_5_0.png" src="_images/Tutorial_5_0.png" />
+<img alt="_images/Tutorial_8_0.png" src="_images/Tutorial_8_0.png" />
 </div>
 </div>
 <p>Now let’s try applying the special positions, also known as Wyckoff sites.</p>
@@ -159,14 +198,14 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/Tutorial_7_0.png" src="_images/Tutorial_7_0.png" />
+<img alt="_images/Tutorial_10_0.png" src="_images/Tutorial_10_0.png" />
 </div>
 </div>
 <p>You can see the two sub groups: points on the line and the origin.</p>
 </section>
 <section id="asymmetric-unit">
 <h3>Asymmetric unit<a class="headerlink" href="#asymmetric-unit" title="Permalink to this headline"></a></h3>
-<p>As you add more point, you’ll notice that there is overlap:</p>
+<p>As you add more points, you’ll notice that there is overlap:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">8000</span>
@@ -184,7 +223,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/Tutorial_10_0.png" src="_images/Tutorial_10_0.png" />
+<img alt="_images/Tutorial_13_0.png" src="_images/Tutorial_13_0.png" />
 </div>
 </div>
 <p>This is because our randomly generated points do not all lie in the asymmetric unit. We can load the asymmetric unit test function and use it to filter our points</p>
@@ -219,14 +258,59 @@ True
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/Tutorial_13_0.png" src="_images/Tutorial_13_0.png" />
+<img alt="_images/Tutorial_16_0.png" src="_images/Tutorial_16_0.png" />
 </div>
 </div>
 </section>
+</section>
+<section id="fractional-vs-euclidean-coordinates">
+<h2>Fractional vs Euclidean Coordinates<a class="headerlink" href="#fractional-vs-euclidean-coordinates" title="Permalink to this headline"></a></h2>
+<p>All the work above required the points to be between 0 and 1, which are called fractional coordinates. Namely, a value of 0.2, 0.1 means that 20% of lattice vector 1 and 10% of lattice vector 2. How can you can you work with real particles though? You can easily convert via matrix multiplication between fractional coordinates and Euclidean coordintes. In our example above, the Bravais lattice is square so let’s make a square set of lattice vectors to see this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">v1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># 11 wide</span>
+<span class="n">v2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="c1"># 3 tall</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[11  0]
+ [ 0  3]]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that we have the lattice vectors as columns. This makes converting between formats just a matrix multiplication. We can switch back and forth using the inverse of <strong>B</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Bi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+
+<span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">some_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">))</span>
+<span class="n">homo_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">some_points</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">))),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># convert to frac coords from Euclidean</span>
+<span class="n">frac_coords</span> <span class="o">=</span> <span class="n">some_points</span> <span class="o">@</span> <span class="n">Bi</span>
+<span class="c1"># convert back to Eculidean</span>
+<span class="n">eucl_coords</span> <span class="o">=</span> <span class="n">frac_coords</span> <span class="o">@</span> <span class="n">B</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">some_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">some_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eucl_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">eucl_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s1">&#39;C2&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/Tutorial_20_0.png" src="_images/Tutorial_20_0.png" />
+</div>
+</div>
+<p>You can see we are able to go to fractional coordinates and back to Euclidean with matrix multiplication. In simulation engines, we also will wrap using <code class="docutils literal notranslate"><span class="pre">np.fmod(frac_coords,</span> <span class="pre">1.0)</span></code> on the asymetric unit</p>
 </section>
 <section id="bravais-lattice">
 <h2>Bravais Lattice<a class="headerlink" href="#bravais-lattice" title="Permalink to this headline"></a></h2>
-<p>To project lattice vectors into the correct Bravais lattice, we can use the <code class="xref py py-obj docutils literal notranslate"><span class="pre">symd.project_cell</span></code> function:</p>
+<p>The Bravais lattice isn’t always square. To get correct lattice vectors, we can use the <code class="xref py py-obj docutils literal notranslate"><span class="pre">symd.project_cell</span></code> function:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lattice_vectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
@@ -238,8 +322,8 @@ True
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>This lattice is Square
-[[1.46615757 0.        ]
- [0.         1.46615757]]
+[[2.51041146 0.        ]
+ [0.         2.51041146]]
 </pre></div>
 </div>
 </div>
@@ -261,36 +345,14 @@ True
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The volume of my cell is 2.1496180330595847
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The volume of my cell is 6.302165710232126
 If I have 8 particles in asymmetric unit, there will be 64 in the unit cell
-If I want to have a number density of 0.6 with 8 particles,
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>If I want to have a number density of 0.6 with 8 particles,
 my cell should be [5.163977476386405, 0.0, 0.0, 5.163977476386405]
 </pre></div>
 </div>
-</div>
-</div>
-<p>One of the common tasks for setting a simulation is converting into fractional coordinates. This can be down via matrix inversion and multiplication:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">some_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">))</span>
-<span class="n">homo_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">some_points</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">))),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">B</span> <span class="o">=</span> <span class="n">blattice_vectors</span>
-<span class="n">Bi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">blattice_vectors</span><span class="p">)</span>
-
-<span class="c1"># convert to frac coords</span>
-<span class="n">frac_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fmod</span><span class="p">(</span><span class="n">some_points</span> <span class="o">@</span> <span class="n">Bi</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-<span class="c1"># convert back to Eculidean (are now wrapped)</span>
-<span class="n">eucl_coords</span> <span class="o">=</span> <span class="n">frac_coords</span> <span class="o">@</span> <span class="n">B</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">some_points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">some_points</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eucl_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">eucl_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/Tutorial_19_0.png" src="_images/Tutorial_19_0.png" />
 </div>
 </div>
 </section>
