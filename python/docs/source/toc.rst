@@ -1,4 +1,4 @@
-exmol
+symd
 ==============
 
 .. toctree::
