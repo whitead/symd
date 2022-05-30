@@ -3,3 +3,4 @@ pandas
 matplotlib
 skunk
 svglib
+cairosvg
