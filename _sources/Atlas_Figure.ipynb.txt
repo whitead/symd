@@ -491,7 +491,7 @@
     "plt.ylim(-0.1, 1)\n",
     "# sns.move_legend(g, \"lower right\", bbox_to_anchor=(0.9,0.1), ncol=3)\n",
     "g.map(annotate_config, \"RMSD\", \"Traj\", \"Time\", \"Wyckoffs\").set_axis_labels(\n",
-    "    \"Time\", \"RMSD\"\n",
+    "    r\"Time [$\\tau$]\", \"RMSD\"\n",
     ")\n",
     "\n",
     "main_svg = skunk.pltsvg()\n",
@@ -518,7 +518,7 @@
   {
    "cell_type": "code",
    "execution_count": null,
-   "id": "ffa82518",
+   "id": "efd3afa8",
    "metadata": {},
    "outputs": [],
    "source": []
