@@ -356,7 +356,7 @@
   {
    "cell_type": "code",
    "execution_count": null,
-   "id": "c8cc5a12",
+   "id": "7a4a4428",
    "metadata": {},
    "outputs": [],
    "source": [
@@ -366,8 +366,16 @@
     ")\n",
     "urllib.request.urlretrieve(\n",
     "    \"https://www.dropbox.com/s/smn8tvljxhlp75f/atlas2d.pkl.gz?dl=1\", \"atlas2d.pkl.gz\"\n",
-    ")\n",
-    "\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c8cc5a12",
+   "metadata": {},
+   "outputs": [],
+   "source": [
     "cdf = pd.read_pickle(\"atlas2d.pkl.gz\")\n",
     "with gzip.open(\"atlas2d.traj.pkl.gz\", \"rb\") as f:\n",
     "    trajs = pickle.load(f)"
@@ -516,9 +524,80 @@
    ]
   },
   {
+   "cell_type": "markdown",
+   "id": "ecebae8b",
+   "metadata": {},
+   "source": [
+    "### TOC"
+   ]
+  },
+  {
    "cell_type": "code",
    "execution_count": null,
-   "id": "efd3afa8",
+   "id": "f4b338dc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(titles)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f7a83e87",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "name = \"p3m1-w0-n128\"\n",
+    "group_i = titles.index(name.split(\"-\")[0]) + 1\n",
+    "n_i = int(name.split(\"-n\")[1])\n",
+    "group = symd.groups.load_group(group_i, 2)\n",
+    "gp = len(group.genpos)\n",
+    "pos = trajs[name][0]\n",
+    "\n",
+    "N, D = pos.shape\n",
+    "\n",
+    "# build out colors\n",
+    "M = max(2, n_i // gp)\n",
+    "print(n_i, gp, N, M, N // M)\n",
+    "c = [colors[i % len(colors)] for i in range(M)]\n",
+    "for i in range(1, N // M):\n",
+    "    c.extend([colors[i % len(colors)] for i in range(M)])\n",
+    "#    # which particle is being duplicated\n",
+    "#\n",
+    "#    c.extend([colors[((i - 1) % M) % len(colors)]] * M)\n",
+    "#    #c.extend(['#333'] * M)\n",
+    "print(len(c))\n",
+    "\n",
+    "figsize = (3.33, 1.88)\n",
+    "aspect = figsize[0] / figsize[1]\n",
+    "fig, ax = plt.subplots(figsize=figsize, dpi=300)\n",
+    "ax.scatter(pos[:, 0], pos[:, 1], marker=\"o\", s=2, c=c)\n",
+    "# want about 64 points\n",
+    "q = 0.4\n",
+    "xlim = np.quantile(pos[:, 0], [0.5 - q, 0.5 + q])\n",
+    "ylim = np.quantile(pos[:, 1], [0.5 - q, 0.5 + q])\n",
+    "yd = (ylim[1] - ylim[0]) / aspect\n",
+    "yc = (ylim[1] + ylim[0]) / 2\n",
+    "ylim = (yc - yd, yc + yd)\n",
+    "# ax.set_xlim(*xlim)\n",
+    "# ax.set_ylim(*ylim)\n",
+    "x = 20\n",
+    "ax.set_xlim(-x, x)\n",
+    "ax.set_ylim(-x / aspect, x / aspect)\n",
+    "ax.set_aspect(\"equal\")\n",
+    "ax.set_facecolor(\"#f5f4e9\")\n",
+    "fig.patch.set_facecolor(\"#f5f4e9\")\n",
+    "ax.axis(\"off\")\n",
+    "plt.tight_layout()\n",
+    "plt.savefig(\"toc.tiff\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ae522963",
    "metadata": {},
    "outputs": [],
    "source": []

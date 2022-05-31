@@ -24,7 +24,7 @@ svg2png(bytestring=svg, write_to="atlas_raster.png", dpi=300)
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
-Input [0;32mIn [14][0m, in [0;36m<cell line: 1>[0;34m()[0m
+Input [0;32mIn [15][0m, in [0;36m<cell line: 1>[0;34m()[0m
 [0;32m----> 1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mcairosvg[39;00m [38;5;28;01mimport[39;00m svg2png
 [1;32m      3[0m svg2png(bytestring[38;5;241m=[39msvg, write_to[38;5;241m=[39m[38;5;124m"[39m[38;5;124matlas_raster.png[39m[38;5;124m"[39m, dpi[38;5;241m=[39m[38;5;241m300[39m)
 
