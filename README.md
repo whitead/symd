@@ -61,19 +61,11 @@ An example can be found in the `examples/lj-symm-example` directory.
 [See paper](https://pubs.acs.org/doi/full/10.1021/acs.jctc.2c00401)
 
 ```bibtex
-@article{doi:10.1021/acs.jctc.2c00401,
+@article{cox2022symmetric,
 author = {Cox, Sam and White, Andrew D.},
 title = {Symmetric Molecular Dynamics},
 journal = {Journal of Chemical Theory and Computation},
-volume = {0},
-number = {0},
-pages = {null},
-year = {0},
+year = {2022},
 doi = {10.1021/acs.jctc.2c00401},
-note ={PMID: 35699649},
-URL = { 
-        https://doi.org/10.1021/acs.jctc.2c00401},
-eprint = { 
-        https://doi.org/10.1021/acs.jctc.2c00401}
 }
 ```
