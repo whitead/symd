@@ -138,11 +138,13 @@ def compute_crystal(
 @click.command()
 @click.argument("n", type=int)
 @click.argument("group", type=int)
-@click.option("--w", default=None)
+@click.option("--w", default=None, type=int)
 @click.option("--ndims", default=3)
 @click.option("--ffmpeg", default="ffmpeg")
 @click.option("--vmd", default="vmd")
 def crystal(n, group, w, ndims, ffmpeg, vmd):
+    if w is not None:
+        w = [1] * w
     result = compute_crystal(n, group, w, ndims)
     if result:
         name, config, config2, nd, csm, traj, rho, time = result
