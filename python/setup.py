@@ -18,7 +18,7 @@ setup(
     packages=["symd"],
     include_package_data=True,
     package_data={"symd": ["data/*json"]},
-    install_requires=["numpy", "scipy"],
+    install_requires=["numpy", "click"],
     test_suite="tests",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -28,4 +28,8 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering :: Chemistry",
     ],
+    entry_points="""
+        [console_scripts]
+        symd=symd.main:crystal
+            """,
 )

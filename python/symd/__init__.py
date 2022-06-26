@@ -9,5 +9,6 @@ from .groups import (
     str2mat,
     Group,
     get_cell,
+    group_names,
 )
 from .symd import Symd
