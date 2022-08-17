@@ -5,8 +5,9 @@
 
 typedef struct
 {
-  const double epsilon;
-  const double sigma;
+  const unsigned int n_types; 
+  const double *epsilon;
+  const double *sigma;
 } lj_parameters_t;
 
 typedef struct
@@ -16,15 +17,15 @@ typedef struct
   nlist_parameters_t *nlist;
 } nlj_parameters_t;
 
-static inline void lj(double r, double epsilon, double sigma, double result[2])
+static inline void lj(int n_types, double r, double epsilon, double sigma, double result1[2*n_types], double result2[2*n_types])
 {
-  double ri6 = pow(sigma / r, 6);
-  double ri12 = ri6 * ri6;
-  result[0] = 4 * epsilon * (6 * ri6 * sigma / r - 12 * ri12 * sigma / r);
-  result[1] = 4 * epsilon * (ri12 - ri6);
+  double ri6[n_types*n_types] = pow(sigma / r, 6);
+  double ri12[n_types*n_types] = ri6 * ri6;
+  result1 = 4 * epsilon * (6 * ri6 * sigma / r - 12 * ri12 * sigma / r);
+  result2 = 4 * epsilon * (ri12 - ri6);
 }
 
-double nlj_gather_forces(run_params_t *params, double *positions, double *forces)
+double nlj_gather_forces(int n_types, run_params_t *params, double *positions, double *forces)
 {
   unsigned int n_dims = N_DIMS;
   unsigned int n_particles = params->n_particles;
@@ -42,13 +43,13 @@ double nlj_gather_forces(run_params_t *params, double *positions, double *forces
   unsigned int i, j, k, n;
   int offset;
   double penergy = 0;
-  double r, force, diff, e, lj_result[2];
+  double r, force, diff, e, lj_result1[2*n_types], lj_result2[2*n_types];
   double force_vector[n_dims];
   double rcut = sqrt(nlist->rcut);
   double e_shift, lj_shift;
-  lj(rcut, epsilon, sigma, lj_result);
-  lj_shift = lj_result[0];
-  e_shift = lj_result[1];
+  lj(n_types, rcut, epsilon, sigma, lj_result1, lj_result2);
+  lj_shift = lj_result1;
+  e_shift = lj_result2;
 
 #ifdef DEBUG
   check_nlist(params, nlist, positions, rcut);
@@ -114,9 +115,9 @@ double nlj_gather_forces(run_params_t *params, double *positions, double *forces
           continue;
         r = sqrt(r);
         // LJ force and potential
-        lj(r, epsilon, sigma, lj_result);
-        force = lj_result[0] - lj_shift;
-        e = lj_result[1] - e_shift;
+        lj(n_types, r, epsilon, sigma, lj_result1, lj_result2);
+        force = lj_result1 - lj_shift;
+        e = lj_result2 - e_shift;
 
 #pragma omp critical(update_forces)
         for (k = 0; k < n_dims; k++)
@@ -139,21 +140,22 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
 {
   unsigned int n_dims = N_DIMS;
   unsigned int n_particles = params->n_particles;
+  //unsigned int *types = params->types;
   force_t *force_p = params->force_parameters;
   lj_parameters_t *parameters = (lj_parameters_t *)force_p->parameters;
-  const double epsilon = parameters->epsilon;
-  const double sigma = parameters->sigma;
+  const double *epsilon = parameters->epsilon;
+  const double *sigma = parameters->sigma;
 
   unsigned int i, j, k;
   double penergy = 0;
-  double r, force, diff, e, lj_result[2];
+  double r, force, diff, e, lj_result1, lj_result2;
   double force_vector[n_dims];
   // TODO better
-  double rcut = sigma * 3.5;
-  double e_shift, lj_shift;
-  lj(rcut, epsilon, sigma, lj_result);
-  lj_shift = lj_result[0];
-  e_shift = lj_result[1];
+  double *rcut = sigma * 3.5;
+  double *e_shift, *lj_shift;
+  lj(n_types, rcut, epsilon, sigma, lj_result1, lj_result2)
+  lj_shift = lj_result1;
+  e_shift = lj_result2;
 
 // zero forces
 #pragma omp parallel for
@@ -189,9 +191,9 @@ double lj_gather_forces(run_params_t *params, double *positions, double *forces)
           continue;
         r = sqrt(r);
         // LJ force and potential
-        lj(r, epsilon, sigma, lj_result);
-        force = lj_result[0] - lj_shift;
-        e = lj_result[1] - e_shift;
+        lj(n_types, r, epsilon, sigma, lj_result1, lj_result2)
+        force = lj_result1 - lj_shift;
+        e = lj_result2 - e_shift;
 
 #pragma omp critical(update_forces)
         for (k = 0; k < n_dims; k++)
@@ -219,9 +221,21 @@ void nlj_free_forces(force_t *force)
   free(force);
 }
 
-force_t *build_nlj(double epsilon, double sigma, nlist_parameters_t *nlist)
+force_t *build_nlj_types(int n_types, double epsilon, double sigma, nlist_parameters_t *nlist)
 {
-  nlj_parameters_t init = {.epsilon = epsilon, .sigma = sigma};
+  double *sigma_new = (lj_parameters_t *)malloc(sizeof(n_types*n_types));
+    double *epsilon_new = (lj_parameters_t *)malloc(sizeof(n_types*n_types));
+    int index;
+    for (int i=0; i<n_types; i++)
+    {
+        for (int j=0; j<n_types; j++)
+        {
+            index = i*n_types + j;
+            sigma_new[index] = (sigma[i]*sigma[j])/2;
+            epsilon_new[index] = (epsilon[i]*epsilon[j])/2
+        }
+    }
+  nlj_parameters_t init = {.epsilon = epsilon_new, .sigma = sigma_new};
   nlj_parameters_t *parameters = (nlj_parameters_t *)malloc(sizeof(nlj_parameters_t));
   memcpy(parameters, &init, sizeof(init));
   parameters->nlist = nlist;
@@ -230,7 +244,6 @@ force_t *build_nlj(double epsilon, double sigma, nlist_parameters_t *nlist)
   lj->free = &nlj_free_forces;
   lj->parameters = parameters;
   return lj;
-}
 
 void lj_free_forces(force_t *force)
 {
@@ -239,14 +252,26 @@ void lj_free_forces(force_t *force)
   free(force);
 }
 
-force_t *build_lj(double epsilon, double sigma)
+force_t *build_lj_types(int n_types, double epsilon, double sigma)
 {
-  lj_parameters_t init = {.epsilon = epsilon, .sigma = sigma};
-  lj_parameters_t *parameters = (lj_parameters_t *)malloc(sizeof(lj_parameters_t));
-  memcpy(parameters, &init, sizeof(init));
-  force_t *lj = (force_t *)malloc(sizeof(force_t));
-  lj->gather = &lj_gather_forces;
-  lj->free = &lj_free_forces;
-  lj->parameters = parameters;
-  return lj;
+    double *sigma_new = (lj_parameters_t *)malloc(sizeof(n_types*n_types));
+    double *epsilon_new = (lj_parameters_t *)malloc(sizeof(n_types*n_types));
+    int index;
+    for (int i=0; i<n_types; i++)
+    {
+        for (int j=0; j<n_types; j++)
+        {
+            index = i*n_types + j;
+            sigma_new[index] = (sigma[i]*sigma[j])/2;
+            epsilon_new[index] = (epsilon[i]*epsilon[j])/2
+        }
+    }
+    lj_parmeters_t init = {.epsilon = epsilon_new, .sigma = sigma_new};
+    lj_parameters_t *parameters = (lj_parameters_t *)malloc(sizeof(lj_parameters_t));
+    memcpy(parameters, &init, sizeof(init));
+    force_t *lj = (force_t *)malloc(sizeof(force_t));
+    lj->gather = &lj_gather_forces;
+    lj->free = &lj_free_forces;
+    lj->parameters = parameters;
+    return lj;
 }
