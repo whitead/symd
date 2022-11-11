@@ -439,8 +439,20 @@ projectors3d = {
             6 * [0] + 3 * [1],  # cz
         ]
     ),
+    "Trigonal": np.array(  # cubic, plus use b_y as shear
+        [
+            4 * [1] + 6 * [0],  # ax
+            3 * [0] + [1] + 5 * [0],  # bx
+            3 * [0] + [1] + 5 * [0],  # cx
+            3 * [0] + [1] + 5 * [0],  # ay
+            4 * [1] + 6 * [0],  # by
+            3 * [0] + [1] + 5 * [0],  # cy
+            3 * [0] + [1] + 5 * [0],  # az
+            3 * [0] + [1] + 5 * [0],  # bz,
+            4 * [1] + 6 * [0],  # cz
+        ]
+    ),
 }
-projectors3d["Trigonal"] = projectors3d["Hexagonal"]
 
 
 def _projector_key(p):
