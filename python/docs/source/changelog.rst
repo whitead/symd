@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+v1.1.2 (2022-11-20)
+--------------------
+* Fixed incorrect cubic, tetragonal, and hexagonal projectors in 3D
+
+
 v1.1.0 (2022-6-26)
 -------------------
 * Added names of space groups
