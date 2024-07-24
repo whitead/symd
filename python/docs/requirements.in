@@ -7,3 +7,7 @@ pandas
 matplotlib
 skunk
 svglib
+#lxml>=5 # no wheels for python 3.12 on <5
+#pyzmq>=26.0.0 # no wheels for python 3.12 on <26
+#numpy==1.26.4 # some shit about setuptool (https://github.com/numpy/numpy/issues/23808)
+#pyyaml==6.0.2rc1 # needed for cython 3 release (which is dependency somwehere)
