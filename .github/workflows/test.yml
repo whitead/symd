@@ -21,7 +21,7 @@ jobs:
         python-version: "3.12"
     - name: Install symd
       run: |
-        sudo apt-get install libgsl-dev cmake
+        sudo apt-get install libgsl-dev cmake libxml2-dev libxslt1-dev
         mkdir build && cd build && cmake .. && make && sudo make install
     - name: Install dependencies
       working-directory: python
