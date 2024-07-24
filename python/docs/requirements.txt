@@ -137,8 +137,10 @@ jupyterlab-widgets==1.1.0
     # via ipywidgets
 kiwisolver==1.4.2
     # via matplotlib
-lxml==4.8.0
-    # via svglib
+lxml==5.2.2
+    # via
+    #   -r requirements.in
+    #   svglib
 markdown-it-py==1.1.0
     # via
     #   mdit-py-plugins
@@ -267,8 +269,9 @@ pyyaml==6.0.2rc1
     #   -r requirements.in
     #   myst-nb
     #   myst-parser
-pyzmq==22.3.0
+pyzmq==26.0.3
     # via
+    #   -r requirements.in
     #   jupyter-client
     #   jupyter-server
     #   notebook
