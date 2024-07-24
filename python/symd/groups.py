@@ -313,7 +313,7 @@ def str2mat(s: str) -> np.ndarray:
     fake_env = {"x": 0, "y": 0, "z": 0}
     for i, si in enumerate(s.split(",")):
         # treat implicit multiplication - 2x = 2 * x
-        si = re.sub("(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)", "*", si, flags=re.X)
+        si = re.sub(r"(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)", "*", si, flags=re.X)
         r = [0] * N
         l = {}
         # use fake ones to get translation
@@ -347,12 +347,12 @@ def asymm_constraints(
     """
     s = s.replace("≤", "<=")
     env = {}
-    in3d = "z" in s
+    in3d = "z" in s 
     exec("from math import *", env)
     funcs = []
     for i, si in enumerate(s.split(";")):
         # treat implicit multiplication - 2x = 2 * x
-        si = re.sub("(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)", "*", si, flags=re.X)
+        si = re.sub(r"(?<=\d)(?=x) | (?<=\d)(?=y) | (?<=\d)(?=z)", "*", si, flags=re.X)
         l = {}
         if in3d:
             exec(f"l{i} = lambda x,y,z:" + si, env, l)
@@ -364,6 +364,7 @@ def asymm_constraints(
     else:
         return lambda x, y: sum([f(x, y) for f in funcs]) == len(funcs)
 
+# Bravaie lattices are written as column vectors (col 0 = a, col 1 = b, col 2 = c)
 
 projectors2d = {
     "Square": np.array([4 * [1], 4 * [0], 4 * [0], 4 * [1]]),
@@ -414,16 +415,21 @@ projectors3d = {
     ),
     "Triclinic": np.eye(9),
     "Monoclinic": np.array(  # TODO: might be missing potential rotation around z
+        # b/c must be 90 degrees
+        # a/b must be 90 degrees
+        # a/c is free
+        # so just take b = only y, then c can move in x and z
+        # to make a/b 90 - take a only x
         [
-            [1] + 8 * [0],  # ax
+            [1,0,0] * 3,  # ax (whole a vector)
             9 * [0],  # bx
             2 * [0] + [1] + 6 * [0],  # cx
             9 * [0],  # ay
-            6 * [1] + 3 * [0],  # by
-            5 * [0] + [1] + 3 * [0],  # cy
+            [0,1,0] * 3,  # by (take whole b vector)
+            9 * [0],  # cy
             9 * [0],  # az
             9 * [0],  # bz,
-            8 * [0] + [1],  # cz
+            5 * [0] + [1] + 2 * [0] + [1],  # cz (mix in some input cy)
         ]
     ),
     "Orthorhombic": np.array(  # TODO: might be missing potential rotation around z
@@ -441,15 +447,15 @@ projectors3d = {
     ),
     "Trigonal": np.array(  # cubic, plus use b_y as shear
         [
-            4 * [1] + 6 * [0],  # ax
+            4 * [1] + 5 * [0],  # ax
             3 * [0] + [1] + 5 * [0],  # bx
             3 * [0] + [1] + 5 * [0],  # cx
             3 * [0] + [1] + 5 * [0],  # ay
-            4 * [1] + 6 * [0],  # by
+            4 * [1] + 5 * [0],  # by
             3 * [0] + [1] + 5 * [0],  # cy
             3 * [0] + [1] + 5 * [0],  # az
             3 * [0] + [1] + 5 * [0],  # bz,
-            4 * [1] + 6 * [0],  # cz
+            4 * [1] + 5 * [0],  # cz
         ]
     ),
 }
