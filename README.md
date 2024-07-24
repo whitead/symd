@@ -3,19 +3,19 @@
 [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/whitead/symd)
 [![PyPI version](https://badge.fury.io/py/symd.svg)](https://badge.fury.io/py/symd)
 
-This is a simple MD engine written in C that can be constrained to obey given symmetry groups at every frame. It can be compiled for any dimensions. It supports the following features:
+This is a simple MD engine written in C that can be constrained to obey given symmetry groups at every frame. It can be compiled for any dimension, but scaffolding only exists for 2 and 3D lattices. It supports the following features:
 
 * NVE, NVT (BAOAB, CSVR thermostats), NPT
 * LJ, harmonic, cosine potentials
 * Neighbor lists (use `nlj` instead of `lj` for potential)
-* Symmetry constraints and all Bravais Lattices
+* Symmetry constraints and all Bravais Lattices in 2D/3D
 
 ## Purpose
 
 https://user-images.githubusercontent.com/908389/162356564-95f35117-e31b-412c-8a3a-c3a92a92ae81.mp4
 
 
-This is not really intended to be a production-ready simulation engine. Instead, it is a reference implementation of symmetry MD. I hope then the algorithm can be incorporated into other engines, or this engine can be extended, for others to use the algorithm. The Python package (see below) should make implementing the method as easy as possible. With that said, the most important files are `box.c` and `group.c`, which contain the key algorithms: `fold_particles` and the NPT algorithms: `make_box`, and `try_rescale`.
+This is not really intended to be a production-ready simulation engine. Instead, it is a reference implementation of symmetric MD. I hope then the algorithm can be incorporated into other engines, or this engine can be extended, for others to use the algorithm. The Python package (see below) should make implementing the method as easy as possible. With that said, the most important files are `box.c` and `group.c`, which contain the key algorithms: `fold_particles` and the NPT algorithms: `make_box`, and `try_rescale`.
 
 ## Python Package
 
