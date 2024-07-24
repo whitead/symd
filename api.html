@@ -1,27 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>API &mdash; symd  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
-      <link rel="stylesheet" href="_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script>let toggleHintShow = 'Click to show';</script>
-        <script>let toggleHintHide = 'Click to hide';</script>
-        <script>let toggleOpenOnPrint = 'true';</script>
-        <script src="_static/togglebutton.js"></script>
-        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -33,11 +30,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="toc.html" class="icon icon-home"> symd
+
+          
+          
+          <a href="toc.html" class="icon icon-home">
+            symd
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -50,7 +51,39 @@
 <li class="toctree-l1"><a class="reference internal" href="Custom_Group.html">Custom Symmetry Group Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Energy_Figure.html">Figure 1 from Paper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Atlas_Figure.html">Figure 2 From Paper</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#symd.symd.Symd"><code class="docutils literal notranslate"><span class="pre">Symd</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#symd.symd.Symd.clean_files"><code class="docutils literal notranslate"><span class="pre">Symd.clean_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.symd.Symd.log_output"><code class="docutils literal notranslate"><span class="pre">Symd.log_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.symd.Symd.log_positions"><code class="docutils literal notranslate"><span class="pre">Symd.log_positions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.symd.Symd.number_density"><code class="docutils literal notranslate"><span class="pre">Symd.number_density()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.symd.Symd.read_cell"><code class="docutils literal notranslate"><span class="pre">Symd.read_cell()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.symd.Symd.read_positions"><code class="docutils literal notranslate"><span class="pre">Symd.read_positions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.symd.Symd.remove_overlap"><code class="docutils literal notranslate"><span class="pre">Symd.remove_overlap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.symd.Symd.run"><code class="docutils literal notranslate"><span class="pre">Symd.run()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.symd.Symd.setup_masses"><code class="docutils literal notranslate"><span class="pre">Symd.setup_masses()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.symd.Symd.shrink"><code class="docutils literal notranslate"><span class="pre">Symd.shrink()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#symd.groups.Group"><code class="docutils literal notranslate"><span class="pre">Group</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#symd.groups.Group.asymm_unit"><code class="docutils literal notranslate"><span class="pre">Group.asymm_unit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.groups.Group.genpos"><code class="docutils literal notranslate"><span class="pre">Group.genpos</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.groups.Group.lattice"><code class="docutils literal notranslate"><span class="pre">Group.lattice</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.groups.Group.name"><code class="docutils literal notranslate"><span class="pre">Group.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symd.groups.Group.specpos"><code class="docutils literal notranslate"><span class="pre">Group.specpos</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#symd.groups.asymm_constraints"><code class="docutils literal notranslate"><span class="pre">asymm_constraints()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#symd.groups.cell_nparticles"><code class="docutils literal notranslate"><span class="pre">cell_nparticles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#symd.groups.cell_volume"><code class="docutils literal notranslate"><span class="pre">cell_volume()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#symd.groups.get_cell"><code class="docutils literal notranslate"><span class="pre">get_cell()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#symd.groups.group_names"><code class="docutils literal notranslate"><span class="pre">group_names</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#symd.groups.load_group"><code class="docutils literal notranslate"><span class="pre">load_group()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#symd.groups.prepare_input"><code class="docutils literal notranslate"><span class="pre">prepare_input()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#symd.groups.project_cell"><code class="docutils literal notranslate"><span class="pre">project_cell()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#symd.groups.str2mat"><code class="docutils literal notranslate"><span class="pre">str2mat()</span></code></a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -66,8 +99,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="toc.html" class="icon icon-home"></a> &raquo;</li>
-      <li>API</li>
+      <li><a href="toc.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -78,106 +111,107 @@
            <div itemprop="articleBody">
              
   <section id="module-symd.symd">
-<span id="api"></span><h1>API<a class="headerlink" href="#module-symd.symd" title="Permalink to this headline"></a></h1>
+<span id="api"></span><h1>API<a class="headerlink" href="#module-symd.symd" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="symd.symd.Symd">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Symd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nparticles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wyckoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exeDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exePrefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermostat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'baoab'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lj'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Symd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nparticles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wyckoffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">images</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exeDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exePrefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thermostat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'baoab'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lj'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd" title="Link to this definition"></a></dt>
 <dd><p>Symd Engine set-up and output parser</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="symd.symd.Symd.clean_files">
-<span class="sig-name descname"><span class="pre">clean_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.clean_files" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">clean_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.clean_files" title="Link to this definition"></a></dt>
 <dd><p>Remove output files</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="symd.symd.Symd.log_output">
-<span class="sig-name descname"><span class="pre">log_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'md.log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.log_output" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">log_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'md.log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.log_output" title="Link to this definition"></a></dt>
 <dd><p>Log simulation output</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="symd.symd.Symd.log_positions">
-<span class="sig-name descname"><span class="pre">log_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'positions.xyz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.log_positions" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">log_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'positions.xyz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.log_positions" title="Link to this definition"></a></dt>
 <dd><p>enable logging of the xyz positions of the simulation. Default is to output 100 frames</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="symd.symd.Symd.number_density">
-<span class="sig-name descname"><span class="pre">number_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.number_density" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">number_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.number_density" title="Link to this definition"></a></dt>
 <dd><p>returns the packing fraction of the system</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="symd.symd.Symd.read_cell">
-<span class="sig-name descname"><span class="pre">read_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bravais</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.read_cell" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">read_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bravais</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.read_cell" title="Link to this definition"></a></dt>
 <dd><p>Return the output unit cell.
+:type bravais: 
 :param bravais: if True, return the cell fit to be in Bravais (projected) for use in p1 or non-symmetric MD. If False, return a unit cell that will repeat the simulation.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="symd.symd.Symd.read_positions">
-<span class="sig-name descname"><span class="pre">read_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.read_positions" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">read_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.read_positions" title="Link to this definition"></a></dt>
 <dd><p>Reads the positions from the positions log file</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="symd.symd.Symd.remove_overlap">
-<span class="sig-name descname"><span class="pre">remove_overlap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.remove_overlap" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">remove_overlap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.remove_overlap" title="Link to this definition"></a></dt>
 <dd><p>Attempt to remove overlapping particles</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="symd.symd.Symd.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.run" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.run" title="Link to this definition"></a></dt>
 <dd><p>Run the simulation</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="symd.symd.Symd.setup_masses">
-<span class="sig-name descname"><span class="pre">setup_masses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">masses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masses_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.setup_masses" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">setup_masses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">masses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masses_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.setup_masses" title="Link to this definition"></a></dt>
 <dd><p>Creates a masses file. The masses variable is expanded to be the
 same size as the number of particles</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="symd.symd.Symd.shrink">
-<span class="sig-name descname"><span class="pre">shrink</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.shrink" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">shrink</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#symd.symd.Symd.shrink" title="Link to this definition"></a></dt>
 <dd><p>Run a brief NPT simulation</p>
 </dd></dl>
 
 </dd></dl>
 
-<span class="target" id="module-symd.groups"></span><dl class="py class">
+<dl class="py class" id="module-symd.groups">
 <dt class="sig sig-object py" id="symd.groups.Group">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genpos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specpos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asymm_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.Group" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genpos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specpos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asymm_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.Group" title="Link to this definition"></a></dt>
 <dd><p>A group with information on genpos, specpos, Bravais lattice</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="symd.groups.Group.asymm_unit">
-<span class="sig-name descname"><span class="pre">asymm_unit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#symd.groups.Group.asymm_unit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">asymm_unit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#symd.groups.Group.asymm_unit" title="Link to this definition"></a></dt>
 <dd><p>string indicating asymmetric unit (call <a class="reference internal" href="#symd.groups.asymm_constraints" title="symd.groups.asymm_constraints"><code class="xref py py-func docutils literal notranslate"><span class="pre">asymm_constraints()</span></code></a> to convert to lambda)</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="symd.groups.Group.genpos">
-<span class="sig-name descname"><span class="pre">genpos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#symd.groups.Group.genpos" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">genpos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#symd.groups.Group.genpos" title="Link to this definition"></a></dt>
 <dd><p>general positions as affine matrix strings (call <a class="reference internal" href="#symd.groups.str2mat" title="symd.groups.str2mat"><code class="xref py py-func docutils literal notranslate"><span class="pre">str2mat()</span></code></a> to convert to matrix)</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="symd.groups.Group.lattice">
-<span class="sig-name descname"><span class="pre">lattice</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#symd.groups.Group.lattice" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">lattice</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#symd.groups.Group.lattice" title="Link to this definition"></a></dt>
 <dd><p>Bravais lattice name</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="symd.groups.Group.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#symd.groups.Group.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#symd.groups.Group.name" title="Link to this definition"></a></dt>
 <dd><p>name of the group</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="symd.groups.Group.specpos">
-<span class="sig-name descname"><span class="pre">specpos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#symd.groups.Group.specpos" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">specpos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code><span class="pre">]</span></em><a class="headerlink" href="#symd.groups.Group.specpos" title="Link to this definition"></a></dt>
 <dd><p>list of <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Group</span></code></a> special positions</p>
 </dd></dl>
 
@@ -185,18 +219,18 @@ same size as the number of particles</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="symd.groups.asymm_constraints">
-<span class="sig-name descname"><span class="pre">asymm_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.asymm_constraints" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">asymm_constraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.asymm_constraints" title="Link to this definition"></a></dt>
 <dd><p>Converts inequalities in xyz notation to lambda function. For example,
 0≤x≤2/3;0≤y≤1/3;x≤(1+y)/2;y≤x/2 is converted to a
 lambda function that returns True if the given point satisfies the constraints. Works in 2D and 3D.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>s</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – string in xyz notation</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – string in xyz notation</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]]</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]]</span></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>lambda function that is <code class="docutils literal notranslate"><span class="pre">True</span></code> when the point is in the asymmetric unit</p>
 </dd>
 </dl>
@@ -204,20 +238,20 @@ lambda function that returns True if the given point satisfies the constraints. 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="symd.groups.cell_nparticles">
-<span class="sig-name descname"><span class="pre">cell_nparticles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genpos</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">specpos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.cell_nparticles" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">cell_nparticles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">genpos</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">specpos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.cell_nparticles" title="Link to this definition"></a></dt>
 <dd><p>Get number of unit cell particles given genpos and specpos</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>group</strong> (<a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a>) – The <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Group</span></code></a></p></li>
-<li><p><strong>genpos</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The number of particles in the general positions in asymmetric unit</p></li>
-<li><p><strong>specpos</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The numbers of particles in the special positions</p></li>
+<li><p><strong>group</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a></span>) – The <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Group</span></code></a></p></li>
+<li><p><strong>genpos</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The number of particles in the general positions in asymmetric unit</p></li>
+<li><p><strong>specpos</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The numbers of particles in the special positions</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The number of particles in the unit cell</p>
 </dd>
 </dl>
@@ -225,16 +259,16 @@ lambda function that returns True if the given point satisfies the constraints. 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="symd.groups.cell_volume">
-<span class="sig-name descname"><span class="pre">cell_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.cell_volume" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">cell_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.cell_volume" title="Link to this definition"></a></dt>
 <dd><p>Compute volume of given unit cell in arbitrary dimension</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>b</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>) – lattice vectors as columns</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></span>) – lattice vectors as columns</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>volume of unit cell</p>
 </dd>
 </dl>
@@ -242,22 +276,22 @@ lambda function that returns True if the given point satisfies the constraints. 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="symd.groups.get_cell">
-<span class="sig-name descname"><span class="pre">get_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.get_cell" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.get_cell" title="Link to this definition"></a></dt>
 <dd><p>Compute unit cell given number density, group, and number of particles in asymmetric unit.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>number_density</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – number density of particles</p></li>
-<li><p><strong>group</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a>]) – group number (Hall number) or <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Group</span></code></a></p></li>
-<li><p><strong>dim</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – dimensionality of space</p></li>
-<li><p><strong>n</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – number of particles in asymmetric unit general positions</p></li>
-<li><p><strong>w</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – list of number of particles in special positions</p></li>
+<li><p><strong>number_density</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – number density of particles</p></li>
+<li><p><strong>group</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a>]</span>) – group number (Hall number) or <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Group</span></code></a></p></li>
+<li><p><strong>dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – dimensionality of space</p></li>
+<li><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – number of particles in asymmetric unit general positions</p></li>
+<li><p><strong>w</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>) – list of number of particles in special positions</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>flattened unit cell (for use in symd MD engine)</p>
 </dd>
 </dl>
@@ -265,27 +299,27 @@ lambda function that returns True if the given point satisfies the constraints. 
 
 <dl class="py data">
 <dt class="sig sig-object py" id="symd.groups.group_names">
-<span class="sig-name descname"><span class="pre">group_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[None,</span> <span class="pre">[None,</span> <span class="pre">'p1',</span> <span class="pre">'p1m'],</span> <span class="pre">[None,</span> <span class="pre">'p1',</span> <span class="pre">'p2',</span> <span class="pre">'pm',</span> <span class="pre">'pg',</span> <span class="pre">'cm',</span> <span class="pre">'pmm',</span> <span class="pre">'pmg',</span> <span class="pre">'pgg',</span> <span class="pre">'cmm',</span> <span class="pre">'p4',</span> <span class="pre">'p4m',</span> <span class="pre">'p4g',</span> <span class="pre">'p3',</span> <span class="pre">'p3m1',</span> <span class="pre">'p31m',</span> <span class="pre">'p6',</span> <span class="pre">'p6m'],</span> <span class="pre">[None,</span> <span class="pre">'P1',</span> <span class="pre">'P-1',</span> <span class="pre">'P2',</span> <span class="pre">'P21',</span> <span class="pre">'C2',</span> <span class="pre">'Pm',</span> <span class="pre">'Pc',</span> <span class="pre">'Cm',</span> <span class="pre">'Cc',</span> <span class="pre">'P2/m',</span> <span class="pre">'P21/m',</span> <span class="pre">'C2/m',</span> <span class="pre">'P2/c',</span> <span class="pre">'P21/c',</span> <span class="pre">'C2/c',</span> <span class="pre">'P222',</span> <span class="pre">'P2221',</span> <span class="pre">'P21212',</span> <span class="pre">'P212121',</span> <span class="pre">'C2221',</span> <span class="pre">'C222',</span> <span class="pre">'F222',</span> <span class="pre">'I222',</span> <span class="pre">'I212121',</span> <span class="pre">'Pmm2',</span> <span class="pre">'Pmc21',</span> <span class="pre">'Pcc2',</span> <span class="pre">'Pma2',</span> <span class="pre">'Pca21',</span> <span class="pre">'Pnc2',</span> <span class="pre">'Pmn21',</span> <span class="pre">'Pba2',</span> <span class="pre">'Pna21',</span> <span class="pre">'Pnn2',</span> <span class="pre">'Cmm2',</span> <span class="pre">'Cmc21',</span> <span class="pre">'Ccc2',</span> <span class="pre">'Amm2',</span> <span class="pre">'Aem2',</span> <span class="pre">'Ama2',</span> <span class="pre">'Aea2',</span> <span class="pre">'Fmm2',</span> <span class="pre">'Fdd2',</span> <span class="pre">'Imm2',</span> <span class="pre">'Iba2',</span> <span class="pre">'Ima2',</span> <span class="pre">'Pmmm',</span> <span class="pre">'Pnnn',</span> <span class="pre">'Pccm',</span> <span class="pre">'Pban',</span> <span class="pre">'Pmma',</span> <span class="pre">'Pnna',</span> <span class="pre">'Pmna',</span> <span class="pre">'Pcca',</span> <span class="pre">'Pbam',</span> <span class="pre">'Pccn',</span> <span class="pre">'Pbcm',</span> <span class="pre">'Pnnm',</span> <span class="pre">'Pmmn',</span> <span class="pre">'Pbcn',</span> <span class="pre">'Pbca',</span> <span class="pre">'Pnma',</span> <span class="pre">'Cmcm',</span> <span class="pre">'Cmce',</span> <span class="pre">'Cmmm',</span> <span class="pre">'Cccm',</span> <span class="pre">'Cmme',</span> <span class="pre">'Ccce',</span> <span class="pre">'Fmmm',</span> <span class="pre">'Fddd',</span> <span class="pre">'Immm',</span> <span class="pre">'Ibam',</span> <span class="pre">'Ibca',</span> <span class="pre">'Imma',</span> <span class="pre">'P4',</span> <span class="pre">'P41',</span> <span class="pre">'P42',</span> <span class="pre">'P43',</span> <span class="pre">'I4',</span> <span class="pre">'I41',</span> <span class="pre">'P-4',</span> <span class="pre">'I-4',</span> <span class="pre">'P4/m',</span> <span class="pre">'P42/m',</span> <span class="pre">'P4/n',</span> <span class="pre">'P42/n',</span> <span class="pre">'I4/m',</span> <span class="pre">'I41/a',</span> <span class="pre">'P422',</span> <span class="pre">'P4212',</span> <span class="pre">'P4122',</span> <span class="pre">'P41212',</span> <span class="pre">'P4222',</span> <span class="pre">'P42212',</span> <span class="pre">'P4322',</span> <span class="pre">'P43212',</span> <span class="pre">'I422',</span> <span class="pre">'I4122',</span> <span class="pre">'P4mm',</span> <span class="pre">'P4bm',</span> <span class="pre">'P42cm',</span> <span class="pre">'P42nm',</span> <span class="pre">'P4cc',</span> <span class="pre">'P4nc',</span> <span class="pre">'P42mc',</span> <span class="pre">'P42bc',</span> <span class="pre">'I4mm',</span> <span class="pre">'I4cm',</span> <span class="pre">'I41md',</span> <span class="pre">'I41cd',</span> <span class="pre">'P-42m',</span> <span class="pre">'P-42c',</span> <span class="pre">'P-421m',</span> <span class="pre">'P-421c',</span> <span class="pre">'P-4m2',</span> <span class="pre">'P-4c2',</span> <span class="pre">'P-4b2',</span> <span class="pre">'P-4n2',</span> <span class="pre">'I-4m2',</span> <span class="pre">'I-4c2',</span> <span class="pre">'I-42m',</span> <span class="pre">'I-42d',</span> <span class="pre">'P4/mmm',</span> <span class="pre">'P4/mcc',</span> <span class="pre">'P4/nbm',</span> <span class="pre">'P4/nnc',</span> <span class="pre">'P4/mbm',</span> <span class="pre">'P4/mnc',</span> <span class="pre">'P4/nmm',</span> <span class="pre">'P4/ncc',</span> <span class="pre">'P42/mmc',</span> <span class="pre">'P42/mcm',</span> <span class="pre">'P42/nbc',</span> <span class="pre">'P42/nnm',</span> <span class="pre">'P42/mbc',</span> <span class="pre">'P42/mnm',</span> <span class="pre">'P42/nmc',</span> <span class="pre">'P42/ncm',</span> <span class="pre">'I4/mmm',</span> <span class="pre">'I4/mcm',</span> <span class="pre">'I41/amd',</span> <span class="pre">'I41/acd',</span> <span class="pre">'P3',</span> <span class="pre">'P31',</span> <span class="pre">'P32',</span> <span class="pre">'R3',</span> <span class="pre">'P-3',</span> <span class="pre">'R-3',</span> <span class="pre">'P312',</span> <span class="pre">'P321',</span> <span class="pre">'P3112',</span> <span class="pre">'P3121',</span> <span class="pre">'P3212',</span> <span class="pre">'P3221',</span> <span class="pre">'R32',</span> <span class="pre">'P3m1',</span> <span class="pre">'P31m',</span> <span class="pre">'P3c1',</span> <span class="pre">'P31c',</span> <span class="pre">'R3m',</span> <span class="pre">'R3c',</span> <span class="pre">'P-31m',</span> <span class="pre">'P-31c',</span> <span class="pre">'P-3m1',</span> <span class="pre">'P-3c1',</span> <span class="pre">'R-3m',</span> <span class="pre">'R-3c',</span> <span class="pre">'P6',</span> <span class="pre">'P61',</span> <span class="pre">'P65',</span> <span class="pre">'P62',</span> <span class="pre">'P64',</span> <span class="pre">'P63',</span> <span class="pre">'P-6',</span> <span class="pre">'P6/m',</span> <span class="pre">'P63/m',</span> <span class="pre">'P622',</span> <span class="pre">'P6122',</span> <span class="pre">'P6522',</span> <span class="pre">'P6222',</span> <span class="pre">'P6422',</span> <span class="pre">'P6322',</span> <span class="pre">'P6mm',</span> <span class="pre">'P6cc',</span> <span class="pre">'P63cm',</span> <span class="pre">'P63mc',</span> <span class="pre">'P-6m2',</span> <span class="pre">'P-6c2',</span> <span class="pre">'P-62m',</span> <span class="pre">'P-62c',</span> <span class="pre">'P6/mmm',</span> <span class="pre">'P6/mcc',</span> <span class="pre">'P63/mcm',</span> <span class="pre">'P63/mmc',</span> <span class="pre">'P23',</span> <span class="pre">'F23',</span> <span class="pre">'I23',</span> <span class="pre">'P213',</span> <span class="pre">'I213',</span> <span class="pre">'Pm-3',</span> <span class="pre">'Pn-3',</span> <span class="pre">'Fm-3',</span> <span class="pre">'Fd-3',</span> <span class="pre">'Im-3',</span> <span class="pre">'Pa-3',</span> <span class="pre">'Ia-3',</span> <span class="pre">'P432',</span> <span class="pre">'P4232',</span> <span class="pre">'F432',</span> <span class="pre">'F4132',</span> <span class="pre">'I432',</span> <span class="pre">'P4332',</span> <span class="pre">'P4132',</span> <span class="pre">'I4132',</span> <span class="pre">'P-43m',</span> <span class="pre">'F-43m',</span> <span class="pre">'I-43m',</span> <span class="pre">'P-43n',</span> <span class="pre">'F-43c',</span> <span class="pre">'I-43d',</span> <span class="pre">'Pm-3m',</span> <span class="pre">'Pn-3n',</span> <span class="pre">'Pm-3n',</span> <span class="pre">'Pn-3m',</span> <span class="pre">'Fm-3m',</span> <span class="pre">'Fm-3c',</span> <span class="pre">'Fd-3m',</span> <span class="pre">'Fd-3c',</span> <span class="pre">'Im-3m',</span> <span class="pre">'Ia-3d']]</span></em><a class="headerlink" href="#symd.groups.group_names" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">group_names</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[None,</span> <span class="pre">[None,</span> <span class="pre">'p1',</span> <span class="pre">'p1m'],</span> <span class="pre">[None,</span> <span class="pre">'p1',</span> <span class="pre">'p2',</span> <span class="pre">'pm',</span> <span class="pre">'pg',</span> <span class="pre">'cm',</span> <span class="pre">'pmm',</span> <span class="pre">'pmg',</span> <span class="pre">'pgg',</span> <span class="pre">'cmm',</span> <span class="pre">'p4',</span> <span class="pre">'p4m',</span> <span class="pre">'p4g',</span> <span class="pre">'p3',</span> <span class="pre">'p3m1',</span> <span class="pre">'p31m',</span> <span class="pre">'p6',</span> <span class="pre">'p6m'],</span> <span class="pre">[None,</span> <span class="pre">'P1',</span> <span class="pre">'P-1',</span> <span class="pre">'P2',</span> <span class="pre">'P21',</span> <span class="pre">'C2',</span> <span class="pre">'Pm',</span> <span class="pre">'Pc',</span> <span class="pre">'Cm',</span> <span class="pre">'Cc',</span> <span class="pre">'P2/m',</span> <span class="pre">'P21/m',</span> <span class="pre">'C2/m',</span> <span class="pre">'P2/c',</span> <span class="pre">'P21/c',</span> <span class="pre">'C2/c',</span> <span class="pre">'P222',</span> <span class="pre">'P2221',</span> <span class="pre">'P21212',</span> <span class="pre">'P212121',</span> <span class="pre">'C2221',</span> <span class="pre">'C222',</span> <span class="pre">'F222',</span> <span class="pre">'I222',</span> <span class="pre">'I212121',</span> <span class="pre">'Pmm2',</span> <span class="pre">'Pmc21',</span> <span class="pre">'Pcc2',</span> <span class="pre">'Pma2',</span> <span class="pre">'Pca21',</span> <span class="pre">'Pnc2',</span> <span class="pre">'Pmn21',</span> <span class="pre">'Pba2',</span> <span class="pre">'Pna21',</span> <span class="pre">'Pnn2',</span> <span class="pre">'Cmm2',</span> <span class="pre">'Cmc21',</span> <span class="pre">'Ccc2',</span> <span class="pre">'Amm2',</span> <span class="pre">'Aem2',</span> <span class="pre">'Ama2',</span> <span class="pre">'Aea2',</span> <span class="pre">'Fmm2',</span> <span class="pre">'Fdd2',</span> <span class="pre">'Imm2',</span> <span class="pre">'Iba2',</span> <span class="pre">'Ima2',</span> <span class="pre">'Pmmm',</span> <span class="pre">'Pnnn',</span> <span class="pre">'Pccm',</span> <span class="pre">'Pban',</span> <span class="pre">'Pmma',</span> <span class="pre">'Pnna',</span> <span class="pre">'Pmna',</span> <span class="pre">'Pcca',</span> <span class="pre">'Pbam',</span> <span class="pre">'Pccn',</span> <span class="pre">'Pbcm',</span> <span class="pre">'Pnnm',</span> <span class="pre">'Pmmn',</span> <span class="pre">'Pbcn',</span> <span class="pre">'Pbca',</span> <span class="pre">'Pnma',</span> <span class="pre">'Cmcm',</span> <span class="pre">'Cmce',</span> <span class="pre">'Cmmm',</span> <span class="pre">'Cccm',</span> <span class="pre">'Cmme',</span> <span class="pre">'Ccce',</span> <span class="pre">'Fmmm',</span> <span class="pre">'Fddd',</span> <span class="pre">'Immm',</span> <span class="pre">'Ibam',</span> <span class="pre">'Ibca',</span> <span class="pre">'Imma',</span> <span class="pre">'P4',</span> <span class="pre">'P41',</span> <span class="pre">'P42',</span> <span class="pre">'P43',</span> <span class="pre">'I4',</span> <span class="pre">'I41',</span> <span class="pre">'P-4',</span> <span class="pre">'I-4',</span> <span class="pre">'P4/m',</span> <span class="pre">'P42/m',</span> <span class="pre">'P4/n',</span> <span class="pre">'P42/n',</span> <span class="pre">'I4/m',</span> <span class="pre">'I41/a',</span> <span class="pre">'P422',</span> <span class="pre">'P4212',</span> <span class="pre">'P4122',</span> <span class="pre">'P41212',</span> <span class="pre">'P4222',</span> <span class="pre">'P42212',</span> <span class="pre">'P4322',</span> <span class="pre">'P43212',</span> <span class="pre">'I422',</span> <span class="pre">'I4122',</span> <span class="pre">'P4mm',</span> <span class="pre">'P4bm',</span> <span class="pre">'P42cm',</span> <span class="pre">'P42nm',</span> <span class="pre">'P4cc',</span> <span class="pre">'P4nc',</span> <span class="pre">'P42mc',</span> <span class="pre">'P42bc',</span> <span class="pre">'I4mm',</span> <span class="pre">'I4cm',</span> <span class="pre">'I41md',</span> <span class="pre">'I41cd',</span> <span class="pre">'P-42m',</span> <span class="pre">'P-42c',</span> <span class="pre">'P-421m',</span> <span class="pre">'P-421c',</span> <span class="pre">'P-4m2',</span> <span class="pre">'P-4c2',</span> <span class="pre">'P-4b2',</span> <span class="pre">'P-4n2',</span> <span class="pre">'I-4m2',</span> <span class="pre">'I-4c2',</span> <span class="pre">'I-42m',</span> <span class="pre">'I-42d',</span> <span class="pre">'P4/mmm',</span> <span class="pre">'P4/mcc',</span> <span class="pre">'P4/nbm',</span> <span class="pre">'P4/nnc',</span> <span class="pre">'P4/mbm',</span> <span class="pre">'P4/mnc',</span> <span class="pre">'P4/nmm',</span> <span class="pre">'P4/ncc',</span> <span class="pre">'P42/mmc',</span> <span class="pre">'P42/mcm',</span> <span class="pre">'P42/nbc',</span> <span class="pre">'P42/nnm',</span> <span class="pre">'P42/mbc',</span> <span class="pre">'P42/mnm',</span> <span class="pre">'P42/nmc',</span> <span class="pre">'P42/ncm',</span> <span class="pre">'I4/mmm',</span> <span class="pre">'I4/mcm',</span> <span class="pre">'I41/amd',</span> <span class="pre">'I41/acd',</span> <span class="pre">'P3',</span> <span class="pre">'P31',</span> <span class="pre">'P32',</span> <span class="pre">'R3',</span> <span class="pre">'P-3',</span> <span class="pre">'R-3',</span> <span class="pre">'P312',</span> <span class="pre">'P321',</span> <span class="pre">'P3112',</span> <span class="pre">'P3121',</span> <span class="pre">'P3212',</span> <span class="pre">'P3221',</span> <span class="pre">'R32',</span> <span class="pre">'P3m1',</span> <span class="pre">'P31m',</span> <span class="pre">'P3c1',</span> <span class="pre">'P31c',</span> <span class="pre">'R3m',</span> <span class="pre">'R3c',</span> <span class="pre">'P-31m',</span> <span class="pre">'P-31c',</span> <span class="pre">'P-3m1',</span> <span class="pre">'P-3c1',</span> <span class="pre">'R-3m',</span> <span class="pre">'R-3c',</span> <span class="pre">'P6',</span> <span class="pre">'P61',</span> <span class="pre">'P65',</span> <span class="pre">'P62',</span> <span class="pre">'P64',</span> <span class="pre">'P63',</span> <span class="pre">'P-6',</span> <span class="pre">'P6/m',</span> <span class="pre">'P63/m',</span> <span class="pre">'P622',</span> <span class="pre">'P6122',</span> <span class="pre">'P6522',</span> <span class="pre">'P6222',</span> <span class="pre">'P6422',</span> <span class="pre">'P6322',</span> <span class="pre">'P6mm',</span> <span class="pre">'P6cc',</span> <span class="pre">'P63cm',</span> <span class="pre">'P63mc',</span> <span class="pre">'P-6m2',</span> <span class="pre">'P-6c2',</span> <span class="pre">'P-62m',</span> <span class="pre">'P-62c',</span> <span class="pre">'P6/mmm',</span> <span class="pre">'P6/mcc',</span> <span class="pre">'P63/mcm',</span> <span class="pre">'P63/mmc',</span> <span class="pre">'P23',</span> <span class="pre">'F23',</span> <span class="pre">'I23',</span> <span class="pre">'P213',</span> <span class="pre">'I213',</span> <span class="pre">'Pm-3',</span> <span class="pre">'Pn-3',</span> <span class="pre">'Fm-3',</span> <span class="pre">'Fd-3',</span> <span class="pre">'Im-3',</span> <span class="pre">'Pa-3',</span> <span class="pre">'Ia-3',</span> <span class="pre">'P432',</span> <span class="pre">'P4232',</span> <span class="pre">'F432',</span> <span class="pre">'F4132',</span> <span class="pre">'I432',</span> <span class="pre">'P4332',</span> <span class="pre">'P4132',</span> <span class="pre">'I4132',</span> <span class="pre">'P-43m',</span> <span class="pre">'F-43m',</span> <span class="pre">'I-43m',</span> <span class="pre">'P-43n',</span> <span class="pre">'F-43c',</span> <span class="pre">'I-43d',</span> <span class="pre">'Pm-3m',</span> <span class="pre">'Pn-3n',</span> <span class="pre">'Pm-3n',</span> <span class="pre">'Pn-3m',</span> <span class="pre">'Fm-3m',</span> <span class="pre">'Fm-3c',</span> <span class="pre">'Fd-3m',</span> <span class="pre">'Fd-3c',</span> <span class="pre">'Im-3m',</span> <span class="pre">'Ia-3d']]</span></em><a class="headerlink" href="#symd.groups.group_names" title="Link to this definition"></a></dt>
 <dd><p>Name of space groups</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="symd.groups.load_group">
-<span class="sig-name descname"><span class="pre">load_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.load_group" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">load_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.load_group" title="Link to this definition"></a></dt>
 <dd><p>Load one of the 2D planar groups or 3D space groups that tile space. The <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Group</span></code></a>
 contains the name of the Bravais lattice, the general positions,
 and a list of special positions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>gnum</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – group number (Hall number)</p></li>
-<li><p><strong>dim</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – dimensionality of space</p></li>
+<li><p><strong>gnum</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – group number (Hall number)</p></li>
+<li><p><strong>dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – dimensionality of space</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Group</span></code></a></p>
 </dd>
 </dl>
@@ -293,22 +327,22 @@ and a list of special positions.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="symd.groups.prepare_input">
-<span class="sig-name descname"><span class="pre">prepare_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.prepare_input" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">prepare_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.prepare_input" title="Link to this definition"></a></dt>
 <dd><p>Prepare input files for running symmetry MD.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>group</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – group number (Hall number) or <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Group</span></code></a></p></li>
-<li><p><strong>dim</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – dimensionality of space</p></li>
-<li><p><strong>N</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – number of atoms</p></li>
-<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name of the group (used to name output files)</p></li>
+<li><p><strong>group</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – group number (Hall number) or <a class="reference internal" href="#symd.groups.Group" title="symd.groups.Group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Group</span></code></a></p></li>
+<li><p><strong>dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – dimensionality of space</p></li>
+<li><p><strong>N</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – number of atoms</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – name of the group (used to name output files)</p></li>
 <li><p><strong>dir</strong> – directory to write files to</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of input files</p>
 </dd>
 </dl>
@@ -316,34 +350,34 @@ and a list of special positions.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="symd.groups.project_cell">
-<span class="sig-name descname"><span class="pre">project_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.project_cell" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">project_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.project_cell" title="Link to this definition"></a></dt>
 <dd><p>Project unit cell to constraints of Bravais lattice.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cell</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>) – unit cell as columns</p></li>
-<li><p><strong>projector</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]) – projector tensor or str of Bravais lattice</p></li>
+<li><p><strong>cell</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></span>) – unit cell as columns</p></li>
+<li><p><strong>projector</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</span>) – projector tensor or str of Bravais lattice</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="symd.groups.str2mat">
-<span class="sig-name descname"><span class="pre">str2mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.str2mat" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">str2mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#symd.groups.str2mat" title="Link to this definition"></a></dt>
 <dd><p>Convert affine matrix specified in xyz notation to matrix. For example, -x, y - x, z.
 Can be 2D or 3D.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>s</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – string in xyz notation</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – string in xyz notation</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></span></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray: matrix</p>
 </dd>
 </dl>

@@ -1,27 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Python Tutorial &mdash; symd  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
-      <link rel="stylesheet" href="_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script>let toggleHintShow = 'Click to show';</script>
-        <script>let toggleHintHide = 'Click to hide';</script>
-        <script>let toggleOpenOnPrint = 'true';</script>
-        <script src="_static/togglebutton.js"></script>
-        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -36,11 +33,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="toc.html" class="icon icon-home"> symd
+
+          
+          
+          <a href="toc.html" class="icon icon-home">
+            symd
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -78,8 +79,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="toc.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Python Tutorial</li>
+      <li><a href="toc.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Python Tutorial</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Tutorial.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -90,10 +91,10 @@
            <div itemprop="articleBody">
              
   <section id="python-tutorial">
-<h1>Python Tutorial<a class="headerlink" href="#python-tutorial" title="Permalink to this headline"></a></h1>
+<h1>Python Tutorial<a class="headerlink" href="#python-tutorial" title="Link to this heading"></a></h1>
 <p>This tutorial is meant to show you how to work with the <code class="docutils literal notranslate"><span class="pre">symd</span></code>. This will not focus on running simulations – see the other examples (<a class="reference internal" href="toc.html"><span class="doc">symd</span></a>) for that. Some of the ideas here help with re-implementing the symmetric molecular dynamics engine, but you should refer to <a class="reference external" href="https://arxiv.org/abs/2204.01114">the paper</a> for exact details.</p>
 <p>Let’s install if you have not:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install symd
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>symd
 </pre></div>
 </div>
 <div class="cell docutils container">
@@ -104,7 +105,7 @@
 </div>
 </div>
 <section id="a-group">
-<h2>A group<a class="headerlink" href="#a-group" title="Permalink to this headline"></a></h2>
+<h2>A group<a class="headerlink" href="#a-group" title="Link to this heading"></a></h2>
 <p>All 2D and 3D groups that tile periodically can be loaded with <code class="docutils literal notranslate"><span class="pre">symd</span></code> (see custom group example to make more). Let’s load a 2D group using its Hall Number (1-17 in 2D).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -115,7 +116,25 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Square
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">my_group</span> <span class="o">=</span> <span class="n">symd</span><span class="o">.</span><span class="n">load_group</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="nb">print</span><span class="p">(</span><span class="n">my_group</span><span class="o">.</span><span class="n">lattice</span><span class="p">)</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.12.4/x64/lib/python3.12/site-packages/symd/groups.py:517,</span> in <span class="ni">load_group</span><span class="nt">(gnum, dim)</span>
+<span class="g g-Whitespace">    </span><span class="mi">507</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">508</span><span class="sd"> Load one of the 2D planar groups or 3D space groups that tile space. The :obj:`Group`</span>
+<span class="g g-Whitespace">    </span><span class="mi">509</span><span class="sd"> contains the name of the Bravais lattice, the general positions,</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">    </span><span class="mi">514</span><span class="sd"> :return: The :obj:`Group`</span>
+<span class="g g-Whitespace">    </span><span class="mi">515</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">516</span> <span class="n">gnum</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">gnum</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">517</span> <span class="kn">from</span> <span class="nn">importlib_resources</span> <span class="kn">import</span> <span class="n">files</span>
+<span class="g g-Whitespace">    </span><span class="mi">518</span> <span class="kn">import</span> <span class="nn">symd.data</span>
+<span class="g g-Whitespace">    </span><span class="mi">520</span> <span class="n">fp</span> <span class="o">=</span> <span class="n">files</span><span class="p">(</span><span class="n">symd</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">dgroups.json&quot;</span><span class="p">)</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;importlib_resources&#39;
 </pre></div>
 </div>
 </div>
@@ -158,7 +177,7 @@
 </div>
 <p>You can see the group is a data structure consisting of the Bravais lattice, the general positions (group elements represented as affine matrices), special positions (itself a group), and an asymmetric unit specified as an inequality. The group in this format cannot be used for many calculations, so we’ll need to convert these strings into python objects.</p>
 <section id="group-elements">
-<h3>Group Elements<a class="headerlink" href="#group-elements" title="Permalink to this headline"></a></h3>
+<h3>Group Elements<a class="headerlink" href="#group-elements" title="Link to this heading"></a></h3>
 <p>Let’s get access to the group elements and apply them to some points. We’ll access them using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">symd.str2mat</span></code> function. These are affine matrices, so they are shape <span class="math notranslate nohighlight">\(D+1\times D+1\)</span>, where <span class="math notranslate nohighlight">\(D\)</span> is the number of dimensions. Thus, we need to add work in <a class="reference external" href="https://en.wikipedia.org/wiki/Homogeneous_coordinates">homogeneous coordinates</a>, which are <span class="math notranslate nohighlight">\((x,y,1)\)</span> in 2D.</p>
 <p>We’ll just apply the group elements to these homogeneous coordinates and plot the results. Remember we wrap the coordinates here, as done in the engine and paper.</p>
 <div class="cell docutils container">
@@ -181,7 +200,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/Tutorial_8_0.png" src="_images/Tutorial_8_0.png" />
+<img alt="_images/f466960679ad4ce82cae3e2d730eb87df455ccd3f4d18fefea61a4cc76014441.png" src="_images/f466960679ad4ce82cae3e2d730eb87df455ccd3f4d18fefea61a4cc76014441.png" />
 </div>
 </div>
 <p>Now let’s try applying the special positions, also known as Wyckoff sites.</p>
@@ -198,13 +217,13 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/Tutorial_10_0.png" src="_images/Tutorial_10_0.png" />
+<img alt="_images/89adff07da69bf4f31e3b92f57cf99134dd2da6e5f42272505c44810af47fdc3.png" src="_images/89adff07da69bf4f31e3b92f57cf99134dd2da6e5f42272505c44810af47fdc3.png" />
 </div>
 </div>
 <p>You can see the two sub groups: points on the line and the origin.</p>
 </section>
 <section id="asymmetric-unit">
-<h3>Asymmetric unit<a class="headerlink" href="#asymmetric-unit" title="Permalink to this headline"></a></h3>
+<h3>Asymmetric unit<a class="headerlink" href="#asymmetric-unit" title="Link to this heading"></a></h3>
 <p>As you add more points, you’ll notice that there is overlap:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -223,7 +242,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/Tutorial_13_0.png" src="_images/Tutorial_13_0.png" />
+<img alt="_images/d70da68e7397dd8078e4f55ece6938e6aedb37c829c850bf5bd6d653edb4df54.png" src="_images/d70da68e7397dd8078e4f55ece6938e6aedb37c829c850bf5bd6d653edb4df54.png" />
 </div>
 </div>
 <p>This is because our randomly generated points do not all lie in the asymmetric unit. We can load the asymmetric unit test function and use it to filter our points</p>
@@ -258,13 +277,13 @@ True
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/Tutorial_16_0.png" src="_images/Tutorial_16_0.png" />
+<img alt="_images/6439a311feb3c3beb1b6180494de83b6b473ecdc5626fe9ec14f0c2b5736ce0c.png" src="_images/6439a311feb3c3beb1b6180494de83b6b473ecdc5626fe9ec14f0c2b5736ce0c.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="fractional-vs-euclidean-coordinates">
-<h2>Fractional vs Euclidean Coordinates<a class="headerlink" href="#fractional-vs-euclidean-coordinates" title="Permalink to this headline"></a></h2>
+<h2>Fractional vs Euclidean Coordinates<a class="headerlink" href="#fractional-vs-euclidean-coordinates" title="Link to this heading"></a></h2>
 <p>All the work above required the points to be between 0 and 1, which are called fractional coordinates. Namely, a value of 0.2, 0.1 means that 20% of lattice vector 1 and 10% of lattice vector 2. How can you can you work with real particles though? You can easily convert via matrix multiplication between fractional coordinates and Euclidean coordintes. In our example above, the Bravais lattice is square so let’s make a square set of lattice vectors to see this:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -303,13 +322,13 @@ True
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/Tutorial_20_0.png" src="_images/Tutorial_20_0.png" />
+<img alt="_images/428e6733f087e1afce1bbc28cb1d64f0882d4432a21a65754910cb0639628bb3.png" src="_images/428e6733f087e1afce1bbc28cb1d64f0882d4432a21a65754910cb0639628bb3.png" />
 </div>
 </div>
 <p>You can see we are able to go to fractional coordinates and back to Euclidean with matrix multiplication. In simulation engines, we also will wrap using <code class="docutils literal notranslate"><span class="pre">np.fmod(frac_coords,</span> <span class="pre">1.0)</span></code> on the asymetric unit</p>
 </section>
 <section id="bravais-lattice">
-<h2>Bravais Lattice<a class="headerlink" href="#bravais-lattice" title="Permalink to this headline"></a></h2>
+<h2>Bravais Lattice<a class="headerlink" href="#bravais-lattice" title="Link to this heading"></a></h2>
 <p>The Bravais lattice isn’t always square. To get correct lattice vectors, we can use the <code class="xref py py-obj docutils literal notranslate"><span class="pre">symd.project_cell</span></code> function:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -322,8 +341,8 @@ True
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>This lattice is Square
-[[2.11479269 0.        ]
- [0.         2.11479269]]
+[[1.31528419 0.        ]
+ [0.         1.31528419]]
 </pre></div>
 </div>
 </div>
@@ -345,10 +364,10 @@ True
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The volume of my cell is 4.472348120781142
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The volume of my cell is 1.7299725113082867
 If I have 8 particles in asymmetric unit, there will be 64 in the unit cell
 If I want to have a number density of 0.6 with 8 particles,
-my cell should be [5.163977476386405, 0.0, 0.0, 5.163977476386405]
+my cell should be [5.163977476386403, 0.0, 0.0, 5.163977476386403]
 </pre></div>
 </div>
 </div>
