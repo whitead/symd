@@ -7,3 +7,5 @@ pandas
 matplotlib
 skunk
 svglib
+numpy==1.26.4 # some shit about setuptool (https://github.com/numpy/numpy/issues/23808)
+pyyaml==6.0.2rc1 # needed for cython 3 release (which is dependency somwehere)
