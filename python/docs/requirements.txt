@@ -87,9 +87,7 @@ jupyter-core==5.7.2
 kiwisolver==1.4.5
     # via matplotlib
 lxml==5.2.2
-    # via
-    #   -r requirements.in
-    #   svglib
+    # via svglib
 markdown-it-py==3.0.0
     # via
     #   mdit-py-plugins
@@ -124,9 +122,8 @@ nbformat==5.10.4
     #   nbclient
 nest-asyncio==1.6.0
     # via ipykernel
-numpy==1.26.4
+numpy==2.0.1
     # via
-    #   -r requirements.in
     #   contourpy
     #   matplotlib
     #   pandas
@@ -171,15 +168,13 @@ python-dateutil==2.9.0.post0
     #   pandas
 pytz==2024.1
     # via pandas
-pyyaml==6.0.2rc1
+pyyaml==6.0.1
     # via
-    #   -r requirements.in
     #   jupyter-cache
     #   myst-nb
     #   myst-parser
 pyzmq==26.0.3
     # via
-    #   -r requirements.in
     #   ipykernel
     #   jupyter-client
 referencing==0.35.1
