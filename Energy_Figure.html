@@ -97,12 +97,6 @@
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.8.14/x64/lib/python3.8/site-packages/symd/groups.py:442: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify &#39;dtype=object&#39; when creating the ndarray.
-  &quot;Trigonal&quot;: np.array(  # cubic, plus use b_y as shear
-</pre></div>
-</div>
-</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -193,7 +187,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fd219393e50&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7faefdbd6df0&gt;
 </pre></div>
 </div>
 <img alt="_images/Energy_Figure_5_1.png" src="_images/Energy_Figure_5_1.png" />
@@ -225,39 +219,8 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-3.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [2.71442, 0.0, 0.0, 0.0, 2.71442, 0.0, 0.0, 0.0, 2.71442], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-3.dat&quot;, &quot;group&quot;: &quot;sim2d/group-3.json&quot;}
-Info: You are running version fd57 of symd
-Assuming you&#39;ll pass parameters via stdin. Waiting...
-Warning: assuming default value for position_log_period = 0
-Warning: assuming default value for velocity_log_period = 0
-Warning: assuming default value for force_log_period = 0
-Warning: Setting masses to 1.0
-Info: Loaded group group-3 with 4 particles and 2 members
-Info: Unormed vectors (column wise):
-Info: 2.714420 0.000000 0.000000 
-Info: 0.000000 2.714420 0.000000 
-Info: 0.000000 0.000000 2.714420 
-Info: Projected vectors:
-Info: 2.714420 0.000000 0.000000 
-Info: 0.000000 5.428840 0.000000 
-Info: 0.000000 0.000000 2.714420 
-Info: Inverse Projected vectors:
-Info: 0.368403 0.000000 -0.000000 
-Info:-0.000000 0.184201 -0.000000 
-Info:-0.000000 -0.000000 0.368403 
-Info: Duplicating 4 particles into 4 real particles and 996 ghost for group with 2 elements and 124 tilings. Each cell has 8 particles.
-Info: Computed 12 degrees of freedom
-        Step         Time            T           PE           KE            E       Htherm            V
-           0            0  1.09929e+07      80187.3  6.59574e+07  6.60376e+07  6.60376e+07      40.0001
-         300          1.5  3.25732e+20     -5.42198  1.95439e+21  1.95439e+21  1.95439e+21      40.0001
-
-Exiting due to high temperature or energy  (T = 3.44219e+27)
-
-Failed to complete simulation. Ended with code 1
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-6.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [2.71442, 0.0, 0.0, 0.0, 2.71442, 0.0, 0.0, 0.0, 2.71442], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-6.dat&quot;, &quot;group&quot;: &quot;sim2d/group-6.json&quot;}
-Info: You are running version fd57 of symd
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-6.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [3.41995, 0.0, 0.0, 0.0, 3.41995, 0.0, 0.0, 0.0, 3.41995], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-6.dat&quot;, &quot;group&quot;: &quot;sim2d/group-6.json&quot;}
+Info: You are running version a1d4 of symd
 Assuming you&#39;ll pass parameters via stdin. Waiting...
 Warning: assuming default value for position_log_period = 0
 Warning: assuming default value for velocity_log_period = 0
@@ -265,83 +228,112 @@ Warning: assuming default value for force_log_period = 0
 Warning: Setting masses to 1.0
 Info: Loaded group group-6 with 4 particles and 2 members
 Info: Unormed vectors (column wise):
-Info: 2.714420 0.000000 0.000000 
-Info: 0.000000 2.714420 0.000000 
-Info: 0.000000 0.000000 2.714420 
+Info: 3.419950 0.000000 0.000000 
+Info: 0.000000 3.419950 0.000000 
+Info: 0.000000 0.000000 3.419950 
 Info: Projected vectors:
-Info: 2.714420 0.000000 0.000000 
-Info: 0.000000 5.428840 0.000000 
-Info: 0.000000 0.000000 2.714420 
+Info: 3.419950 0.000000 0.000000 
+Info: 0.000000 3.419950 0.000000 
+Info: 0.000000 0.000000 3.419950 
 Info: Inverse Projected vectors:
-Info: 0.368403 0.000000 -0.000000 
-Info:-0.000000 0.184201 -0.000000 
-Info:-0.000000 -0.000000 0.368403 
+Info: 0.292402 0.000000 -0.000000 
+Info:-0.000000 0.292402 -0.000000 
+Info:-0.000000 -0.000000 0.292402 
 Info: Duplicating 4 particles into 4 real particles and 996 ghost for group with 2 elements and 124 tilings. Each cell has 8 particles.
 Info: Computed 12 degrees of freedom
         Step         Time            T           PE           KE            E       Htherm            V
-           0            0      6074.91     -2.60315      36449.5      36446.9      36446.9      40.0001
+           0            0  9.63701e+30      711.414  5.78221e+31  5.78221e+31  5.78221e+31      39.9999
 
-Exiting due to high temperature or energy  (T = 1.87251e+36)
+Exiting due to high temperature or energy  (T = 9.63701e+30)
 
 Failed to complete simulation. Ended with code 1
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-10.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [3.41995, 0.0, 0.0, 0.0, 3.41995, 0.0, 0.0, 0.0, 3.41995], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-10.dat&quot;, &quot;group&quot;: &quot;sim2d/group-10.json&quot;}
-Info: You are running version fd57 of symd
+{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-6.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [3.41995, 0.0, 0.0, 0.0, 3.41995, 0.0, 0.0, 0.0, 3.41995], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-6.dat&quot;, &quot;group&quot;: &quot;sim2d/group-6.json&quot;}
+Info: You are running version a1d4 of symd
 Assuming you&#39;ll pass parameters via stdin. Waiting...
 Warning: assuming default value for position_log_period = 0
 Warning: assuming default value for velocity_log_period = 0
 Warning: assuming default value for force_log_period = 0
 Warning: Setting masses to 1.0
-Info: Loaded group group-10 with 4 particles and 4 members
+Info: Loaded group group-6 with 4 particles and 2 members
 Info: Unormed vectors (column wise):
 Info: 3.419950 0.000000 0.000000 
 Info: 0.000000 3.419950 0.000000 
 Info: 0.000000 0.000000 3.419950 
 Info: Projected vectors:
 Info: 3.419950 0.000000 0.000000 
-Info: 0.000000 6.839900 0.000000 
+Info: 0.000000 3.419950 0.000000 
 Info: 0.000000 0.000000 3.419950 
 Info: Inverse Projected vectors:
 Info: 0.292402 0.000000 -0.000000 
-Info:-0.000000 0.146201 -0.000000 
+Info:-0.000000 0.292402 -0.000000 
 Info:-0.000000 -0.000000 0.292402 
-Info: Duplicating 4 particles into 4 real particles and 1996 ghost for group with 4 elements and 124 tilings. Each cell has 16 particles.
+Info: Duplicating 4 particles into 4 real particles and 996 ghost for group with 2 elements and 124 tilings. Each cell has 8 particles.
 Info: Computed 12 degrees of freedom
         Step         Time            T           PE           KE            E       Htherm            V
-           0            0  1.63155e+07      19.0551  9.78928e+07  9.78928e+07  9.78928e+07      79.9999
+           0            0      2824.48      35.1351      16946.9        16982        16982      39.9999
 
-Exiting due to high temperature or energy  (T = 2.34589e+41)
+Exiting due to high temperature or energy  (T = 1.28001e+29)
 
 Failed to complete simulation. Ended with code 1
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-11.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [3.41995, 0.0, 0.0, 0.0, 3.41995, 0.0, 0.0, 0.0, 3.41995], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-11.dat&quot;, &quot;group&quot;: &quot;sim2d/group-11.json&quot;}
-Info: You are running version fd57 of symd
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-8.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [4.30888, 0.0, 0.0, 0.0, 4.30888, 0.0, 0.0, 0.0, 4.30888], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-8.dat&quot;, &quot;group&quot;: &quot;sim2d/group-8.json&quot;}
+Info: You are running version a1d4 of symd
 Assuming you&#39;ll pass parameters via stdin. Waiting...
 Warning: assuming default value for position_log_period = 0
 Warning: assuming default value for velocity_log_period = 0
 Warning: assuming default value for force_log_period = 0
 Warning: Setting masses to 1.0
-Info: Loaded group group-11 with 4 particles and 4 members
+Info: Loaded group group-8 with 4 particles and 4 members
 Info: Unormed vectors (column wise):
-Info: 3.419950 0.000000 0.000000 
-Info: 0.000000 3.419950 0.000000 
-Info: 0.000000 0.000000 3.419950 
+Info: 4.308880 0.000000 0.000000 
+Info: 0.000000 4.308880 0.000000 
+Info: 0.000000 0.000000 4.308880 
 Info: Projected vectors:
-Info: 3.419950 0.000000 0.000000 
-Info: 0.000000 6.839900 0.000000 
-Info: 0.000000 0.000000 3.419950 
+Info: 4.308880 0.000000 0.000000 
+Info: 0.000000 4.308880 0.000000 
+Info: 0.000000 0.000000 4.308880 
 Info: Inverse Projected vectors:
-Info: 0.292402 0.000000 -0.000000 
-Info:-0.000000 0.146201 -0.000000 
-Info:-0.000000 -0.000000 0.292402 
+Info: 0.232079 0.000000 -0.000000 
+Info:-0.000000 0.232079 -0.000000 
+Info:-0.000000 -0.000000 0.232079 
 Info: Duplicating 4 particles into 4 real particles and 1996 ghost for group with 4 elements and 124 tilings. Each cell has 16 particles.
 Info: Computed 12 degrees of freedom
         Step         Time            T           PE           KE            E       Htherm            V
-           0            0       329900      14972.7   1.9794e+06  1.99437e+06  1.99437e+06      79.9999
+           0            0      3253.75       164.22      19522.5      19686.7      19686.7      80.0006
 
-Exiting due to high temperature or energy  (T = 4.1176e+40)
+Exiting due to high temperature or energy  (T = 4.58749e+30)
+
+Failed to complete simulation. Ended with code 1
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&quot;steps&quot;: 1000, &quot;n_particles&quot;: 4, &quot;time_step&quot;: 0.005, &quot;seed&quot;: 435423, &quot;anderson_nu&quot;: 100, &quot;langevin_gamma&quot;: 10, &quot;bussi_taut&quot;: 0.5, &quot;thermostat_seed&quot;: 54344, &quot;rcut&quot;: 10, &quot;skin&quot;: 0.6000000000000001, &quot;temperature&quot;: 0.01, &quot;pressure&quot;: null, &quot;box_update_period&quot;: 0, &quot;start_temperature&quot;: 0.5, &quot;thermostat&quot;: &quot;baoab&quot;, &quot;force_type&quot;: &quot;lj&quot;, &quot;final_positions&quot;: &quot;sim2d/group-15.dat&quot;, &quot;cell_log_file&quot;: &quot;sim2d/cell_log_file.dat&quot;, &quot;print_period&quot;: 300.0, &quot;cell&quot;: [5.42884, 0.0, 0.0, 0.0, 5.42884, 0.0, 0.0, 0.0, 5.42884], &quot;lj_epsilon&quot;: 1, &quot;lj_sigma&quot;: 1.0, &quot;n_images&quot;: 2, &quot;start_positions&quot;: &quot;sim2d/group-15.dat&quot;, &quot;group&quot;: &quot;sim2d/group-15.json&quot;}
+Info: You are running version a1d4 of symd
+Assuming you&#39;ll pass parameters via stdin. Waiting...
+Warning: assuming default value for position_log_period = 0
+Warning: assuming default value for velocity_log_period = 0
+Warning: assuming default value for force_log_period = 0
+Warning: Setting masses to 1.0
+Info: Loaded group group-15 with 4 particles and 8 members
+Info: Unormed vectors (column wise):
+Info: 5.428840 0.000000 0.000000 
+Info: 0.000000 5.428840 0.000000 
+Info: 0.000000 0.000000 5.428840 
+Info: Projected vectors:
+Info: 5.428840 0.000000 0.000000 
+Info: 0.000000 5.428840 0.000000 
+Info: 0.000000 0.000000 5.428840 
+Info: Inverse Projected vectors:
+Info: 0.184201 0.000000 -0.000000 
+Info:-0.000000 0.184201 -0.000000 
+Info:-0.000000 -0.000000 0.184201 
+Info: Duplicating 4 particles into 4 real particles and 3996 ghost for group with 8 elements and 124 tilings. Each cell has 32 particles.
+Info: Computed 12 degrees of freedom
+        Step         Time            T           PE           KE            E       Htherm            V
+           0            0  2.04576e+18      85.5033  1.22745e+19  1.22745e+19  1.22745e+19          160
+         300          1.5  6.16738e+18      221.694  3.70043e+19  3.70043e+19  3.70043e+19          160
+
+Exiting due to high temperature or energy  (T = 5.81629e+26)
 
 Failed to complete simulation. Ended with code 1
 </pre></div>
